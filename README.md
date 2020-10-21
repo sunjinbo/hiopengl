@@ -1,2 +1,2 @@
 # hiopengl
-HiOpenGL is practice for learning OpenGL ES on android platform.
+HiOpenGL is roadmap project for learning OpenGL ES on android platform.
