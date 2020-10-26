@@ -14,19 +14,55 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onP1Click(View view) {
+    public void onGLSurfaceViewClick(View view) {
         startActivity(new Intent(this, GLSurfaceViewActivity.class));
     }
 
-    public void onP2Click(View view) {
+    public void onTextureViewClick(View view) {
         startActivity(new Intent(this, TextureViewActivity.class));
     }
 
-    public void onP3Click(View view) {
+    public void onSurfaceViewClick(View view) {
         startActivity(new Intent(this, SurfaceViewActivity.class));
     }
 
-    public void onP4Click(View view) {
+    public void onCanvasClick(View view) {
         startActivity(new Intent(this, CanvasActivity.class));
+    }
+
+    public void onGeometricClick(View view) {
+        startActivity(new Intent(this, GeometricActivity.class));
+    }
+
+    public void onPolyhedronClick(View view) {
+        startActivity(new Intent(this, PolyhedronActivity.class));
+    }
+
+    public void onGLSLClick(View view) {
+
+    }
+
+    public void onModelViewClick(View view) {
+
+    }
+
+    public void onProjectionClick(View view) {
+
+    }
+
+    public void onViewportClick(View view) {
+
+    }
+
+    public void onLightingClick(View view) {
+
+    }
+
+    public void onTextureClick(View view) {
+
+    }
+
+    public void onParticleClick(View view) {
+
     }
 }

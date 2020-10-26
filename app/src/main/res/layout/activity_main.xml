@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <Button
-            android:onClick="onP1Click"
+            android:onClick="onGLSurfaceViewClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -20,7 +20,7 @@
             android:text="GLSurfaceView + OpenGL ES" />
 
         <Button
-            android:onClick="onP2Click"
+            android:onClick="onTextureViewClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -28,7 +28,7 @@
             android:text="TextureView + OpenGL ES" />
 
         <Button
-            android:onClick="onP3Click"
+            android:onClick="onSurfaceViewClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -36,7 +36,7 @@
             android:text="SurfaceView + OpenGL ES" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onCanvasClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -44,6 +44,7 @@
             android:text="SurfaceView + Canvas" />
 
         <Button
+            android:onClick="onGeometricClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -51,6 +52,7 @@
             android:text="Points, Line and Triangles" />
 
         <Button
+            android:onClick="onPolyhedronClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -58,6 +60,7 @@
             android:text="Polyhedron" />
 
         <Button
+            android:onClick="onGLSLClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -65,7 +68,7 @@
             android:text="OpenGL GLSL" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onModelViewClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -73,7 +76,7 @@
             android:text="Modeling and Viewing" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onProjectionClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -81,7 +84,7 @@
             android:text="Projection" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onViewportClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -89,7 +92,7 @@
             android:text="Viewport" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onLightingClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -97,7 +100,7 @@
             android:text="OpenGL Lighting" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onTextureClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
@@ -105,7 +108,7 @@
             android:text="OpenGL Texture" />
 
         <Button
-            android:onClick="onP4Click"
+            android:onClick="onParticleClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
