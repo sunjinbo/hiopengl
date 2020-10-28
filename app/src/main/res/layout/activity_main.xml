@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
-            android:text="Points, Line and Triangles" />
+            android:text="Geometric Figures" />
 
         <Button
             android:onClick="onPolyhedronClick"
