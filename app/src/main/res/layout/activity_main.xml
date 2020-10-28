@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
-            android:text="OpenGL Lighting" />
+            android:text="Lighting" />
 
         <Button
             android:onClick="onTextureClick"
@@ -105,7 +105,23 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
-            android:text="OpenGL Texture" />
+            android:text="Texture" />
+
+        <Button
+            android:onClick="onFrameBufferClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Frame Buffer" />
+
+        <Button
+            android:onClick="onDepthTestClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Depth Test" />
 
         <Button
             android:onClick="onParticleClick"
@@ -113,7 +129,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
-            android:text="OpenGL Particle Effect" />
+            android:text="Particle Effect" />
 
     </LinearLayout>
 

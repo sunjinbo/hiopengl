@@ -58,6 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void onFrameBufferClick(View view) {
+
+    }
+
+    public void onDepthTestClick(View view) {
+
+    }
+
     public void onTextureClick(View view) {
 
     }
