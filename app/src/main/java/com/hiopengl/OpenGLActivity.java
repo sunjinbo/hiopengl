@@ -1,5 +1,6 @@
 package com.hiopengl;
 
+import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
@@ -38,8 +39,10 @@ public abstract class OpenGLActivity extends AppCompatActivity {
 
     protected abstract class GLRenderer implements GLSurfaceView.Renderer {
 
-        protected GLRenderer() {
+        protected Context mContext;
 
+        protected GLRenderer(Context context) {
+            mContext = context;
         }
 
         @Override

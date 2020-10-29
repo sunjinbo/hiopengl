@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PolyhedronActivity"></activity>
+        <activity android:name=".ViewportActivity"></activity>
+        <activity android:name=".ProjectionActivity" />
+        <activity android:name=".ViewModelActivity" />
+        <activity android:name=".GLSLActivity" />
+        <activity android:name=".PolyhedronActivity" />
         <activity android:name=".GeometricActivity" />
         <activity android:name=".CanvasActivity" />
         <activity android:name=".SurfaceViewActivity" />

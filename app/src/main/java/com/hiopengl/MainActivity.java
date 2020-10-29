@@ -39,19 +39,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onGLSLClick(View view) {
-
+        startActivity(new Intent(this, GLSLActivity.class));
     }
 
-    public void onModelViewClick(View view) {
-
+    public void onViewModelClick(View view) {
+        startActivity(new Intent(this, ViewModelActivity.class));
     }
 
     public void onProjectionClick(View view) {
-
+        startActivity(new Intent(this, ProjectionActivity.class));
     }
 
     public void onViewportClick(View view) {
-
+        startActivity(new Intent(this, ViewportActivity.class));
     }
 
     public void onLightingClick(View view) {

@@ -1,5 +1,7 @@
 package com.hiopengl;
 
+import android.content.Context;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -38,7 +40,7 @@ public class PolyhedronActivity extends OpenGLActivity {
 
     @Override
     protected OpenGLActivity.GLRenderer getRenderer() {
-        return new PolyhedronRenderer();
+        return new PolyhedronRenderer(this);
     }
 
     private class PolyhedronRenderer extends OpenGLActivity.GLRenderer {
@@ -48,7 +50,9 @@ public class PolyhedronActivity extends OpenGLActivity {
         private ShortBuffer indexBuffer;
         private float angle = 0.0f;
 
-        public PolyhedronRenderer() {
+        public PolyhedronRenderer(Context context) {
+            super(context);
+
             ByteBuffer vbb
                     = ByteBuffer.allocateDirect(vertices.length * 4);
             vbb.order(ByteOrder.nativeOrder());
