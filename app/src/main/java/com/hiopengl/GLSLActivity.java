@@ -102,6 +102,10 @@ public class GLSLActivity extends AppCompatActivity {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+            GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+            GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
+                    | GL10.GL_DEPTH_BUFFER_BIT);
+
             int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
             GLES30.glEnableVertexAttribArray(aPositionLocation);
             //x y z 所以数据size 是3
