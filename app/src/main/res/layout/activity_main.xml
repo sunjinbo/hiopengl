@@ -92,12 +92,28 @@
             android:text="Viewport" />
 
         <Button
+            android:onClick="onFaceCullingClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Face culling" />
+
+        <Button
             android:onClick="onLightingClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
             android:text="Lighting" />
+
+        <Button
+            android:onClick="onMaterialClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Material" />
 
         <Button
             android:onClick="onTextureClick"

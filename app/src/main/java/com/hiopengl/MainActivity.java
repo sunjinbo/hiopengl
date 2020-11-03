@@ -54,7 +54,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ViewportActivity.class));
     }
 
+    public void onFaceCullingClick(View view) {
+        startActivity(new Intent(this, FaceCullingActivity.class));
+    }
+
     public void onLightingClick(View view) {
+
+    }
+
+    public void onMaterialClick(View view) {
 
     }
 

@@ -17,8 +17,26 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:onClick="onPointsClick"
-            android:text="GL_POINTS"
+            android:onClick="onBackClick"
+            android:text="GL_BACK"
+            android:textSize="12sp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onFrontClick"
+            android:text="GL_FRONT"
+            android:textSize="12sp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onFrontAndBackClick"
+            android:text="GL_FRONT_AND_BACK"
             android:textSize="12sp"
             android:layout_gravity="center"
             android:layout_weight="1"
@@ -33,62 +51,19 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:onClick="onLineStripClick"
-            android:text="GL_LINE_STRIP"
-            android:textSize="12sp"
+            android:onClick="onCCWClick"
+            android:text="GL_CCW"
             android:layout_gravity="center"
+            android:textSize="12sp"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <Button
-            android:onClick="onLineLoopClick"
-            android:text="GL_LINE_LOOP"
-            android:textSize="12sp"
+            android:onClick="onCWClick"
+            android:text="GL_CW"
             android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:onClick="onLinesClick"
-            android:text="GL_LINES"
             android:textSize="12sp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:onClick="onTrianglesClick"
-            android:text="GL_TRIANGLES"
-            android:textSize="12sp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:onClick="onTriangleFanClick"
-            android:text="GL_TRIANGLE_FAN"
-            android:textSize="12sp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:onClick="onTriangleStripClick"
-            android:text="GL_TRIANGLE_STRIP"
-            android:textSize="12sp"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
