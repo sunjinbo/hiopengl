@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, FaceCullingActivity.class));
     }
 
+    public void onVertexClick(View view) {
+        startActivity(new Intent(this, VertexActivity.class));
+    }
+
     public void onLightingClick(View view) {
 
     }
