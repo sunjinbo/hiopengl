@@ -302,10 +302,10 @@ public class VertexActivity extends AppCompatActivity {
 
             // 获取shader中颜色举柄的位置
             int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
-            // 将颜色数据数组传递给GPU
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT, false, 0, colorBuffer);
             // 启用颜色句柄
             GLES30.glEnableVertexAttribArray(aColorLocation);
+            // 将颜色数据数组传递给GPU
+            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT, false, 0, colorBuffer);
 
             // 绘制图形
             GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3);

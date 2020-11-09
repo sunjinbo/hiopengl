@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onLightingClick(View view) {
-
+        startActivity(new Intent(this, LightingActivity.class));
     }
 
     public void onMaterialClick(View view) {
