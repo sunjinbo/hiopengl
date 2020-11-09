@@ -25,6 +25,8 @@ public class ViewportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsurfaceview);
 
+        getSupportActionBar().setTitle("Viewport");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLRenderer = new ViewportRenderer(this);

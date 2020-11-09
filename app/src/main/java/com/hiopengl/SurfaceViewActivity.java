@@ -39,6 +39,8 @@ public class SurfaceViewActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surfaceview);
 
+        getSupportActionBar().setTitle("SurfaceView + OpenGL ES");
+
         vbb = ByteBuffer.allocateDirect(vertexArray.length*4);
         vbb.order(ByteOrder.nativeOrder());
         vertex = vbb.asFloatBuffer();

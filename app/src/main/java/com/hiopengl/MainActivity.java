@@ -67,7 +67,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onMaterialClick(View view) {
+        startActivity(new Intent(this, MaterialActivity.class));
+    }
 
+    public void onTextureClick(View view) {
+        startActivity(new Intent(this, TextureActivity.class));
     }
 
     public void onFrameBufferClick(View view) {
@@ -75,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onDepthTestClick(View view) {
-
-    }
-
-    public void onTextureClick(View view) {
 
     }
 

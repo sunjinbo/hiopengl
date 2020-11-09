@@ -26,6 +26,8 @@ public class FaceCullingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_culling);
 
+        getSupportActionBar().setTitle("Face culling");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();
         mGLSurfaceView.setRenderer(mGLRenderer);

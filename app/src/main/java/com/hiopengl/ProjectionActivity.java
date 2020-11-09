@@ -26,6 +26,8 @@ public class ProjectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsurfaceview);
 
+        getSupportActionBar().setTitle("Projection");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLRenderer = new ProjectionRenderer(this);

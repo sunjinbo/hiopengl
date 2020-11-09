@@ -26,7 +26,9 @@ public class LightingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_glsurfaceview);
+        setContentView(R.layout.activity_lighting);
+
+        getSupportActionBar().setTitle("Lighting");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
@@ -236,7 +238,7 @@ public class LightingActivity extends AppCompatActivity {
             GLES30.glEnable(GL10.GL_CULL_FACE);
             GLES30.glCullFace(GLES30.GL_FRONT);
             GLES30.glFrontFace(GLES30.GL_CCW);
-            
+
             GLES30.glBindVertexArray(vaoBufferId);
             GLES30.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, eboBufferId);
             GLES30.glDrawElements(GLES30.GL_TRIANGLES, 36, GLES30.GL_UNSIGNED_INT, 0);

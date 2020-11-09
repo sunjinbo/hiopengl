@@ -22,6 +22,8 @@ public class GLSurfaceViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsurfaceview);
 
+        getSupportActionBar().setTitle("GLSurfaceView + OpenGL ES");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();
         mGLSurfaceView.setRenderer(mGLRenderer);

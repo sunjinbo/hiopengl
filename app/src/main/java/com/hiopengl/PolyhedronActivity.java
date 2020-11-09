@@ -1,6 +1,7 @@
 package com.hiopengl;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -37,6 +38,12 @@ public class PolyhedronActivity extends OpenGLActivity {
             0f, 0f, 1f, 1f,
             1f, 0f, 1f, 1f
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Polyhedron");
+    }
 
     @Override
     protected OpenGLActivity.GLRenderer getRenderer() {

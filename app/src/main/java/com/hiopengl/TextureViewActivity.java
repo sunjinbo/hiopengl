@@ -40,6 +40,8 @@ public class TextureViewActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_textureview);
 
+        getSupportActionBar().setTitle("TextureView + OpenGL ES");
+
         vbb = ByteBuffer.allocateDirect(vertexArray.length*4);
         vbb.order(ByteOrder.nativeOrder());
         vertex = vbb.asFloatBuffer();

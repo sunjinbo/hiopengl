@@ -24,6 +24,8 @@ public class CanvasActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surfaceview);
 
+        getSupportActionBar().setTitle("SurfaceView + Canvas");
+
         mSurfaceView = findViewById(R.id.surface_view);
         mSurfaceView.getHolder().addCallback(this);
         mPaint = new Paint();

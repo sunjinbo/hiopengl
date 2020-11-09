@@ -24,6 +24,8 @@ public class GeometricActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_geometric);
 
+        getSupportActionBar().setTitle("Geometric Figures");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();
         mGLSurfaceView.setRenderer(mGLRenderer);

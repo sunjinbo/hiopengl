@@ -26,6 +26,8 @@ public class ViewModelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsurfaceview);
 
+        getSupportActionBar().setTitle("Modeling and Viewing");
+
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLRenderer = new ViewModelRenderer(this);
