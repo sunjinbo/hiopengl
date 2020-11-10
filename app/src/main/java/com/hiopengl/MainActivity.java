@@ -26,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, SurfaceViewActivity.class));
     }
 
+    public void onSurfaceTextureClick(View view) {
+        startActivity(new Intent(this, SurfaceTextureActivity.class));
+    }
+
     public void onCanvasClick(View view) {
         startActivity(new Intent(this, CanvasActivity.class));
     }
@@ -74,15 +78,19 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, TextureActivity.class));
     }
 
-    public void onFrameBufferClick(View view) {
+    public void onMeshClick(View view) {
+        startActivity(new Intent(this, MeshActivity.class));
+    }
 
+    public void onFrameBufferClick(View view) {
+        startActivity(new Intent(this, FrameBufferActivity.class));
     }
 
     public void onDepthTestClick(View view) {
-
+        startActivity(new Intent(this, DepthTestActivity.class));
     }
 
     public void onParticleClick(View view) {
-
+        startActivity(new Intent(this, ParticleActivity.class));
     }
 }

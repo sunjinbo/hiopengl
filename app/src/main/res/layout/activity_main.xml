@@ -36,6 +36,14 @@
             android:text="SurfaceView + OpenGL ES" />
 
         <Button
+            android:onClick="onSurfaceTextureClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="SurfaceTexture + OpenGL ES" />
+
+        <Button
             android:onClick="onCanvasClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,6 +138,14 @@
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
             android:text="Texture" />
+
+        <Button
+            android:onClick="onMeshClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Mesh" />
 
         <Button
             android:onClick="onFrameBufferClick"
