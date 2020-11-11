@@ -234,7 +234,6 @@ public class LightingSourceActivity extends AppCompatActivity {
             int uMaxtrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
             GLES30.glUniformMatrix4fv(uMaxtrixLocation,1,false, mMVPMatrix,0);
 
-
             GLES30.glEnable(GL10.GL_CULL_FACE);
             GLES30.glCullFace(GLES30.GL_FRONT);
             GLES30.glFrontFace(GLES30.GL_CCW);
