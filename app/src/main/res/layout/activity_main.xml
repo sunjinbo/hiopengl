@@ -116,12 +116,20 @@
             android:text="VA、VBO、VAO、EBO" />
 
         <Button
-            android:onClick="onLightingClick"
+            android:onClick="onPhongLightingClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|left"
             android:textAllCaps="false"
-            android:text="Lighting" />
+            android:text="Phong Lighting" />
+
+        <Button
+            android:onClick="onLightingSourceClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:text="Lighting source" />
 
         <Button
             android:onClick="onMaterialClick"

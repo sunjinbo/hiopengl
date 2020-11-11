@@ -66,8 +66,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, VertexActivity.class));
     }
 
-    public void onLightingClick(View view) {
-        startActivity(new Intent(this, LightingActivity.class));
+    public void onPhongLightingClick(View view) {
+        startActivity(new Intent(this, PhongLightingActivity.class));
+    }
+
+    public void onLightingSourceClick(View view) {
+        startActivity(new Intent(this, LightingSourceActivity.class));
     }
 
     public void onMaterialClick(View view) {

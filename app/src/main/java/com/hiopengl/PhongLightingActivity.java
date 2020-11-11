@@ -19,20 +19,20 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MaterialActivity extends AppCompatActivity {
+public class PhongLightingActivity extends AppCompatActivity {
     protected GLSurfaceView mGLSurfaceView;
-    protected MaterialRenderer mGLRenderer;
+    protected LightingRenderer mGLRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_material);
+        setContentView(R.layout.activity_phone_lighting);
 
-        getSupportActionBar().setTitle("Material");
+        getSupportActionBar().setTitle("Phong Lighting");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
-        mGLRenderer = new MaterialRenderer(this);
+        mGLRenderer = new LightingRenderer(this);
         mGLSurfaceView.setRenderer(mGLRenderer);
     }
 
@@ -50,7 +50,7 @@ public class MaterialActivity extends AppCompatActivity {
         mGLRenderer.onResume();
     }
 
-    private class MaterialRenderer implements GLSurfaceView.Renderer, Runnable {
+    private class LightingRenderer implements GLSurfaceView.Renderer, Runnable {
         private static final int BYTES_PER_FLOAT = 4;
         private static final int BYTES_PER_INT = 4;
 
@@ -110,7 +110,7 @@ public class MaterialActivity extends AppCompatActivity {
         private float mAngle = 0;
         private boolean mRunning = false;
 
-        public MaterialRenderer(Context context) {
+        public LightingRenderer(Context context) {
             mContext = context;
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertex.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
@@ -139,10 +139,10 @@ public class MaterialActivity extends AppCompatActivity {
             GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
 
             //编译顶点着色程序
-            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_material.glsl");
+            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_phong_lighting.glsl");
             int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
             //编译片段着色程序
-            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_material.glsl");
+            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_phong_lighting.glsl");
             int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
             //连接程序
             mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
