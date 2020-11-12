@@ -14,7 +14,6 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -61,43 +60,56 @@ public class MaterialActivity extends AppCompatActivity {
 
         // 顶点和索引数据
         private FloatBuffer vertexBuffer;
-        private IntBuffer indexBuffer;
 
         // VBO
         private int vboBufferId;
-
-        // EBO
-        private int eboBufferId;
 
         // VAO
         private int vaoBufferId;
 
         // vertex数据(坐标+颜色+法向量)
-        private float vertex[] ={ // X, Y, Z, R, G, B, A, normalX, normalY, normalZ
-                0.5f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // A
-                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // B
-                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // C
-                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  // D
-                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  // E
-                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  // F
-                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  // G
-                -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f // H
-        };
+        private float vertex[] ={ // X, Y, Z, R, G, B, normalX, normalY, normalZ
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // F
+                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // B
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // C
+                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // B
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // F
+                -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, // H
 
-        // index数据
-        private int index[] = {
-                0, 2, 1,
-                3, 2, 0,
-                6, 3, 0,
-                6, 4, 3,
-                1, 5, 7,
-                1, 2, 5,
-                7, 4, 6,
-                7, 5, 4,
-                6, 0, 1,
-                7, 6, 1,
-                5, 2, 3,
-                4, 5, 3
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // E
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // D
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // A
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // A
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // G
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // E
+
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // G
+                -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // H
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // F
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // F
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // E
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // G
+
+                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // B
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // A
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // C
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // C
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // A
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // D
+
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // F
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // C
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // D
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // D
+                -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // E
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, // F
+
+                -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // H
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // A
+                0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // B
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // G
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // A
+                -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f // H
         };
 
         //相机矩阵
@@ -106,6 +118,8 @@ public class MaterialActivity extends AppCompatActivity {
         private final float[] mProjectMatrix = new float[16];
         //最终变换矩阵
         private final float[] mMVPMatrix = new float[16];
+        //模型矩阵
+        private final float[] mModelMatrix = new float[16];
 
         private float mAngle = 0;
         private boolean mRunning = false;
@@ -117,12 +131,6 @@ public class MaterialActivity extends AppCompatActivity {
             vertexBuffer = byteBuffer.asFloatBuffer();
             vertexBuffer.put(vertex);
             vertexBuffer.position(0);
-
-            indexBuffer = ByteBuffer.allocateDirect(index.length * 4)
-                    .order(ByteOrder.nativeOrder())
-                    .asIntBuffer();
-            indexBuffer.put(index);
-            indexBuffer.position(0);
         }
 
         public void onResume() {
@@ -162,19 +170,6 @@ public class MaterialActivity extends AppCompatActivity {
             GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexBuffer.capacity() * BYTES_PER_FLOAT, vertexBuffer, GLES30.GL_STATIC_DRAW);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
-            // 初始化EBO
-            buffers[0] = 0;
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
-            if (buffers[0] == 0) {
-                throw new RuntimeException();
-            }
-
-            eboBufferId = buffers[0];
-
-            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
-            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * BYTES_PER_INT, indexBuffer, GLES30.GL_STATIC_DRAW);
-            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
-
             // 初始化VAO
             buffers[0] = 0;
             GLES30.glGenBuffers(buffers.length, buffers, 0);
@@ -189,19 +184,19 @@ public class MaterialActivity extends AppCompatActivity {
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboBufferId);
             int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
             GLES30.glEnableVertexAttribArray(aPositionLocation);
-            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,10 * BYTES_PER_FLOAT, 0);
+            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,9 * BYTES_PER_FLOAT, 0);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboBufferId);
             int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
             GLES30.glEnableVertexAttribArray(aColorLocation);
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT, false, 10 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
+            GLES30.glVertexAttribPointer(aColorLocation, 3, GLES30.GL_FLOAT, false, 9 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboBufferId);
             int aNormalLocation = GLES30.glGetAttribLocation(mProgram,"aNormal");
             GLES30.glEnableVertexAttribArray(aNormalLocation);
-            GLES30.glVertexAttribPointer(aNormalLocation, 3, GLES30.GL_FLOAT, false, 10 * BYTES_PER_FLOAT, 7 * BYTES_PER_FLOAT);
+            GLES30.glVertexAttribPointer(aNormalLocation, 3, GLES30.GL_FLOAT, false, 9 * BYTES_PER_FLOAT, 6 * BYTES_PER_FLOAT);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             GLES30.glBindVertexArray(0);
@@ -237,18 +232,32 @@ public class MaterialActivity extends AppCompatActivity {
             // 计算变换矩阵
             Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewMatrix,0);
 
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"material.ambient"), 0.0215f, 0.1745f, 0.0215f);
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"material.diffuse"), 0.07568f, 0.61424f, 0.07568f);
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"material.specular"), 0.633f, 0.727811f, 0.633f);
+            GLES30.glUniform1f(GLES30.glGetUniformLocation(mProgram,"material.shininess"), 128 * 0.6f);
+
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"light.position"), 1.2f, 1.0f, 2.0f);
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"light.ambient"), 1.0f, 1.0f, 1.0f);
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"light.diffuse"), 1.0f, 1.0f, 1.0f);
+            GLES30.glUniform3f(GLES30.glGetUniformLocation(mProgram,"light.specular"), 1.0f, 1.0f, 1.0f);
+
+            int viewPosLocation = GLES30.glGetUniformLocation(mProgram,"viewPos");
+            GLES30.glUniform3f(viewPosLocation, dx, 0.0f, dz);
+
             int uMaxtrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
             GLES30.glUniformMatrix4fv(uMaxtrixLocation,1,false, mMVPMatrix,0);
 
+            Matrix.setIdentityM(mModelMatrix, 0);
+            int uModelLocation = GLES30.glGetUniformLocation(mProgram,"vModel");
+            GLES30.glUniformMatrix4fv(uModelLocation,1,false, mModelMatrix,0);
 
             GLES30.glEnable(GL10.GL_CULL_FACE);
-            GLES30.glCullFace(GLES30.GL_FRONT);
+            GLES30.glCullFace(GLES30.GL_BACK);
             GLES30.glFrontFace(GLES30.GL_CCW);
 
             GLES30.glBindVertexArray(vaoBufferId);
-            GLES30.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, eboBufferId);
-            GLES30.glDrawElements(GLES30.GL_TRIANGLES, 36, GLES30.GL_UNSIGNED_INT, 0);
-            GLES30.glBindVertexArray(0);
+            GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 36 * 3);
             GLES30.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
