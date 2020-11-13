@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 public class ParticleActivity extends ActionBarActivity {

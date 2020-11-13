@@ -7,6 +7,6 @@ uniform mat4 vMatrix;
 out vec2 vTexCoord;
 
 void main() {
-     vec2 vTexCoord = aTexCoord;
+     vTexCoord = aTexCoord;
      gl_Position  = vMatrix * vec4(vPosition, 1.0f);
 }

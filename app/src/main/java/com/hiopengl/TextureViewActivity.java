@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.TextureView;

@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;

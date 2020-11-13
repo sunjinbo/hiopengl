@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;

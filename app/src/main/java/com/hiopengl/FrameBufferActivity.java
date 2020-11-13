@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 public class FrameBufferActivity extends ActionBarActivity {

@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
