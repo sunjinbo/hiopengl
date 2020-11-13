@@ -13,7 +13,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class FaceCullingActivity extends AppCompatActivity {
+public class FaceCullingActivity extends ActionBarActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private GLRenderer mGLRenderer;
@@ -25,8 +25,6 @@ public class FaceCullingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_culling);
-
-        getSupportActionBar().setTitle("Face culling");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();

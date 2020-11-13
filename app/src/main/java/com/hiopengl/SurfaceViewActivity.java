@@ -17,7 +17,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-public class SurfaceViewActivity extends AppCompatActivity
+public class SurfaceViewActivity extends ActionBarActivity
         implements SurfaceHolder.Callback, Runnable {
 
     private SurfaceView mSurfaceView;
@@ -38,8 +38,6 @@ public class SurfaceViewActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surfaceview);
-
-        getSupportActionBar().setTitle("SurfaceView + OpenGL ES");
 
         vbb = ByteBuffer.allocateDirect(vertexArray.length*4);
         vbb.order(ByteOrder.nativeOrder());

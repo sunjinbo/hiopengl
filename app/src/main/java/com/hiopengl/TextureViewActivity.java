@@ -17,7 +17,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-public class TextureViewActivity extends AppCompatActivity
+public class TextureViewActivity extends ActionBarActivity
         implements TextureView.SurfaceTextureListener, Runnable  {
 
     private TextureView mTextureView;
@@ -39,8 +39,6 @@ public class TextureViewActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_textureview);
-
-        getSupportActionBar().setTitle("TextureView + OpenGL ES");
 
         vbb = ByteBuffer.allocateDirect(vertexArray.length*4);
         vbb.order(ByteOrder.nativeOrder());

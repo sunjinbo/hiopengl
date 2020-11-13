@@ -13,7 +13,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class GeometricActivity extends AppCompatActivity {
+public class GeometricActivity extends ActionBarActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private GLRenderer mGLRenderer;
@@ -23,8 +23,6 @@ public class GeometricActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_geometric);
-
-        getSupportActionBar().setTitle("Geometric Figures");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();

@@ -18,7 +18,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class LightingSourceActivity extends AppCompatActivity {
+public class LightingSourceActivity extends ActionBarActivity {
     protected GLSurfaceView mGLSurfaceView;
     protected LightingSourceRenderer mGLRenderer;
 
@@ -26,8 +26,6 @@ public class LightingSourceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lighting_source);
-
-        getSupportActionBar().setTitle("Lighting Source");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);

@@ -18,7 +18,7 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class VertexActivity extends AppCompatActivity {
+public class VertexActivity extends ActionBarActivity {
 
     private enum GLType {
         VA, VBO, VAO, EBO
@@ -32,8 +32,6 @@ public class VertexActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vertex);
-
-        getSupportActionBar().setTitle("VA、VBO、VAO、EBO");
 
         mTypeTextView = findViewById(R.id.type);
         mGLSurfaceView = findViewById(R.id.gl_surface_view);

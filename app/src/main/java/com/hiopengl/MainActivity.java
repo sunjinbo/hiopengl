@@ -1,100 +1,224 @@
 package com.hiopengl;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ListView mListView;
+    private ExampleCategoryAdapter mCategoryAdapter;
+    private List<ExampleCategory> mAllExamples;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mListView = findViewById(R.id.list_view);
+        mCategoryAdapter = new ExampleCategoryAdapter(this, R.layout.list_view_item);
+        mAllExamples = getAllExamples();
+        mCategoryAdapter.addAll(mAllExamples);
+        mListView.setAdapter(mCategoryAdapter);
     }
 
-    public void onGLSurfaceViewClick(View view) {
-        startActivity(new Intent(this, GLSurfaceViewActivity.class));
+    @Override
+    public void onBackPressed() {
+        if (mListView.getAdapter() instanceof ExampleInfoAdapter) {
+            mListView.setAdapter(mCategoryAdapter);
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    public void onTextureViewClick(View view) {
-        startActivity(new Intent(this, TextureViewActivity.class));
+    private List<ExampleCategory> getAllExamples() {
+        List<ExampleCategory> allExamples = new ArrayList<>();
+
+        ExampleCategory android = new ExampleCategory("Android + OpenGL ES");
+        android.add("GLSurfaceView + OpenGL ES", "com.hiopengl.GLSurfaceViewActivity", true);
+        android.add("TextureView + OpenGL ES", "com.hiopengl.TextureViewActivity", true);
+        android.add("SurfaceView + OpenGL ES", "com.hiopengl.SurfaceViewActivity", true);
+        android.add("SurfaceTexture + OpenGL ES", "com.hiopengl.SurfaceTextureActivity", false);
+        android.add("SurfaceView + Canvas", "com.hiopengl.CanvasActivity", true);
+        allExamples.add(android);
+
+        ExampleCategory gettingStarted = new ExampleCategory("Getting Started");
+        gettingStarted.add("Geometric Figures", "com.hiopengl.GeometricActivity", true);
+        gettingStarted.add("Polyhedron", "com.hiopengl.PolyhedronActivity", true);
+        gettingStarted.add("OpenGL GLSL", "com.hiopengl.GLSLActivity", true);
+        gettingStarted.add("Modeling and Viewing", "com.hiopengl.ViewModelActivity", true);
+        gettingStarted.add("Projection", "com.hiopengl.ProjectionActivity", true);
+        gettingStarted.add("Viewport", "com.hiopengl.ViewportActivity", true);
+        gettingStarted.add("VA、VBO、VAO、EBO", "com.hiopengl.VertexActivity", true);
+        allExamples.add(gettingStarted);
+
+        ExampleCategory advancedOpenGL = new ExampleCategory("Advanced OpenGL");
+        advancedOpenGL.add("Face culling", "com.hiopengl.FaceCullingActivity", true);
+        advancedOpenGL.add("Texture 2D", "com.hiopengl.Texture2DActivity", false);
+        advancedOpenGL.add("Texture 3D", "com.hiopengl.Texture3DActivity", true);
+        advancedOpenGL.add("Mesh", "com.hiopengl.MeshActivity", false);
+        advancedOpenGL.add("Frame Buffer", "com.hiopengl.FrameBufferActivity", false);
+        advancedOpenGL.add("Depth Test", "com.hiopengl.DepthTestActivity", false);
+        allExamples.add(advancedOpenGL);
+
+        ExampleCategory lighting = new ExampleCategory("Lighting");
+        lighting.add("Phong Lighting", "com.hiopengl.PhongLightingActivity", true);
+        lighting.add("Lighting source", "com.hiopengl.LightingSourceActivity", true);
+        lighting.add("Lighting maps", "", false);
+        lighting.add("Material", "com.hiopengl.MaterialActivity", true);
+        allExamples.add(lighting);
+
+        ExampleCategory inPractice = new ExampleCategory("In Practice");
+        inPractice.add("Particle", "com.hiopengl.ParticleActivity", true);
+        allExamples.add(inPractice);
+
+        return allExamples;
     }
 
-    public void onSurfaceViewClick(View view) {
-        startActivity(new Intent(this, SurfaceViewActivity.class));
+    private class ExampleCategoryAdapter extends ArrayAdapter<ExampleCategory> {
+
+        private LayoutInflater mInflater;
+
+        public ExampleCategoryAdapter(@NonNull Context context, int resource) {
+            super(context, resource);
+            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.list_view_item, null);
+                holder = new ViewHolder();
+
+                holder.item = convertView.findViewById(R.id.item);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder)convertView.getTag();
+            }
+
+            final ExampleCategory category = getItem(position);
+            holder.item.setText(category.getCategoryName());
+
+            holder.item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ExampleInfoAdapter adapter = new ExampleInfoAdapter(getContext(), R.layout.list_view_item);
+                    adapter.addAll(category.getExamples());
+                    mListView.setAdapter(adapter);
+                }
+            });
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            public Button item;
+        }
     }
 
-    public void onSurfaceTextureClick(View view) {
-        startActivity(new Intent(this, SurfaceTextureActivity.class));
+    private class ExampleInfoAdapter extends ArrayAdapter<ExampleInfo> {
+
+        private LayoutInflater mInflater;
+
+        public ExampleInfoAdapter(@NonNull Context context, int resource) {
+            super(context, resource);
+            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.list_view_item, null);
+                holder = new ViewHolder();
+
+                holder.item = convertView.findViewById(R.id.item);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder)convertView.getTag();
+            }
+
+            final ExampleInfo exampleInfo = getItem(position);
+            holder.item.setText(exampleInfo.getExampleName());
+            holder.item.setEnabled(exampleInfo.isDone());
+            holder.item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    ComponentName cn = new ComponentName(getContext(), exampleInfo.getActivityFrom());
+                    intent.setComponent(cn);
+                    intent.putExtra("title", exampleInfo.getExampleName());
+                    startActivity(intent);
+                }
+            });
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            public Button item;
+        }
     }
 
-    public void onCanvasClick(View view) {
-        startActivity(new Intent(this, CanvasActivity.class));
+    private class ExampleCategory {
+        private String mCategoryName;
+        private List<ExampleInfo> mExamples = new ArrayList<>();
+
+        public ExampleCategory(String categoryName) {
+            mCategoryName = categoryName;
+        }
+
+        public String getCategoryName() {
+            return mCategoryName;
+        }
+
+        public List<ExampleInfo> getExamples() {
+            return mExamples;
+        }
+
+        public void add(String exampleName, String activityFrom, boolean isDone) {
+            mExamples.add(new ExampleInfo(exampleName, activityFrom, isDone));
+        }
     }
 
-    public void onGeometricClick(View view) {
-        startActivity(new Intent(this, GeometricActivity.class));
-    }
+    private static class ExampleInfo {
+        private String mExampleName;
+        private String mActivityFrom;
+        private boolean mIsDone;
 
-    public void onPolyhedronClick(View view) {
-        startActivity(new Intent(this, PolyhedronActivity.class));
-    }
+        public ExampleInfo(String exampleName, String activityFrom, boolean isDone) {
+            mExampleName = exampleName;
+            mActivityFrom = activityFrom;
+            mIsDone = isDone;
+        }
 
-    public void onGLSLClick(View view) {
-        startActivity(new Intent(this, GLSLActivity.class));
-    }
+        public String getExampleName() {
+            return mExampleName;
+        }
 
-    public void onViewModelClick(View view) {
-        startActivity(new Intent(this, ViewModelActivity.class));
-    }
+        public String getActivityFrom() {
+            return mActivityFrom;
+        }
 
-    public void onProjectionClick(View view) {
-        startActivity(new Intent(this, ProjectionActivity.class));
-    }
-
-    public void onViewportClick(View view) {
-        startActivity(new Intent(this, ViewportActivity.class));
-    }
-
-    public void onFaceCullingClick(View view) {
-        startActivity(new Intent(this, FaceCullingActivity.class));
-    }
-
-    public void onVertexClick(View view) {
-        startActivity(new Intent(this, VertexActivity.class));
-    }
-
-    public void onPhongLightingClick(View view) {
-        startActivity(new Intent(this, PhongLightingActivity.class));
-    }
-
-    public void onLightingSourceClick(View view) {
-        startActivity(new Intent(this, LightingSourceActivity.class));
-    }
-
-    public void onMaterialClick(View view) {
-        startActivity(new Intent(this, MaterialActivity.class));
-    }
-
-    public void onTextureClick(View view) {
-        startActivity(new Intent(this, TextureActivity.class));
-    }
-
-    public void onMeshClick(View view) {
-        startActivity(new Intent(this, MeshActivity.class));
-    }
-
-    public void onFrameBufferClick(View view) {
-        startActivity(new Intent(this, FrameBufferActivity.class));
-    }
-
-    public void onDepthTestClick(View view) {
-        startActivity(new Intent(this, DepthTestActivity.class));
-    }
-
-    public void onParticleClick(View view) {
-        startActivity(new Intent(this, ParticleActivity.class));
+        public boolean isDone() {
+            return mIsDone;
+        }
     }
 }

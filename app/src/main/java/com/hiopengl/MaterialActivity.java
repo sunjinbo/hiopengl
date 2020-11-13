@@ -18,7 +18,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MaterialActivity extends AppCompatActivity {
+public class MaterialActivity extends ActionBarActivity {
     protected GLSurfaceView mGLSurfaceView;
     protected MaterialRenderer mGLRenderer;
 
@@ -26,8 +26,6 @@ public class MaterialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_material);
-
-        getSupportActionBar().setTitle("Material");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);

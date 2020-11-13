@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class CanvasActivity extends AppCompatActivity
+public class CanvasActivity extends ActionBarActivity
         implements SurfaceHolder.Callback, Runnable {
 
     private SurfaceView mSurfaceView;
@@ -23,8 +23,6 @@ public class CanvasActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surfaceview);
-
-        getSupportActionBar().setTitle("SurfaceView + Canvas");
 
         mSurfaceView = findViewById(R.id.surface_view);
         mSurfaceView.getHolder().addCallback(this);

@@ -15,7 +15,7 @@
         <activity android:name=".MeshActivity" />
         <activity android:name=".SurfaceTextureActivity" />
         <activity android:name=".MaterialActivity" />
-        <activity android:name=".TextureActivity" />
+        <activity android:name=".Texture3DActivity" />
         <activity android:name=".PhongLightingActivity" />
         <activity android:name=".VertexActivity" />
         <activity android:name=".FaceCullingActivity" />

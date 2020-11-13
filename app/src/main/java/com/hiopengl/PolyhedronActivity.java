@@ -42,7 +42,6 @@ public class PolyhedronActivity extends OpenGLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle("Polyhedron");
     }
 
     @Override

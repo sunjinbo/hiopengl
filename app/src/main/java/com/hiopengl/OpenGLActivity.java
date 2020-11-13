@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public abstract class OpenGLActivity extends AppCompatActivity {
+public abstract class OpenGLActivity extends ActionBarActivity {
     protected GLSurfaceView mGLSurfaceView;
     protected GLRenderer mGLRenderer;
 

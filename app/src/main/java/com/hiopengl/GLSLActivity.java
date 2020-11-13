@@ -14,7 +14,7 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class GLSLActivity extends AppCompatActivity {
+public class GLSLActivity extends ActionBarActivity {
     protected GLSurfaceView mGLSurfaceView;
     protected GLSLRenderer mGLRenderer;
 
@@ -22,8 +22,6 @@ public class GLSLActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsurfaceview);
-
-        getSupportActionBar().setTitle("OpenGL GLSL");
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);

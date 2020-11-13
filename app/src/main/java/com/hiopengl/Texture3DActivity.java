@@ -1,7 +1,5 @@
 package com.hiopengl;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
@@ -17,20 +15,18 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class TextureActivity extends AppCompatActivity {
+public class Texture3DActivity extends ActionBarActivity {
     protected GLSurfaceView mGLSurfaceView;
-    protected TextureRenderer mGLRenderer;
+    protected Texture3DRenderer mGLRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_texture);
-
-        getSupportActionBar().setTitle("Texture");
+        setContentView(R.layout.activity_texture_3d);
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
-        mGLRenderer = new TextureRenderer(this);
+        mGLRenderer = new Texture3DRenderer(this);
         mGLSurfaceView.setRenderer(mGLRenderer);
     }
 
@@ -48,7 +44,7 @@ public class TextureActivity extends AppCompatActivity {
         mGLRenderer.onResume();
     }
 
-    private class TextureRenderer implements GLSurfaceView.Renderer, Runnable {
+    private class Texture3DRenderer implements GLSurfaceView.Renderer, Runnable {
         private static final int BYTES_PER_FLOAT = 4;
         private static final int BYTES_PER_INT = 4;
 
@@ -124,7 +120,7 @@ public class TextureActivity extends AppCompatActivity {
         private float mAngle = 0;
         private boolean mRunning = false;
 
-        public TextureRenderer(Context context) {
+        public Texture3DRenderer(Context context) {
             mContext = context;
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertex.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
@@ -147,10 +143,10 @@ public class TextureActivity extends AppCompatActivity {
             GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
 
             //编译顶点着色程序
-            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_texture.glsl");
+            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_texture_3d.glsl");
             int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
             //编译片段着色程序
-            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_texture.glsl");
+            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_texture_3d.glsl");
             int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
             //连接程序
             mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
