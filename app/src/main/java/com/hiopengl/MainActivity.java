@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         advancedOpenGL.add("Texture 3D", "com.hiopengl.Texture3DActivity", true);
         advancedOpenGL.add("Mesh", "com.hiopengl.MeshActivity", false);
         advancedOpenGL.add("Frame Buffer", "com.hiopengl.FrameBufferActivity", false);
-        advancedOpenGL.add("Depth Test", "com.hiopengl.DepthTestActivity", false);
+        advancedOpenGL.add("Depth Test", "com.hiopengl.DepthTestActivity", true);
         allExamples.add(advancedOpenGL);
 
         ExampleCategory lighting = new ExampleCategory("Lighting");
