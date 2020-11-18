@@ -64,15 +64,17 @@ public class MainActivity extends AppCompatActivity {
         gettingStarted.add("Projection", "com.hiopengl.ProjectionActivity", true);
         gettingStarted.add("Viewport", "com.hiopengl.ViewportActivity", true);
         gettingStarted.add("VA、VBO、VAO、EBO", "com.hiopengl.VertexActivity", true);
+        gettingStarted.add("Texture 2D", "com.hiopengl.Texture2DActivity", true);
+        gettingStarted.add("Texture 3D", "com.hiopengl.Texture3DActivity", true);
         allExamples.add(gettingStarted);
 
         ExampleCategory advancedOpenGL = new ExampleCategory("Advanced OpenGL");
+        advancedOpenGL.add("Multiple shader", "com.hiopengl.MultipleShaderActivity", true);
         advancedOpenGL.add("Face culling", "com.hiopengl.FaceCullingActivity", true);
-        advancedOpenGL.add("Texture 2D", "com.hiopengl.Texture2DActivity", true);
-        advancedOpenGL.add("Texture 3D", "com.hiopengl.Texture3DActivity", true);
         advancedOpenGL.add("Mesh", "com.hiopengl.MeshActivity", false);
         advancedOpenGL.add("Frame Buffer", "com.hiopengl.FrameBufferActivity", false);
         advancedOpenGL.add("Depth Test", "com.hiopengl.DepthTestActivity", true);
+        advancedOpenGL.add("Stencil Test", "com.hiopengl.StencilTestActivity", false);
         allExamples.add(advancedOpenGL);
 
         ExampleCategory lighting = new ExampleCategory("Lighting");
