@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         ExampleCategory advancedOpenGL = new ExampleCategory("Advanced OpenGL");
         advancedOpenGL.add("Multiple shader", "com.hiopengl.MultipleShaderActivity", true);
         advancedOpenGL.add("Face culling", "com.hiopengl.FaceCullingActivity", true);
+        advancedOpenGL.add("Blending", "com.hiopengl.BlendingActivity", true);
         advancedOpenGL.add("Mesh", "com.hiopengl.MeshActivity", false);
         advancedOpenGL.add("Frame Buffer", "com.hiopengl.FrameBufferActivity", false);
         advancedOpenGL.add("Depth Test", "com.hiopengl.DepthTestActivity", true);
