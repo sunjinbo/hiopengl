@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         gettingStarted.add("VA、VBO、VAO、EBO", "com.hiopengl.VertexActivity", true);
         gettingStarted.add("Texture 2D", "com.hiopengl.Texture2DActivity", true);
         gettingStarted.add("Texture 3D", "com.hiopengl.Texture3DActivity", true);
+        gettingStarted.add("Scissor test", "com.hiopengl.ScissorTestActivity", true);
         allExamples.add(gettingStarted);
 
         ExampleCategory advancedOpenGL = new ExampleCategory("Advanced OpenGL");
