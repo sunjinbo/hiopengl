@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         android.add("TextureView + OpenGL ES", "com.hiopengl.TextureViewActivity", true);
         android.add("SurfaceView + OpenGL ES", "com.hiopengl.SurfaceViewActivity", true);
         android.add("SurfaceTexture + OpenGL ES", "com.hiopengl.SurfaceTextureActivity", false);
-        android.add("SurfaceView + Canvas", "com.hiopengl.CanvasActivity", true);
+        android.add("View + Canvas", "com.hiopengl.ViewCanvasActivity", true);
+        android.add("SurfaceView + Canvas", "com.hiopengl.SurfaceViewCanvasActivity", true);
+        android.add("TextureView + Canvas", "com.hiopengl.TextureViewCanvasActivity", true);
         allExamples.add(android);
 
         ExampleCategory gettingStarted = new ExampleCategory("Getting Started");

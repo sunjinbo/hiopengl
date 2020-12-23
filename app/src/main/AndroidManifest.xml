@@ -8,7 +8,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ScissorTestActivity"></activity>
+        <activity android:name=".TextureViewCanvasActivity"></activity>
+        <activity android:name=".ViewCanvasActivity" />
+        <activity android:name=".ScissorTestActivity" />
         <activity android:name=".BlendingActivity" />
         <activity android:name=".MultipleShaderActivity" />
         <activity android:name=".StencilTestActivity" />
@@ -30,7 +32,7 @@
         <activity android:name=".GLSLActivity" />
         <activity android:name=".PolyhedronActivity" />
         <activity android:name=".GeometricActivity" />
-        <activity android:name=".CanvasActivity" />
+        <activity android:name=".SurfaceViewCanvasActivity" />
         <activity android:name=".SurfaceViewActivity" />
         <activity android:name=".TextureViewActivity" />
         <activity android:name=".GLSurfaceViewActivity" />

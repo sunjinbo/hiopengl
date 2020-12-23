@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class CanvasActivity extends ActionBarActivity
+public class SurfaceViewCanvasActivity extends ActionBarActivity
         implements SurfaceHolder.Callback, Runnable {
 
     private SurfaceView mSurfaceView;
