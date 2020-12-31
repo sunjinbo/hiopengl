@@ -8,27 +8,29 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class CustomSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class CanvasSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     private boolean mRunning = false;
     private SurfaceHolder mSurfaceHolder;
+    private CanvasDrawer mDrawer;
 
-    public CustomSurfaceView(Context context) {
+    public CanvasSurfaceView(Context context) {
         super(context);
         initView();
     }
 
-    public CustomSurfaceView(Context context, AttributeSet attrs) {
+    public CanvasSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public CustomSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CanvasSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }
 
     private void initView() {
+        mDrawer = new CanvasDrawer();
         getHolder().addCallback(this);
     }
 
@@ -57,17 +59,12 @@ public class CustomSurfaceView extends SurfaceView implements SurfaceHolder.Call
             if (canvas != null) {
                 try {
                     synchronized (mSurfaceHolder) {
-                        onRender(canvas);
+                        mDrawer.draw(canvas);
                     }
                 } finally {
                     mSurfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
         }
-    }
-
-    private void onRender(Canvas canvas) {
-        canvas.drawColor(Color.RED);
-        // draw whatever.
     }
 }

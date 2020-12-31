@@ -8,8 +8,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TextureViewCanvasActivity"></activity>
-        <activity android:name=".ViewCanvasActivity" />
+        <activity android:name=".CanvasTextureViewActivity"></activity>
+        <activity android:name=".CanvasViewActivity" />
         <activity android:name=".ScissorTestActivity" />
         <activity android:name=".BlendingActivity" />
         <activity android:name=".MultipleShaderActivity" />
@@ -20,7 +20,7 @@
         <activity android:name=".DepthTestActivity" />
         <activity android:name=".FrameBufferActivity" />
         <activity android:name=".MeshActivity" />
-        <activity android:name=".SurfaceTextureActivity" />
+        <activity android:name=".OpenGLSurfaceTextureActivity" />
         <activity android:name=".MaterialActivity" />
         <activity android:name=".Texture3DActivity" />
         <activity android:name=".PhongLightingActivity" />
@@ -32,10 +32,10 @@
         <activity android:name=".GLSLActivity" />
         <activity android:name=".PolyhedronActivity" />
         <activity android:name=".GeometricActivity" />
-        <activity android:name=".SurfaceViewCanvasActivity" />
-        <activity android:name=".SurfaceViewActivity" />
-        <activity android:name=".TextureViewActivity" />
-        <activity android:name=".GLSurfaceViewActivity" />
+        <activity android:name=".CanvasSurfaceViewActivity" />
+        <activity android:name=".OpenGLSurfaceViewActivity" />
+        <activity android:name=".OpenGLTextureViewActivity" />
+        <activity android:name=".OpenGLGLSurfaceViewActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

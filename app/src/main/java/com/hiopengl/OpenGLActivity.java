@@ -4,8 +4,6 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -16,7 +14,7 @@ public abstract class OpenGLActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_glsurfaceview);
+        setContentView(R.layout.activity_opengl_glsurfaceview);
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = getRenderer();

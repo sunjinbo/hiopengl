@@ -16,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class OpenGLTextureView extends TextureView implements TextureView.SurfaceTextureListener, Runnable {
     private boolean mRunning = false;
     private SurfaceTexture mSurfaceTexture;
+    private OpenGLDrawer mDrawer;
 
     public OpenGLTextureView(Context context) {
         super(context);
@@ -91,11 +92,12 @@ public class OpenGLTextureView extends TextureView implements TextureView.Surfac
         //获取当前opengles画布
         GL10 gl = (GL10)context.getGL();
 
+        mDrawer = new OpenGLDrawer();
         mRunning = true;
         while (mRunning) {
             SystemClock.sleep(333);
             synchronized (mSurfaceTexture) {
-                onRender(gl);
+                mDrawer.draw(gl);
 
                 //显示绘制结果到屏幕上
                 egl.eglSwapBuffers(dpy, surface);
@@ -106,12 +108,5 @@ public class OpenGLTextureView extends TextureView implements TextureView.Surfac
         egl.eglDestroySurface(dpy, surface);
         egl.eglDestroyContext(dpy, context);
         egl.eglTerminate(dpy);
-    }
-
-    private void onRender(GL10 gl) {
-        gl.glClearColor(1.0F, 0.0F, 1.0F, 1.0F);
-        // Clears the screen and depth buffer.
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT
-                | GL10.GL_DEPTH_BUFFER_BIT);
     }
 }

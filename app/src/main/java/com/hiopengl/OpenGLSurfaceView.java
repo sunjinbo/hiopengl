@@ -1,7 +1,6 @@
 package com.hiopengl;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -17,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class OpenGLSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private boolean mRunning = false;
     private SurfaceHolder mSurfaceHolder;
+    private OpenGLDrawer mDrawer;
 
     public OpenGLSurfaceView(Context context) {
         super(context);
@@ -86,11 +86,12 @@ public class OpenGLSurfaceView extends SurfaceView implements SurfaceHolder.Call
         //获取当前opengles画布
         GL10 gl = (GL10)context.getGL();
 
+        mDrawer = new OpenGLDrawer();
         mRunning = true;
         while (mRunning) {
             SystemClock.sleep(333);
             synchronized (mSurfaceHolder) {
-                onRender(gl);
+                mDrawer.draw(gl);
 
                 //显示绘制结果到屏幕上
                 egl.eglSwapBuffers(dpy, surface);
@@ -101,12 +102,5 @@ public class OpenGLSurfaceView extends SurfaceView implements SurfaceHolder.Call
         egl.eglDestroySurface(dpy, surface);
         egl.eglDestroyContext(dpy, context);
         egl.eglTerminate(dpy);
-    }
-
-    private void onRender(GL10 gl) {
-        gl.glClearColor(1.0F, 0.0F, 0.0F, 1.0F);
-        // Clears the screen and depth buffer.
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT
-                | GL10.GL_DEPTH_BUFFER_BIT);
     }
 }

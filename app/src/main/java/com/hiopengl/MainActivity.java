@@ -49,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
         List<ExampleCategory> allExamples = new ArrayList<>();
 
         ExampleCategory android = new ExampleCategory("Android + OpenGL ES");
-        android.add("GLSurfaceView + OpenGL ES", "com.hiopengl.GLSurfaceViewActivity", true);
-        android.add("TextureView + OpenGL ES", "com.hiopengl.TextureViewActivity", true);
-        android.add("SurfaceView + OpenGL ES", "com.hiopengl.SurfaceViewActivity", true);
-        android.add("SurfaceTexture + OpenGL ES", "com.hiopengl.SurfaceTextureActivity", false);
-        android.add("View + Canvas", "com.hiopengl.ViewCanvasActivity", true);
-        android.add("SurfaceView + Canvas", "com.hiopengl.SurfaceViewCanvasActivity", true);
-        android.add("TextureView + Canvas", "com.hiopengl.TextureViewCanvasActivity", true);
+        android.add("GLSurfaceView + OpenGL ES", "com.hiopengl.OpenGLGLSurfaceViewActivity", true);
+        android.add("TextureView + OpenGL ES", "com.hiopengl.OpenGLTextureViewActivity", true);
+        android.add("SurfaceView + OpenGL ES", "com.hiopengl.OpenGLSurfaceViewActivity", true);
+        android.add("SurfaceTexture + OpenGL ES", "com.hiopengl.OpenGLSurfaceTextureActivity", false);
+        android.add("View + Canvas", "com.hiopengl.CanvasViewActivity", true);
+        android.add("SurfaceView + Canvas", "com.hiopengl.CanvasSurfaceViewActivity", true);
+        android.add("TextureView + Canvas", "com.hiopengl.CanvasTextureViewActivity", true);
         allExamples.add(android);
 
         ExampleCategory gettingStarted = new ExampleCategory("Getting Started");

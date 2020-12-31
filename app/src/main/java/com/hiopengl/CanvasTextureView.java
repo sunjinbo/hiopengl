@@ -2,7 +2,6 @@ package com.hiopengl;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.SystemClock;
@@ -10,29 +9,31 @@ import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.TextureView;
 
-public class CustomTextureView extends TextureView implements TextureView.SurfaceTextureListener, Runnable {
+public class CanvasTextureView extends TextureView implements TextureView.SurfaceTextureListener, Runnable {
 
     private boolean mRunning = false;
     private SurfaceTexture mSurfaceTexture;
     private Surface mSurface;
     private Rect mRect;
+    private CanvasDrawer mDrawer;
 
-    public CustomTextureView(Context context) {
+    public CanvasTextureView(Context context) {
         super(context);
         initView();
     }
 
-    public CustomTextureView(Context context, AttributeSet attrs) {
+    public CanvasTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public CustomTextureView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CanvasTextureView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }
 
     private void initView() {
+        mDrawer = new CanvasDrawer();
         setSurfaceTextureListener(this);
     }
 
@@ -71,17 +72,12 @@ public class CustomTextureView extends TextureView implements TextureView.Surfac
             if (canvas != null) {
                 try {
                     synchronized (mSurface) {
-                        onRender(canvas);
+                        mDrawer.draw(canvas);
                     }
                 } finally {
                     mSurface.unlockCanvasAndPost(canvas);
                 }
             }
         }
-    }
-
-    private void onRender(Canvas canvas) {
-        canvas.drawColor(Color.RED);
-        // draw whatever.
     }
 }

@@ -8,13 +8,18 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLGLSurfaceView extends GLSurfaceView implements GLSurfaceView.Renderer {
+
+    private OpenGLDrawer mDrawer;
+
     public OpenGLGLSurfaceView(Context context) {
         super(context);
+        mDrawer = new OpenGLDrawer();
         setRenderer(this);
     }
 
     public OpenGLGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mDrawer = new OpenGLDrawer();
         setRenderer(this);
     }
 
@@ -25,14 +30,11 @@ public class OpenGLGLSurfaceView extends GLSurfaceView implements GLSurfaceView.
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        gl.glViewport(0, 0, width, height);
+        mDrawer.setSize(gl, width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        gl.glClearColor(1.0F, 0.0F, 0.0F, 1.0F);
-        // Clears the screen and depth buffer.
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT
-                | GL10.GL_DEPTH_BUFFER_BIT);
+        mDrawer.draw(gl);
     }
 }
