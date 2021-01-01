@@ -48,15 +48,22 @@ public class MainActivity extends AppCompatActivity {
     private List<ExampleCategory> getAllExamples() {
         List<ExampleCategory> allExamples = new ArrayList<>();
 
-        ExampleCategory android = new ExampleCategory("Android + OpenGL ES");
-        android.add("GLSurfaceView + OpenGL ES", "com.hiopengl.OpenGLGLSurfaceViewActivity", true);
-        android.add("TextureView + OpenGL ES", "com.hiopengl.OpenGLTextureViewActivity", true);
-        android.add("SurfaceView + OpenGL ES", "com.hiopengl.OpenGLSurfaceViewActivity", true);
-        android.add("SurfaceTexture + OpenGL ES", "com.hiopengl.OpenGLSurfaceTextureActivity", false);
-        android.add("View + Canvas", "com.hiopengl.CanvasViewActivity", true);
-        android.add("SurfaceView + Canvas", "com.hiopengl.CanvasSurfaceViewActivity", true);
-        android.add("TextureView + Canvas", "com.hiopengl.CanvasTextureViewActivity", true);
-        allExamples.add(android);
+        ExampleCategory renderer = new ExampleCategory("Android Renderer");
+        renderer.add("GLSurfaceView + OpenGL ES", "com.hiopengl.OpenGLGLSurfaceViewActivity", true);
+        renderer.add("TextureView + OpenGL ES", "com.hiopengl.OpenGLTextureViewActivity", true);
+        renderer.add("SurfaceView + OpenGL ES", "com.hiopengl.OpenGLSurfaceViewActivity", true);
+        renderer.add("SurfaceTexture + OpenGL ES", "com.hiopengl.OpenGLSurfaceTextureActivity", false);
+        renderer.add("View + Canvas", "com.hiopengl.CanvasViewActivity", true);
+        renderer.add("SurfaceView + Canvas", "com.hiopengl.CanvasSurfaceViewActivity", true);
+        renderer.add("TextureView + Canvas", "com.hiopengl.CanvasTextureViewActivity", true);
+        allExamples.add(renderer);
+
+        ExampleCategory reader = new ExampleCategory("Android OpenGL Reader");
+        reader.add("glReadPixels", "com.hiopengl.GLReadPixelsActivity", true);
+        reader.add("ImageReader", "com.hiopengl.ImageReaderActivity", true);
+        reader.add("OpenGL PBO", "com.hiopengl.OpenGLPBOActivity", true);
+        reader.add("HardwareBuffer", "com.hiopengl.HardwareBufferActivity", true);
+        allExamples.add(reader);
 
         ExampleCategory gettingStarted = new ExampleCategory("Getting Started");
         gettingStarted.add("Geometric Figures", "com.hiopengl.GeometricActivity", true);
