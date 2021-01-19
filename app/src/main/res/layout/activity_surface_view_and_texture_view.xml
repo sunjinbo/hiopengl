@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SurfaceViewAndTextureViewActivity">
+
+    <FrameLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <com.hiopengl.OpenGLSurfaceView
+            android:id="@+id/surface_view"
+            android:layout_gravity="left|top"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
+
+        <com.hiopengl.OpenGLTextureView
+            android:id="@+id/texture_view"
+            android:layout_gravity="left|bottom"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
+
+    </FrameLayout>
+
+    <TextView
+        android:text="Tween Animation"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:onClick="onRotateTweenAnimationClick"
+            android:text="rotate"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onTranslateTweenAnimationClick"
+            android:text="translate"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onScaleTweenAnimationClick"
+            android:text="scale"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onAlphaTweenAnimationClick"
+            android:text="alpha"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <TextView
+        android:text="Property Animation"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:onClick="onRotatePropertyAnimationClick"
+            android:text="rotate"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onTranslatePropertyAnimationClick"
+            android:text="translate"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onScalePropertyAnimationClick"
+            android:text="scale"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:onClick="onAlphaPropertyAnimationClick"
+            android:text="alpha"
+            android:textAllCaps="false"
+            android:textSize="12dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

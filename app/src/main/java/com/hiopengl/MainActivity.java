@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         renderer.add("View + Canvas", "com.hiopengl.CanvasViewActivity", true);
         renderer.add("SurfaceView + Canvas", "com.hiopengl.CanvasSurfaceViewActivity", true);
         renderer.add("TextureView + Canvas", "com.hiopengl.CanvasTextureViewActivity", true);
+        renderer.add("TextureView vs. SurfaceView", "com.hiopengl.SurfaceViewAndTextureViewActivity", true);
         allExamples.add(renderer);
 
         ExampleCategory reader = new ExampleCategory("Android OpenGL Reader");
