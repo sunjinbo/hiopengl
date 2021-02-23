@@ -16,6 +16,7 @@
         <activity android:name=".CanvasTextureViewActivity" />
         <activity android:name=".CanvasViewActivity" />
         <activity android:name=".ScissorTestActivity" />
+        <activity android:name=".FBOActivity" />
         <activity android:name=".BlendingActivity" />
         <activity android:name=".MultipleShaderActivity" />
         <activity android:name=".StencilTestActivity" />
