@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CanvasViewActivity">
+    tools:context=".android.graphics.CanvasViewActivity">
 
-    <com.hiopengl.CanvasView
+    <com.hiopengl.android.graphics.view.CanvasView
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

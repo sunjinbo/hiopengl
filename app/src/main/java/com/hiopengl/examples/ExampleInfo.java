@@ -1,5 +1,7 @@
 package com.hiopengl.examples;
 
+import android.text.TextUtils;
+
 public class ExampleInfo extends ExampleItem {
     private String mActivityFrom;
 
@@ -9,7 +11,7 @@ public class ExampleInfo extends ExampleItem {
     }
 
     public ExampleInfo(String exampleName, String activityFrom) {
-        super(exampleName, true);
+        super(exampleName, !TextUtils.isEmpty(activityFrom));
         mActivityFrom = activityFrom;
     }
 

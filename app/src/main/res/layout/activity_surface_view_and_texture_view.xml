@@ -6,20 +6,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SurfaceViewAndTextureViewActivity">
+    tools:context=".android.graphics.SurfaceViewAndTextureViewActivity">
 
     <FrameLayout
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
-        <com.hiopengl.OpenGLSurfaceView
+        <com.hiopengl.android.graphics.view.OpenGLSurfaceView
             android:id="@+id/surface_view"
             android:layout_gravity="left|top"
             android:layout_width="200dp"
             android:layout_height="200dp" />
 
-        <com.hiopengl.OpenGLTextureView
+        <com.hiopengl.android.graphics.view.OpenGLTextureView
             android:id="@+id/texture_view"
             android:layout_gravity="left|bottom"
             android:layout_width="200dp"

@@ -9,24 +9,25 @@ public class ExampleFactory {
         ExampleCategory androidGraphicRendering = new ExampleCategory("Android Graphic Rendering");
 
         ExampleCategory viewAndRenderer = new ExampleCategory("View and Renderer");
-        viewAndRenderer.addItem(new ExampleInfo("GLSurfaceView + OpenGL ES", ""));
-        viewAndRenderer.addItem(new ExampleInfo("TextureView + OpenGL ES", ""));
-        viewAndRenderer.addItem(new ExampleInfo("SurfaceView + OpenGL ES", ""));
-        viewAndRenderer.addItem(new ExampleInfo("SurfaceTexture + OpenGL ES", ""));
-        viewAndRenderer.addItem(new ExampleInfo("View + Canvas", ""));
-        viewAndRenderer.addItem(new ExampleInfo("SurfaceView + Canvas", ""));
-        viewAndRenderer.addItem(new ExampleInfo("TextureView + Canvas", ""));
-        viewAndRenderer.addItem(new ExampleInfo("TextureView VS. SurfaceView", ""));
+        viewAndRenderer.addItem(new ExampleInfo("GLSurfaceView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLGLSurfaceViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("TextureView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLTextureViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("SurfaceView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLSurfaceViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("SurfaceTexture + OpenGL ES", "com.hiopengl.android.graphics.OpenGLSurfaceTextureActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("View + Canvas", "com.hiopengl.android.graphics.CanvasViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("SurfaceView + Canvas", "com.hiopengl.android.graphics.CanvasSurfaceViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("TextureView + Canvas", "com.hiopengl.android.graphics.CanvasTextureViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("TextureView VS. SurfaceView", "com.hiopengl.android.graphics.SurfaceViewAndTextureViewActivity"));
         androidGraphicRendering.addItem(viewAndRenderer);
 
         ExampleCategory openGLTextureReader = new ExampleCategory("OpenGL Texture Reader");
-        openGLTextureReader.addItem(new ExampleInfo("glReadPixels", ""));
-        openGLTextureReader.addItem(new ExampleInfo("ImageReader", ""));
-        openGLTextureReader.addItem(new ExampleInfo("OpenGL PBO", ""));
-        openGLTextureReader.addItem(new ExampleInfo("HardwareBuffer", ""));
+        openGLTextureReader.addItem(new ExampleInfo("glReadPixels", "com.hiopengl.android.reader.GLReadPixelsActivity"));
+        openGLTextureReader.addItem(new ExampleInfo("ImageReader", "com.hiopengl.android.reader.ImageReaderActivity"));
+        openGLTextureReader.addItem(new ExampleInfo("OpenGL PBO", "com.hiopengl.android.reader.PBOActivity"));
+        openGLTextureReader.addItem(new ExampleInfo("HardwareBuffer", "com.hiopengl.android.reader.HardwareBufferActivity"));
         androidGraphicRendering.addItem(openGLTextureReader);
 
         ExampleCategory cameraWithOpenGLES = new ExampleCategory("Camera with OpenGL ES");
+        cameraWithOpenGLES.addItem(new ExampleInfo("Filter", "com.hiopengl.android.camera.CameraFilterActivity"));
         androidGraphicRendering.addItem(cameraWithOpenGLES);
 
         ExampleCategory screenRecorder = new ExampleCategory("Screen Recorder");
@@ -36,6 +37,7 @@ public class ExampleFactory {
         androidGraphicRendering.addItem(screenRecorder);
 
         ExampleCategory quickstartForAndroidARCore = new ExampleCategory("Quickstart for Android ARCore");
+        quickstartForAndroidARCore.addItem(new ExampleInfo("ARCore Kickoff", ""));
         androidGraphicRendering.addItem(quickstartForAndroidARCore);
 
         all.addItem(androidGraphicRendering);
@@ -43,45 +45,50 @@ public class ExampleFactory {
         ExampleCategory gettingStartedWithOpenGLES = new ExampleCategory("Getting Started with OpenGL® ES");
 
         ExampleCategory coordinateTransformations = new ExampleCategory("Coordinate Transformations");
-        coordinateTransformations.addItem(new ExampleInfo("Modeling and Viewing", ""));
-        coordinateTransformations.addItem(new ExampleInfo("Projection", ""));
-        coordinateTransformations.addItem(new ExampleInfo("Viewport", ""));
+        coordinateTransformations.addItem(new ExampleInfo("Modeling and Viewing", "com.hiopengl.basic.coordinate.ViewModelActivity"));
+        coordinateTransformations.addItem(new ExampleInfo("Projection", "com.hiopengl.basic.coordinate.ProjectionActivity"));
+        coordinateTransformations.addItem(new ExampleInfo("Viewport", "com.hiopengl.basic.coordinate.ViewPortActivity"));
         gettingStartedWithOpenGLES.addItem(coordinateTransformations);
 
-        gettingStartedWithOpenGLES.addItem(new ExampleInfo("Geometric Figures", ""));
+        gettingStartedWithOpenGLES.addItem(new ExampleInfo("Geometric Figures", "com.hiopengl.basic.GeometricActivity"));
 
         ExampleCategory vertexData = new ExampleCategory("Vertex Data");
-        vertexData.addItem(new ExampleInfo("Vertex Array for OpenGL ES 1.0", ""));
-        vertexData.addItem(new ExampleInfo("Vertex Array for OpenGL ES 2.0", ""));
-        vertexData.addItem(new ExampleInfo("Vertex Buffer for OpenGL ES 3.0", ""));
+        vertexData.addItem(new ExampleInfo("Vertex Array for OpenGL ES 1.0", "com.hiopengl.basic.vertex.VertexArrayOpenGL10Activity"));
+        vertexData.addItem(new ExampleInfo("Vertex Array for OpenGL ES 2.0", "com.hiopengl.basic.vertex.VertexArrayOpenGL20Activity"));
+        vertexData.addItem(new ExampleInfo("Vertex Buffer for OpenGL ES 3.0", "com.hiopengl.basic.vertex.VertexBufferOpenGL30Activity"));
         gettingStartedWithOpenGLES.addItem(vertexData);
 
-        gettingStartedWithOpenGLES.addItem(new ExampleInfo("2D/3D Texture", ""));
-        gettingStartedWithOpenGLES.addItem(new ExampleInfo("RBO(Render Buffer Object)", ""));
+        ExampleCategory texture = new ExampleCategory("Texture");
+        texture.addItem(new ExampleInfo("2D Texture", "com.hiopengl.basic.texture.Texture2DActivity"));
+        texture.addItem(new ExampleInfo("3D Texture", "com.hiopengl.basic.texture.Texture3DActivity"));
+        texture.addItem(new ExampleInfo("Mipmap Texture", "com.hiopengl.basic.texture.TextureMipmapActivity"));
+        gettingStartedWithOpenGLES.addItem(texture);
+
+        gettingStartedWithOpenGLES.addItem(new ExampleInfo("RBO(Render Buffer Object)", "com.hiopengl.basic.RBOActivity"));
 
         all.addItem(gettingStartedWithOpenGLES);
 
         ExampleCategory advancedTechnologyWithOpenGLES = new ExampleCategory("Advanced Technology with OpenGL® ES");
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Face culling", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Mesh", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Frame Buffer", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Blending", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Stencil test", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Depth test", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Scissor test", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Lighting", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Materials", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context and Texture", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Model Loading", ""));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", ""));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Face culling", "com.hiopengl.advanced.FaceCullingActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Mesh", "com.hiopengl.advanced.MeshActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Frame Buffer", "com.hiopengl.advanced.FrameBufferActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Blending", "com.hiopengl.advanced.BlendingActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Stencil test", "com.hiopengl.advanced.StencilTestActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Depth test", "com.hiopengl.advanced.DepthTestActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Scissor test", "com.hiopengl.advanced.ScissorTestActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Lighting", "com.hiopengl.advanced.LightingActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Materials", "com.hiopengl.advanced.MaterialActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context and Texture", "com.hiopengl.advanced.SharedContextActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Model Loading", "com.hiopengl.advanced.ModelLoadingActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", "com.hiopengl.advanced.AssimpActivity"));
 
         all.addItem(advancedTechnologyWithOpenGLES);
 
         ExampleCategory openGLESInPractice = new ExampleCategory("OpenGL® ES in Practice");
-        openGLESInPractice.addItem(new ExampleInfo("Polyhedron", ""));
-        openGLESInPractice.addItem(new ExampleInfo("Particles", ""));
-        openGLESInPractice.addItem(new ExampleInfo("Text Rendering", ""));
-        openGLESInPractice.addItem(new ExampleInfo("Skybox", ""));
+        openGLESInPractice.addItem(new ExampleInfo("Polyhedron", "com.hiopengl.practices.PolyhedronActivity"));
+        openGLESInPractice.addItem(new ExampleInfo("Particle", "com.hiopengl.practices.ParticleActivity"));
+        openGLESInPractice.addItem(new ExampleInfo("Text Rendering", "com.hiopengl.practices.TextRenderingActivity"));
+        openGLESInPractice.addItem(new ExampleInfo("Skybox", "com.hiopengl.practices.SkyboxActivity"));
 
         all.addItem(openGLESInPractice);
 

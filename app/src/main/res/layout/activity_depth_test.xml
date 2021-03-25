@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DepthTestActivity">
+    tools:context=".advanced.DepthTestActivity">
 
     <android.opengl.GLSurfaceView
         android:id="@+id/gl_surface_view"

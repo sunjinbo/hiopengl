@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">hiopengl</string>
+    <string name="not_implementation">Not implementation</string>
 </resources>

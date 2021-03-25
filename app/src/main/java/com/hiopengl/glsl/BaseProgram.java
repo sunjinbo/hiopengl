@@ -3,7 +3,7 @@ package com.hiopengl.glsl;
 import android.content.Context;
 import android.opengl.GLES30;
 
-import com.hiopengl.ShaderUtil;
+import com.hiopengl.utils.ShaderUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

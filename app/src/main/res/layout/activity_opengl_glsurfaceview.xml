@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OpenGLGLSurfaceViewActivity">
+    tools:context=".android.graphics.OpenGLGLSurfaceViewActivity">
 
-    <com.hiopengl.OpenGLGLSurfaceView
+    <com.hiopengl.android.graphics.view.OpenGLGLSurfaceView
         android:id="@+id/gl_surface_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
