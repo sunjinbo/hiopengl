@@ -25,7 +25,7 @@ public class ViewportActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opengl_glsurfaceview);
+        setContentView(R.layout.activity_viewport);
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);

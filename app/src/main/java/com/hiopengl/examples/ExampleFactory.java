@@ -47,7 +47,7 @@ public class ExampleFactory {
         ExampleCategory coordinateTransformations = new ExampleCategory("Coordinate Transformations");
         coordinateTransformations.addItem(new ExampleInfo("Modeling and Viewing", "com.hiopengl.basic.coordinate.ViewModelActivity"));
         coordinateTransformations.addItem(new ExampleInfo("Projection", "com.hiopengl.basic.coordinate.ProjectionActivity"));
-        coordinateTransformations.addItem(new ExampleInfo("Viewport", "com.hiopengl.basic.coordinate.ViewPortActivity"));
+        coordinateTransformations.addItem(new ExampleInfo("Viewport", "com.hiopengl.basic.coordinate.ViewportActivity"));
         gettingStartedWithOpenGLES.addItem(coordinateTransformations);
 
         gettingStartedWithOpenGLES.addItem(new ExampleInfo("Geometric Figures", "com.hiopengl.basic.GeometricActivity"));
