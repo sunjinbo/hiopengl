@@ -48,7 +48,7 @@
         <activity android:name=".basic.coordinate.ViewModelActivity" />
         <activity android:name=".basic.GLSLActivity" />
         <activity android:name=".practices.PolyhedronActivity" />
-        <activity android:name=".basic.GeometricActivity" />
+        <activity android:name=".basic.PrimitiveActivity" />
         <activity android:name=".android.graphics.CanvasSurfaceViewActivity" />
         <activity android:name=".android.graphics.OpenGLSurfaceViewActivity" />
         <activity android:name=".android.graphics.OpenGLTextureViewActivity" />

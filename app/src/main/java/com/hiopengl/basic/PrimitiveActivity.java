@@ -3,6 +3,7 @@ package com.hiopengl.basic;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
@@ -14,8 +15,9 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class GeometricActivity extends ActionBarActivity {
+public class PrimitiveActivity extends ActionBarActivity {
 
+    private TextView mHintTextView;
     private GLSurfaceView mGLSurfaceView;
     private GLRenderer mGLRenderer;
     private int mDrawMode = GL10.GL_POINTS;
@@ -23,8 +25,8 @@ public class GeometricActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_geometric);
-
+        setContentView(R.layout.activity_primitive);
+        mHintTextView = findViewById(R.id.hint);
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLRenderer = new GLRenderer();
         mGLSurfaceView.setRenderer(mGLRenderer);
@@ -44,30 +46,37 @@ public class GeometricActivity extends ActionBarActivity {
 
     public void onPointsClick(View view) {
         mDrawMode = GL10.GL_POINTS;
+        mHintTextView.setText(getResources().getString(R.string.gl_points));
     }
 
     public void onLineStripClick(View view) {
         mDrawMode = GL10.GL_LINE_STRIP;
+        mHintTextView.setText(getResources().getString(R.string.gl_line_strip));
     }
 
     public void onLineLoopClick(View view) {
         mDrawMode = GL10.GL_LINE_LOOP;
+        mHintTextView.setText(getResources().getString(R.string.gl_line_loop));
     }
 
     public void onLinesClick(View view) {
         mDrawMode = GL10.GL_LINES;
+        mHintTextView.setText(getResources().getString(R.string.gl_lines));
     }
 
     public void onTrianglesClick(View view) {
         mDrawMode = GL10.GL_TRIANGLES;
+        mHintTextView.setText(getResources().getString(R.string.gl_triangles));
     }
 
     public void onTriangleFanClick(View view) {
         mDrawMode = GL10.GL_TRIANGLE_FAN;
+        mHintTextView.setText(getResources().getString(R.string.gl_triangle_fan));
     }
 
     public void onTriangleStripClick(View view) {
         mDrawMode = GL10.GL_TRIANGLE_STRIP;
+        mHintTextView.setText(getResources().getString(R.string.gl_triangle_strip));
     }
 
     private class GLRenderer implements GLSurfaceView.Renderer {

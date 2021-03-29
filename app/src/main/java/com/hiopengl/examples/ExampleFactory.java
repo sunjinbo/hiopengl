@@ -50,7 +50,7 @@ public class ExampleFactory {
         coordinateTransformations.addItem(new ExampleInfo("Viewport", "com.hiopengl.basic.coordinate.ViewportActivity"));
         gettingStartedWithOpenGLES.addItem(coordinateTransformations);
 
-        gettingStartedWithOpenGLES.addItem(new ExampleInfo("Geometric Figures", "com.hiopengl.basic.GeometricActivity"));
+        gettingStartedWithOpenGLES.addItem(new ExampleInfo("Primitives", "com.hiopengl.basic.PrimitiveActivity"));
 
         ExampleCategory vertexData = new ExampleCategory("Vertex Data");
         vertexData.addItem(new ExampleInfo("Vertex Array for OpenGL ES 1.0", "com.hiopengl.basic.vertex.VertexArrayOpenGL10Activity"));

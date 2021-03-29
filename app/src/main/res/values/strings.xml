@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">hiopengl</string>
     <string name="not_implementation">Not implementation</string>
+    <string name="gl_points">This will cause OpenGL to interpret each individual vertex in the stream as a point. Points that have a Texture mapped onto them are often called "point sprites".</string>
+    <string name="gl_line_strip">The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines. If the user only specifies 1 vertex, the drawing command is ignored.</string>
+    <string name="gl_line_loop">As line strips, except that the first and last vertices are also used as a line. Thus, you get n lines for n input vertices. If the user only specifies 1 vertex, the drawing command is ignored. The line between the first and last vertices happens after all of the previous lines in the sequence.</string>
+    <string name="gl_lines">Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line. And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.</string>
+    <string name="gl_triangles">Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.</string>
+    <string name="gl_triangle_fan">The first vertex is always held fixed. From there on, every group of 2 adjacent vertices form a triangle with the first. So with a vertex stream, you get a list of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of n length will generate n-2 triangles.</string>
+    <string name="gl_triangle_strip">Every group of 3 adjacent vertices forms a triangle. The face direction of the strip is determined by the winding of the first triangle. Each successive triangle will have its effective face order reversed, so the system compensates for that by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.</string>
 </resources>
