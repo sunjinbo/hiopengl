@@ -102,7 +102,7 @@ public abstract class VertexActivity extends ActionBarActivity implements GLSurf
         mGLSurfaceView.onResume();
     }
 
-    protected void initVertex() {
+    protected void initVertexBuffer() {
         ByteBuffer posByteBuffer = ByteBuffer.allocateDirect(Coords.length * 4);
         posByteBuffer.order(ByteOrder.nativeOrder());
         mPositionFloatBuffer = posByteBuffer.asFloatBuffer();

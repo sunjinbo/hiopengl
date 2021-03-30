@@ -1,389 +1,128 @@
 package com.hiopengl.basic.vertex;
 
-import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
-import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
-import com.hiopengl.R;
-import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.ShaderUtil;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class VertexBufferOpenGL30Activity extends ActionBarActivity {
+public class VertexBufferOpenGL30Activity extends VertexActivity {
 
-    private enum GLType {
-        VA, VBO, VAO, EBO
-    }
-    private GLSurfaceView mGLSurfaceView;
-    private GLRenderer mGLRenderer;
-    private GLType mGLType = GLType.VA;
-    private TextView mTypeTextView;
+    private int mProgramId;
+    private int mPositionVBO;
+    private int mColorVBO;
+    private int mVAO;
+
+    private float[] mViewMatrix = new float[16]; // 相机矩阵
+    private float[] mProjectionMatrix = new float[16]; // 投影矩阵
+    private float[] mMVPMatrix = new float[16]; // 最终变换的矩阵
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vertex);
-
-        mGLSurfaceView = findViewById(R.id.gl_surface_view);
+        ShaderUtil.setEGLContextClientVersion(3);
         mGLSurfaceView.setEGLContextClientVersion(3);
-        mGLRenderer = new GLRenderer(this);
-        mGLSurfaceView.setRenderer(mGLRenderer);
+        mGLSurfaceView.setRenderer(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        mGLSurfaceView.onPause();
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        initVertexBuffer();
+        initShaderProgram();
+        initVertexBufferObject();
+        initVertexArrayObject(); // 将创建的vbo对象关联到vao上
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mGLSurfaceView.onResume();
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
+        GLES30.glViewport(0, 0, width, height);
+        float ratio = (float) width / (float) height;
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        Matrix.setLookAtM(mViewMatrix, 0,
+                0f, 0f, 5f,
+                0f, 0f, 0f,
+                0f, 1f, 0f);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
 
-    public void onVAClick(View view) {
-        mGLType = GLType.VA;
-        mTypeTextView.setText("VA");
+    @Override
+    public void onDrawFrame(GL10 gl) {
+        GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
+
+        GLES30.glUseProgram(mProgramId);
+
+        Matrix.rotateM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
+
+        int uMatrixLocation = GLES20.glGetUniformLocation(mProgramId, "uMatrix");
+        GLES30.glUniformMatrix4fv(uMatrixLocation, 1, false, mMVPMatrix, 0);
+
+        GLES30.glBindVertexArray(mVAO);
+
+        GLES20.glDrawArrays(GL10.GL_LINES, 0, 24);
+
+        GLES30.glBindVertexArray(0);
     }
 
-    public void onVBOClick(View view) {
-        mGLType = GLType.VBO;
-        mTypeTextView.setText("VAO");
+    private void initShaderProgram() {
+        // 编译顶点着色程序
+        final String vertexShader = ShaderUtil.loadAssets(this, "vertex_vertex_opengl_es_30.glsl");
+        final int vertexShaderId = ShaderUtil.compileVertexShader(vertexShader);
+        // 编译片段着色程序
+        final String fragmentShader = ShaderUtil.loadAssets(this, "fragment_vertex_opengl_es_30.glsl");
+        final int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShader);
+        // 链接程序
+        mProgramId = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
+        // 在OpenGL ES环境中使用该程序
+        GLES30.glUseProgram(mProgramId);
     }
 
-    public void onVAOClick(View view) {
-        mGLType = GLType.VAO;
-        mTypeTextView.setText("VAO");
+    private void initVertexBufferObject() {
+        // 创建位置坐标数据的VBO对象并绑定到缓冲区
+        int[] posBuffers = new int[1];
+        GLES30.glGenBuffers(posBuffers.length, posBuffers, 0);
+
+        mPositionVBO = posBuffers[0];
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mPositionVBO);
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, mPositionFloatBuffer.capacity() * 4, mPositionFloatBuffer, GLES30.GL_STATIC_DRAW);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+
+        // 创建颜色数据的VBO对象并绑定到缓冲区
+        int[] colorBuffers = new int[1];
+        GLES30.glGenBuffers(colorBuffers.length, colorBuffers, 0);
+
+        mColorVBO = colorBuffers[0];
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVBO);
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, mColorFloatBuffer.capacity() * 4, mColorFloatBuffer, GLES30.GL_STATIC_DRAW);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
     }
 
-    public void onEBOClick(View view) {
-        mGLType = GLType.EBO;
-        mTypeTextView.setText("EBO");
+    private void initVertexArrayObject() {
+        int[] buffer = new int[1];
+        GLES30.glGenBuffers(buffer.length, buffer, 0);
+
+        mVAO = buffer[0];
+
+        GLES30.glBindVertexArray(mVAO);
+
+        // 关联位置数据
+        GLES30.glEnableVertexAttribArray(0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mPositionVBO);
+        GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 0, 0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+
+        // 关联颜色数据
+        GLES30.glEnableVertexAttribArray(1);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVBO);
+        GLES30.glVertexAttribPointer(1, 4, GLES30.GL_FLOAT, false, 0, 0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+
+        GLES30.glBindVertexArray(0);
     }
-
-    private class GLRenderer implements GLSurfaceView.Renderer {
-
-        private static final int BYTES_PER_FLOAT = 4;
-        private static final int BYTES_PER_INT = 4;
-
-        protected Context mContext;
-
-        //渲染程序
-        protected int mProgram = -1;
-        private FloatBuffer vertexBuffer;
-        private FloatBuffer colorBuffer;
-        private IntBuffer indexBuffer;
-
-        float vertex[] ={
-                0.5f,  0.5f, 0.0f, // top
-                0.5f, -0.5f, 0.0f, // bottom left
-                -0.5f, -0.5f, 0.0f  // bottom right
-        };
-
-        private float color[] = {
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f
-        };
-
-        private int index[] = {
-                0, 1, 2
-        };
-
-        // VBO
-        private int mVertexVboBufferId;
-        private int mColorVboBufferId;
-        // VAO
-        private int mVaoBufferId;
-        // EBO
-        private int mEboBufferId;
-
-        public GLRenderer(Context context) {
-            mContext = context;
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertex.length * 4);
-            byteBuffer.order(ByteOrder.nativeOrder());
-            vertexBuffer = byteBuffer.asFloatBuffer();
-            //把这门语法() 推送给GPU
-            vertexBuffer.put(vertex);
-            vertexBuffer.position(0);
-
-            colorBuffer = ByteBuffer.allocateDirect(color.length * 4)
-                    .order(ByteOrder.nativeOrder())
-                    .asFloatBuffer();
-            //传入指定的数据
-            colorBuffer.put(color);
-            colorBuffer.position(0);
-
-            indexBuffer = ByteBuffer.allocateDirect(index.length * 4)
-                    .order(ByteOrder.nativeOrder())
-                    .asIntBuffer();
-            //传入指定的数据
-            indexBuffer.put(index);
-            indexBuffer.position(0);
-        }
-
-        @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
-
-            //编译顶点着色程序
-            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_glsl.glsl");
-            int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
-            //编译片段着色程序
-            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_glsl.glsl");
-            int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
-            //连接程序
-            mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
-            //在OpenGLES环境中使用程序
-            GLES30.glUseProgram(mProgram);
-
-            initVertexVBO();
-            initColorVBO();
-            initEBO();
-            initVAO();
-        }
-
-        @Override
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
-            GLES30.glViewport(0, 0, width, height);
-        }
-
-        @Override
-        public void onDrawFrame(GL10 gl) {
-            GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
-            GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
-                    | GL10.GL_DEPTH_BUFFER_BIT);
-
-            switch (mGLType) {
-                case VA:
-                    drawVA();
-                    break;
-                case VBO:
-                    drawVBO();
-                    break;
-                case VAO:
-                    drawVAO();
-                    break;
-                case EBO:
-                    drawEBO();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void initVertexVBO() {
-            // Allocate a buffer.
-            final int buffers[] = new int[1];
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
-
-            if (buffers[0] == 0) {
-                throw new RuntimeException("Could not create a new index buffer object.");
-            }
-
-            mVertexVboBufferId = buffers[0];
-
-            // Bind to the buffer.
-            GLES30.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[0]);
-
-            // Transfer data from native memory to the GPU buffer.
-            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,vertexBuffer.capacity() * BYTES_PER_FLOAT, vertexBuffer, GLES30.GL_STATIC_DRAW);
-
-            // IMPORTANT: Unbind from the buffer when we're done with it.
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-
-            // We let the native buffer go out of scope, but it won't be released
-            // until the next time the garbage collector is run.
-        }
-
-        private void initColorVBO() {
-            // Allocate a buffer.
-            final int buffers[] = new int[1];
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
-
-            if (buffers[0] == 0) {
-                throw new RuntimeException("Could not create a new index buffer object.");
-            }
-
-            mColorVboBufferId = buffers[0];
-
-            // Bind to the buffer.
-            GLES30.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[0]);
-
-            // Transfer data from native memory to the GPU buffer.
-            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,colorBuffer.capacity() * BYTES_PER_FLOAT, colorBuffer, GLES30.GL_STATIC_DRAW);
-
-            // IMPORTANT: Unbind from the buffer when we're done with it.
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
-
-            // We let the native buffer go out of scope, but it won't be released
-            // until the next time the garbage collector is run.
-        }
-
-        private void initEBO() {
-            // Allocate a elements buffer object.
-            final int buffers[] = new int[1];
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
-
-            if (buffers[0] == 0) {
-                throw new RuntimeException("Could not create a new index buffer object.");
-            }
-
-            mEboBufferId = buffers[0];
-
-            // Bind to the buffer.
-            GLES30.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
-
-            // Transfer data from native memory to the GPU buffer.
-            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,indexBuffer.capacity() * BYTES_PER_INT, indexBuffer, GLES30.GL_STATIC_DRAW);
-
-            // IMPORTANT: Unbind from the buffer when we're done with it.
-            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-            // We let the native buffer go out of scope, but it won't be released
-            // until the next time the garbage collector is run.
-        }
-
-        private void initVAO() {
-            // Allocate a vertex array buffer.
-            final int buffers[] = new int[1];
-            GLES30.glGenVertexArrays(buffers.length, buffers, 0);
-
-            if (buffers[0] == 0) {
-                throw new RuntimeException("Could not create a new index buffer object.");
-            }
-
-            mVaoBufferId = buffers[0];
-
-            // Bind to the buffer.
-            GLES30.glBindVertexArray(buffers[0]);
-
-            // 获取shader中顶点举柄的位置
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
-            // 启用顶点句柄
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVertexVboBufferId);
-            GLES30.glVertexAttribPointer(aPositionLocation, 3, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            // 获取shader中颜色举柄的位置
-            int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
-            // 启用颜色句柄
-            GLES30.glEnableVertexAttribArray(aColorLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVboBufferId);
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            // IMPORTANT: Unbind from the buffer when we're done with it.
-            GLES30.glBindVertexArray(0);
-        }
-
-        private void drawVA() {
-            // 获取shader中顶点举柄的位置
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
-            // 启用顶点句柄
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            // 将顶数据数组传递给GPU
-            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, vertexBuffer);
-
-            // 获取shader中颜色举柄的位置
-            int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
-            // 启用颜色句柄
-            GLES30.glEnableVertexAttribArray(aColorLocation);
-            // 将颜色数据数组传递给GPU
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT, false, 0, colorBuffer);
-
-            // 绘制图形
-            GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3);
-
-            // 关闭顶点和颜色数组的句柄
-            GLES30.glDisableVertexAttribArray(aPositionLocation);
-            GLES30.glDisableVertexAttribArray(aColorLocation);
-        }
-
-        private void drawVBO() {
-            // 获取shader中顶点举柄的位置
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
-            // 启用顶点句柄
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVertexVboBufferId);
-            GLES30.glVertexAttribPointer(aPositionLocation, 3, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            // 获取shader中颜色举柄的位置
-            int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
-            // 启用颜色句柄
-            GLES30.glEnableVertexAttribArray(aColorLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVboBufferId);
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            // 绘制图形
-            GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3);
-
-            // 关闭顶点和颜色数组的句柄
-            GLES30.glDisableVertexAttribArray(aPositionLocation);
-            GLES30.glDisableVertexAttribArray(aColorLocation);
-        }
-
-        private void drawVAO() {
-            GLES30.glBindVertexArray(mVaoBufferId);
-
-            // 绘制图形
-            GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3);
-
-            GLES30.glBindVertexArray(0);
-        }
-
-        private void drawEBO() {
-            // 获取shader中顶点举柄的位置
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
-            // 启用顶点句柄
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVertexVboBufferId);
-            GLES30.glVertexAttribPointer(aPositionLocation, 3, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            // 获取shader中颜色举柄的位置
-            int aColorLocation = GLES30.glGetAttribLocation(mProgram,"aColor");
-            // 启用颜色句柄
-            GLES30.glEnableVertexAttribArray(aColorLocation);
-            // 直接使用GPU显存中的VBO
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVboBufferId);
-            GLES30.glVertexAttribPointer(aColorLocation, 4, GLES30.GL_FLOAT,
-                    false, 0, 0);
-            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,0);
-
-            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, mEboBufferId);
-            GLES30.glDrawElements(GLES30.GL_TRIANGLES, 3, GLES30.GL_UNSIGNED_INT, 0);
-            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-            // 关闭顶点和颜色数组的句柄
-            GLES30.glDisableVertexAttribArray(aPositionLocation);
-            GLES30.glDisableVertexAttribArray(aColorLocation);
-        }
-    }
-
 }

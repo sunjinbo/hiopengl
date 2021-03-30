@@ -16,7 +16,7 @@ public class VertexArrayOpenGL10Activity extends VertexActivity {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        initVertex();
+        initVertexBuffer();
     }
 
     @Override

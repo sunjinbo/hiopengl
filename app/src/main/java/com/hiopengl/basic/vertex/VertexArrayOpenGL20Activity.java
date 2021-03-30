@@ -27,7 +27,7 @@ public class VertexArrayOpenGL20Activity extends VertexActivity {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        initVertex();
+        initVertexBuffer();
         initShaderProgram();
     }
 
@@ -46,7 +46,7 @@ public class VertexArrayOpenGL20Activity extends VertexActivity {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
-        GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         GLES20.glUseProgram(mProgramId);
 
