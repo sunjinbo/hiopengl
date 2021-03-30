@@ -47,7 +47,6 @@ public class GlUtil {
 
     private static final int SIZEOF_FLOAT = 4;
 
-
     private GlUtil() {}     // do not instantiate
 
     /**

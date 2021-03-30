@@ -1,114 +1,22 @@
 package com.hiopengl.basic.vertex;
 
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-
-import com.hiopengl.R;
-import com.hiopengl.base.ActionBarActivity;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class VertexArrayOpenGL10Activity extends ActionBarActivity implements GLSurfaceView.Renderer {
-
-    private static final float Coords[] ={
-            0.5f,  0.5f, 0.5f, // A
-            0.5f, 0.5f, -0.5f, // B
-
-            0.5f, 0.5f, -0.5f, // B
-            0.5f, -0.5f, -0.5f,  // C
-
-            0.5f, -0.5f, -0.5f,  // C
-            0.5f, -0.5f, 0.5f,  // D
-
-            0.5f, -0.5f, 0.5f,  // D
-            0.5f,  0.5f, 0.5f, // A
-
-            -0.5f, 0.5f, 0.5f,  // F
-            0.5f,  0.5f, 0.5f, // A
-
-            -0.5f, 0.5f, 0.5f,  // F
-            -0.5f, -0.5f, 0.5f,  // E
-
-            -0.5f, -0.5f, 0.5f,  // E
-            0.5f, -0.5f, 0.5f,  // D
-
-            -0.5f, 0.5f, -0.5f,  // G
-            0.5f, 0.5f, -0.5f, // B
-
-            -0.5f, 0.5f, -0.5f,  // G
-            -0.5f, 0.5f, 0.5f,  // F
-
-            -0.5f, 0.5f, -0.5f,  // G
-            -0.5f, -0.5f, -0.5f,  // H
-
-            -0.5f, -0.5f, -0.5f,  // H
-            -0.5f, -0.5f, 0.5f,  // E
-
-            -0.5f, -0.5f, -0.5f,  // H
-            0.5f, -0.5f, -0.5f  // C
-    };
-
-    private static final float Color[] = {
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f
-    };
-
-    // Flat Color
-    private float[] rgba = new float[]{1.0f, 0.0f, 1.0f, 1.0f};
-
-    private GLSurfaceView mGLSurfaceView;
-    private FloatBuffer mPositionFloatBuffer;
-    private FloatBuffer mColorFloatBuffer;
+public class VertexArrayOpenGL10Activity extends VertexActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vertex_array_opengl10);
-        mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(1);
         mGLSurfaceView.setRenderer(this);
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        ByteBuffer posByteBuffer = ByteBuffer.allocateDirect(Coords.length * 4);
-        posByteBuffer.order(ByteOrder.nativeOrder());
-        mPositionFloatBuffer = posByteBuffer.asFloatBuffer();
-        mPositionFloatBuffer.put(Coords);
-        mPositionFloatBuffer.position(0);
-
-//        ByteBuffer colorByteBuffer = ByteBuffer.allocateDirect(Color.length * 4);
-//        colorByteBuffer.order(ByteOrder.nativeOrder());
-//        mColorFloatBuffer = colorByteBuffer.asFloatBuffer();
-//        mColorFloatBuffer.put(Color);
-//        mColorFloatBuffer.position(0);
+        initVertex();
     }
 
     @Override
