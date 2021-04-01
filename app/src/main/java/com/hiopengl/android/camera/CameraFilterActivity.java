@@ -41,11 +41,9 @@ import static android.opengl.EGL14.EGL_GREEN_SIZE;
 import static android.opengl.EGL14.EGL_NONE;
 import static android.opengl.EGL14.EGL_RED_SIZE;
 import static android.opengl.EGL14.EGL_RENDERABLE_TYPE;
-import static android.opengl.EGL15.EGL_OPENGL_ES3_BIT;
-import static android.opengl.EGLExt.EGL_OPENGL_ES3_BIT_KHR;
 
 public class CameraFilterActivity extends ActionBarActivity
-        implements TextureView.SurfaceTextureListener, Runnable {
+        implements TextureView.SurfaceTextureListener, SurfaceTexture.OnFrameAvailableListener, Runnable {
 
     private static final int MY_PERMISSION_REQUEST_CODE = 10000;
 
@@ -59,6 +57,9 @@ public class CameraFilterActivity extends ActionBarActivity
     private boolean mRunning = false;
     private SurfaceTexture mSurfaceTexture;
     private int mTextureId = -1;
+
+    private SurfaceTexture mCameraTexture;
+    private boolean mUpdateTexture = false;
 
     //渲染程序
     private int mProgram = -1;
@@ -135,6 +136,13 @@ public class CameraFilterActivity extends ActionBarActivity
     }
 
     @Override
+    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+        synchronized (this) {
+            mUpdateTexture = true;
+        }
+    }
+
+    @Override
     public void run() {
         //创建一个EGL实例
         EGL10 egl = (EGL10) EGLContext.getEGL();
@@ -176,6 +184,7 @@ public class CameraFilterActivity extends ActionBarActivity
         while (mRunning) {
             SystemClock.sleep(333);
             synchronized (mSurfaceTexture) {
+                updateTexture();
                 drawFrame(gl);
 
                 //显示绘制结果到屏幕上
@@ -237,7 +246,9 @@ public class CameraFilterActivity extends ActionBarActivity
     private void startPreview() {
         try {
             mCaptureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            Surface surface = new Surface(new SurfaceTexture(mTextureId));
+            mCameraTexture = new SurfaceTexture(mTextureId);
+            mCameraTexture.setOnFrameAvailableListener(this);
+            Surface surface = new Surface(mCameraTexture);
             mCaptureBuilder.addTarget(surface);
 
             mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
@@ -293,7 +304,7 @@ public class CameraFilterActivity extends ActionBarActivity
         String vertexShaderStr = ShaderUtil.loadAssets(this, "vertex_camera_filter.glsl");
         int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
         //编译片段着色程序
-        String fragmentShaderStr = ShaderUtil.loadAssets(this, "fragment_texture_2d.glsl");
+        String fragmentShaderStr = ShaderUtil.loadAssets(this, "fragment_camera_filter.glsl");
         int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
         //连接程序
         mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
@@ -302,7 +313,12 @@ public class CameraFilterActivity extends ActionBarActivity
 
         mTextureId = createTextureObject();
 
-        openCamera();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                openCamera();
+            }
+        });
     }
 
     private void drawFrame(GL10 gl) {
@@ -319,7 +335,7 @@ public class CameraFilterActivity extends ActionBarActivity
         // 设置当前活动的纹理单元为纹理单元0
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         // 将纹理ID绑定到当前活动的纹理单元上
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+        GLES30.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureId);
         // 将纹理单元传递片段着色器的u_TextureUnit
         int uTextureLocation = GLES30.glGetUniformLocation(mProgram,"sTexture");
         GLES30.glUniform1i(uTextureLocation, 0);
@@ -351,5 +367,14 @@ public class CameraFilterActivity extends ActionBarActivity
         GlUtil.checkGl3Error("glTexParameter");
 
         return texId;
+    }
+
+    private void updateTexture() {
+        synchronized (this) {
+            if (mUpdateTexture) {
+                mCameraTexture.updateTexImage();
+                mUpdateTexture = false;
+            }
+        }
     }
 }
