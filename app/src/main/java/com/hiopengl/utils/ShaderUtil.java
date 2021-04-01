@@ -33,7 +33,7 @@ public class ShaderUtil {
      * @return
      */
     public static int compileFragmentShader(String shaderCode) {
-        return compileShader(GLES20.GL_FRAGMENT_SHADER, shaderCode);
+        return compileShader(GLES30.GL_FRAGMENT_SHADER, shaderCode);
     }
 
     /**

@@ -15,6 +15,9 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.opengl.EGL14.EGL_OPENGL_ES2_BIT;
+import static android.opengl.EGL15.EGL_OPENGL_ES3_BIT;
+
 public class OpenGLSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private boolean mRunning = false;
     private SurfaceHolder mSurfaceHolder;

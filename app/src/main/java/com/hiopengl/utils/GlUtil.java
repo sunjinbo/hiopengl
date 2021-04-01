@@ -118,6 +118,15 @@ public class GlUtil {
         }
     }
 
+    public static void checkGl3Error(String op) {
+        int error = GLES30.glGetError();
+        if (error != GLES30.GL_NO_ERROR) {
+            String msg = op + ": glError 0x" + Integer.toHexString(error);
+            Log.e(TAG, msg);
+            throw new RuntimeException(msg);
+        }
+    }
+
     /**
      * Checks to see if the location we obtained is valid.  GLES returns -1 if a label
      * could not be found, but does not set the GL error.

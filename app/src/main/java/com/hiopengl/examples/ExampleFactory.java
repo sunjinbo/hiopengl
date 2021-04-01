@@ -27,7 +27,7 @@ public class ExampleFactory {
         androidGraphicRendering.addItem(openGLTextureReader);
 
         ExampleCategory cameraWithOpenGLES = new ExampleCategory("Camera with OpenGL ES");
-        cameraWithOpenGLES.addItem(new ExampleInfo("Filter", "com.hiopengl.android.camera.CameraFilterActivity"));
+        cameraWithOpenGLES.addItem(new ExampleInfo("Camera Filter", "com.hiopengl.android.camera.CameraFilterActivity"));
         androidGraphicRendering.addItem(cameraWithOpenGLES);
 
         ExampleCategory screenRecorder = new ExampleCategory("Screen Recorder");
