@@ -61,6 +61,9 @@ public class CameraFilterActivity extends ActionBarActivity
     private SurfaceTexture mCameraTexture;
     private boolean mUpdateTexture = false;
 
+    private int mWidth = 0;
+    private int mHeight = 0;
+
     //渲染程序
     private int mProgram = -1;
     private FloatBuffer vertexBuffer;
@@ -96,8 +99,6 @@ public class CameraFilterActivity extends ActionBarActivity
                     new String[]{Manifest.permission.CAMERA},
                     MY_PERMISSION_REQUEST_CODE
             );
-        } else {
-//            openCamera();
         }
     }
 
@@ -122,6 +123,8 @@ public class CameraFilterActivity extends ActionBarActivity
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         mSurfaceTexture = surface;
+        mWidth = width;
+        mHeight = height;
     }
 
     @Override

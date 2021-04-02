@@ -42,7 +42,6 @@
         <activity android:name=".advanced.DepthTestActivity" />
         <activity android:name=".advanced.FrameBufferActivity" />
         <activity android:name=".advanced.MeshActivity" />
-        <activity android:name=".android.graphics.OpenGLSurfaceTextureActivity" />
         <activity android:name=".advanced.MaterialActivity" />
         <activity android:name=".basic.texture.Texture3DActivity" />
         <activity android:name=".advanced.PhongLightingActivity" />
