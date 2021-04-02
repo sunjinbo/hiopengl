@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
@@ -26,14 +27,34 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class TextureMipmapActivity extends ActionBarActivity {
-    protected GLSurfaceView mGLSurfaceView;
-    protected Texture3DRenderer mGLRenderer;
+    private GLSurfaceView mGLSurfaceView;
+    private Texture3DRenderer mGLRenderer;
+    private SeekBar mSeekBar;
+    private int mDZ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_texture_mipmap);
 
+        mSeekBar = findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mDZ = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mDZ = mSeekBar.getProgress();
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLRenderer = new Texture3DRenderer(this);
@@ -44,25 +65,15 @@ public class TextureMipmapActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
         mGLSurfaceView.onPause();
-        mGLRenderer.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mGLSurfaceView.onResume();
-        mGLRenderer.onResume();
     }
 
-    public void onNormalClick(View v) {
-
-    }
-
-    public void onMipmapClick(View v) {
-
-    }
-
-    private class Texture3DRenderer implements GLSurfaceView.Renderer, Runnable {
+    private class Texture3DRenderer implements GLSurfaceView.Renderer {
         private static final int BYTES_PER_FLOAT = 4;
         private static final int BYTES_PER_INT = 4;
 
@@ -126,17 +137,18 @@ public class TextureMipmapActivity extends ActionBarActivity {
         };
 
         // 纹理
-        private int mTextureId;
+        private int textureId;
 
+        //模型矩阵
+        private final float[] mModelMatrix = new float[16];
         //相机矩阵
         private final float[] mViewMatrix = new float[16];
+        //ViewModel矩阵
+        private final float[] mViewModelMatrix = new float[16];
         //投影矩阵
         private final float[] mProjectMatrix = new float[16];
         //最终变换矩阵
         private final float[] mMVPMatrix = new float[16];
-
-        private float mAngle = 0;
-        private boolean mRunning = false;
 
         public Texture3DRenderer(Context context) {
             mContext = context;
@@ -145,15 +157,6 @@ public class TextureMipmapActivity extends ActionBarActivity {
             vertexBuffer = byteBuffer.asFloatBuffer();
             vertexBuffer.put(vertex);
             vertexBuffer.position(0);
-        }
-
-        public void onResume() {
-            mRunning = true;
-            new Thread(this).start();
-        }
-
-        public void onPause() {
-            mRunning = false;
         }
 
         @Override
@@ -171,7 +174,7 @@ public class TextureMipmapActivity extends ActionBarActivity {
             //在OpenGLES环境中使用程序
             GLES30.glUseProgram(mProgram);
 
-            mTextureId = loadMipmapTexture(mContext, R.drawable.mipmaps);
+            textureId = loadTexture(mContext, R.drawable.texture);
 
             // 初始化VBO
             int[] buffers = new int[1];
@@ -219,6 +222,8 @@ public class TextureMipmapActivity extends ActionBarActivity {
             float ratio = (float) width / height;
             // 设置透视投影
             Matrix.frustumM(mProjectMatrix,0, -ratio, ratio,-1f,1f,1f,333f);
+            Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.setIdentityM(mViewModelMatrix, 0);
         }
 
         @Override
@@ -227,28 +232,27 @@ public class TextureMipmapActivity extends ActionBarActivity {
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                     | GL10.GL_DEPTH_BUFFER_BIT);
 
-            float dx = (float) (2 * Math.sin(mAngle));
-            float dz = (float) (2 * Math.cos(mAngle));
-
-            Log.d("angle", "dx = " + dx + ", dz = " + dz);
+            Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
 
             // 设置相机位置
             Matrix.setLookAtM(mViewMatrix,0,
-                    dx,0.3f, dz,// 摄像机坐标
-                    0f,0.1f,0f,// 目标物的中心坐标
-                    0f,1.0f,0.0f);// 相机方向
+                    0f,0f, mDZ,// 摄像机坐标
+                    0f,0f,0f,// 目标物的中心坐标
+                    0f,0.1f,0.0f);// 相机方向
             // 接着是摄像机顶部的方向了，如下图，很显然相机旋转，up的方向就会改变，这样就会会影响到绘制图像的角度。
             // 例如设置up方向为y轴正方向，upx = 0,upy = 1,upz = 0。这是相机正对着目标图像
             // 计算变换矩阵
-            Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewMatrix,0);
 
-            int uMaxtrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
-            GLES30.glUniformMatrix4fv(uMaxtrixLocation,1,false, mMVPMatrix,0);
+            Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
+
+            int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
+            GLES30.glUniformMatrix4fv(uMatrixLocation,1,false, mMVPMatrix,0);
 
             // 设置当前活动的纹理单元为纹理单元0
             GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
             // 将纹理ID绑定到当前活动的纹理单元上
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId);
             // 将纹理单元传递片段着色器的u_TextureUnit
             int uTextureLocation = GLES30.glGetUniformLocation(mProgram,"uTexture");
             GLES30.glUniform1i(uTextureLocation, 0);
@@ -262,20 +266,7 @@ public class TextureMipmapActivity extends ActionBarActivity {
             GLES30.glBindVertexArray(0);
         }
 
-        @Override
-        public void run() {
-            while (mRunning) {
-                SystemClock.sleep(111);
-                mAngle += 0.1;
-                if (mAngle >= 360) mAngle = 0;
-            }
-        }
-
-        private int loadTexture(Context context, int resourceId) {
-            return 0;
-        }
-
-        private int loadMipmapTexture(Context context, int resourceId) {
+        public int loadTexture(Context context, int resourceId) {
             final int[] textureObjectIds = new int[1];
             // 1. 创建纹理对象
             GLES30.glGenTextures(1, textureObjectIds, 0);
@@ -309,7 +300,7 @@ public class TextureMipmapActivity extends ActionBarActivity {
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
             // 4. 通过OpenGL对象读取Bitmap数据，并且绑定到纹理对象上，之后就可以回收Bitmap对象
-            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 4, bitmap, 0);
+            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
 
             // Note: Following code may cause an error to be reported in the
             // ADB log as follows: E/IMGSRV(20095): :0: HardwareMipGen:
@@ -319,10 +310,7 @@ public class TextureMipmapActivity extends ActionBarActivity {
             // square. It will look the same because of texture coordinates,
             // and mipmap generation will work.
             // 5. 生成Mip位图
-//            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
-
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_BASE_LEVEL, 0);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAX_LEVEL,4);
+            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
 
             // 6. 回收Bitmap对象
             bitmap.recycle();

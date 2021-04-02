@@ -17,24 +17,32 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="48dp">
 
-        <Button
-            android:onClick="onNormalClick"
-            android:text="NORMAL"
-            android:textSize="10dp"
+        <TextView
+            android:text="NEAR"
+            android:textSize="16dp"
+            android:layout_margin="8dp"
             android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:progress="2"
+            android:min="2"
+            android:max="100"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:onClick="onMipmapClick"
-            android:text="MIPMAP"
-            android:textSize="10dp"
+        <TextView
+            android:text="FAR"
+            android:textSize="16dp"
+            android:layout_margin="8dp"
             android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
