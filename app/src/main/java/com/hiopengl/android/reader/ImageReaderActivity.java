@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.hiopengl.R;
+import com.hiopengl.android.graphics.drawer.OpenGLDrawer;
 import com.hiopengl.base.ActionBarActivity;
 
 import javax.microedition.khronos.egl.EGL10;
@@ -33,6 +34,8 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
 
     private ImageReader mImageReader;
 
+    private OpenGLDrawer mOpenGLDrawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +54,8 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         mWidth = width;
         mHeight = height;
-        mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 5);
-        mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mHandler);
+        mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1);
+        mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, null);
         mSurface = mImageReader.getSurface();
         new Thread(this).start();
     }
@@ -89,12 +92,15 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
         EGLContext context = egl.eglCreateContext(dpy, config,
                 EGL10.EGL_NO_CONTEXT, null);
         // 创建新的surface
-        EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
-        EGLSurface surface2 = egl.eglCreateWindowSurface(dpy, config, mSurface, null);
+        EGLSurface drawSurface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
+        EGLSurface readSurface = egl.eglCreateWindowSurface(dpy, config, mSurface, null);
         // 将OpenGL环境设置为当前
-        egl.eglMakeCurrent(dpy, surface, surface2, context);
+        egl.eglMakeCurrent(dpy, drawSurface, readSurface, context);
         // 获取当前OpenGL画布
         GL10 gl = (GL10)context.getGL();
+
+        mOpenGLDrawer = new OpenGLDrawer();
+        mOpenGLDrawer.setSize(gl, mWidth, mHeight);
 
         mRunning = true;
         while (mRunning) {
@@ -102,20 +108,22 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
             synchronized (mSurfaceHolder) {
                 render(gl);
 
-                //显示绘制结果到屏幕上
-                egl.eglSwapBuffers(dpy, surface);
+                // 显示绘制结果到屏幕上
+                egl.eglSwapBuffers(dpy, drawSurface);
             }
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-        egl.eglDestroySurface(dpy, surface);
+        egl.eglDestroySurface(dpy, drawSurface);
+        egl.eglDestroySurface(dpy, readSurface);
         egl.eglDestroyContext(dpy, context);
         egl.eglTerminate(dpy);
     }
 
     private void render(GL10 gl) {
-        gl.glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+        gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        mOpenGLDrawer.draw(gl);
     }
 
     private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
