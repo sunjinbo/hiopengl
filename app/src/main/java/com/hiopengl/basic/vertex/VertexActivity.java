@@ -86,7 +86,7 @@ public abstract class VertexActivity extends ActionBarActivity implements GLSurf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vertex);
+        setContentView(getLayoutId());
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
     }
 
@@ -100,6 +100,10 @@ public abstract class VertexActivity extends ActionBarActivity implements GLSurf
     protected void onResume() {
         super.onResume();
         mGLSurfaceView.onResume();
+    }
+
+    protected int getLayoutId() {
+        return R.layout.activity_vertex;
     }
 
     protected void initVertexBuffer() {

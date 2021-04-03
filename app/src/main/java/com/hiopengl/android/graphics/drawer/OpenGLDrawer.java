@@ -15,6 +15,7 @@ public class OpenGLDrawer {
 
     ByteBuffer vbb;
     FloatBuffer vertex;
+    boolean rotate = false;
 
     public OpenGLDrawer() {
         vbb = ByteBuffer.allocateDirect(vertexArray.length*4);
@@ -22,6 +23,10 @@ public class OpenGLDrawer {
         vertex = vbb.asFloatBuffer();
         vertex.put(vertexArray);
         vertex.position(0);
+    }
+
+    public void setRotate(boolean rotate) {
+        this.rotate = rotate;
     }
 
     public void setSize(GL10 gl, int width, int height) {
