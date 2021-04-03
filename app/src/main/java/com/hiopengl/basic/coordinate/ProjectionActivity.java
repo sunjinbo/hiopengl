@@ -121,8 +121,12 @@ public class ProjectionActivity extends ActionBarActivity {
                 1.0f, 0.0f, 0.0f, 1.0f
         };
 
+        //模型矩阵
+        private final float[] mModelMatrix = new float[16];
         //相机矩阵
         private final float[] mViewMatrix = new float[16];
+        //ViewModel矩阵
+        private final float[] mViewModelMatrix = new float[16];
         //投影矩阵
         private final float[] mProjectMatrix = new float[16];
         //最终变换矩阵
@@ -186,6 +190,9 @@ public class ProjectionActivity extends ActionBarActivity {
                     0,0, 3,// 摄像机坐标
                     0f,0f,0f,// 目标物的中心坐标
                     0f,1.0f,0.0f);// 相机方向
+
+            Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.setIdentityM(mViewModelMatrix, 0);
         }
 
         @Override
@@ -200,13 +207,16 @@ public class ProjectionActivity extends ActionBarActivity {
                     -mRatio * mScale, mRatio * mScale,-1f * mScale,1f * mScale,
                     1f,333f);
 
+            Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
+
             // 接着是摄像机顶部的方向了，如下图，很显然相机旋转，up的方向就会改变，这样就会会影响到绘制图像的角度。
             // 例如设置up方向为y轴正方向，upx = 0,upy = 1,upz = 0。这是相机正对着目标图像
             // 计算变换矩阵
-            Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewMatrix,0);
+            Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
 
-            int uMaxtrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
-            GLES30.glUniformMatrix4fv(uMaxtrixLocation,1,false, mMVPMatrix,0);
+            int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
+            GLES30.glUniformMatrix4fv(uMatrixLocation,1,false, mMVPMatrix,0);
 
             int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
             GLES30.glEnableVertexAttribArray(aPositionLocation);
