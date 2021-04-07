@@ -17,7 +17,10 @@
             android:name="com.android.graphics.developerdriver.enable"
             android:value="true" />
 
-        <activity android:name=".android.recorder.RecorderActivity" android:turnScreenOn="true" />
+        <activity android:name=".android.recorder.DrawTwiceActivity" />
+        <activity android:name=".android.recorder.GlBlitFramebufferActivity" />
+        <activity android:name=".android.recorder.FBOBlitx2Activity" />
+        <activity android:name=".android.recorder.RecorderActivity" />
         <activity android:name=".practices.SkyboxActivity" />
         <activity android:name=".practices.TextRenderingActivity" />
         <activity android:name=".advanced.AssimpActivity" />

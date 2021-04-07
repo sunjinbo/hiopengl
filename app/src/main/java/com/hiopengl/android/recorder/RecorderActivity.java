@@ -1,9 +1,13 @@
 package com.hiopengl.android.recorder;
 
+import android.opengl.EGLExt;
 import android.opengl.GLES30;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
@@ -15,16 +19,30 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.opengl.EGL14.EGL_BLUE_SIZE;
+import static android.opengl.EGL14.EGL_DEPTH_SIZE;
+import static android.opengl.EGL14.EGL_GREEN_SIZE;
+import static android.opengl.EGL14.EGL_NONE;
+import static android.opengl.EGL14.EGL_RED_SIZE;
+import static android.opengl.EGL14.EGL_RENDERABLE_TYPE;
+
 public class RecorderActivity extends ActionBarActivity
-        implements GLSurfaceView.Renderer, Runnable {
+        implements SurfaceHolder.Callback, Runnable {
 
     protected static final float BALL_RADIUS = 100f;
 
-    protected GLSurfaceView mGLSurfaceView;
+    protected SurfaceView mSurfaceView;
+    protected SurfaceHolder mSurfaceHolder;
     protected Playground mPlayground;
+    protected int mWidth;
+    protected int mHeight;
 
     protected int mProgram = -1;
     protected int mTextureId = -1;
@@ -34,15 +52,34 @@ public class RecorderActivity extends ActionBarActivity
 
     protected boolean mIsRunning = false;
 
+    protected Button mRecordButton;
+    protected boolean mIsRecording = false;
+
+    protected long mLastTickTimeMillis = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder);
-        mGLSurfaceView = findViewById(R.id.gl_surface_view);
-        mGLSurfaceView.setEGLContextClientVersion(3);
-        mGLSurfaceView.setRenderer(this);
 
-//        ShaderUtil.setEGLContextClientVersion(3);
+        mRecordButton = findViewById(R.id.recorder);
+        mRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsRecording) {
+                    mIsRecording = false;
+                    mRecordButton.setText("START RECORD");
+                } else {
+                    mIsRecording = true;
+                    mRecordButton.setText("STOP RECORD");
+                }
+            }
+        });
+
+        mSurfaceView = findViewById(R.id.surface_view);
+        mSurfaceView.getHolder().addCallback(this);
+
+        ShaderUtil.setEGLContextClientVersion(3);
 
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mVertexArray.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
@@ -52,26 +89,88 @@ public class RecorderActivity extends ActionBarActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mGLSurfaceView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mGLSurfaceView.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mIsRunning = false;
     }
 
     @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
+    public void run() {
+        //创建一个EGL实例
+        EGL10 egl = (EGL10) EGLContext.getEGL();
+        //
+        EGLDisplay dpy = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+        //初始化EGLDisplay
+        int[] version = new int[2];
+        egl.eglInitialize(dpy, version);
+
+        int[] configSpec = {
+                EGL_RENDERABLE_TYPE, EGLExt.EGL_OPENGL_ES3_BIT_KHR,
+                EGL_RED_SIZE, 5,
+                EGL_GREEN_SIZE, 6,
+                EGL_BLUE_SIZE, 5,
+                EGL_DEPTH_SIZE, 1,
+                EGL_NONE
+        };
+
+        EGLConfig[] configs = new EGLConfig[1];
+        int[] num_config = new int[1];
+        //选择config创建opengl运行环境
+        egl.eglChooseConfig(dpy, configSpec, configs, 1, num_config);
+        EGLConfig config = configs[0];
+        int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 3,
+                EGL10.EGL_NONE };
+        EGLContext context = egl.eglCreateContext(dpy, config,
+                EGL10.EGL_NO_CONTEXT, attrib_list);
+        //创建新的surface
+        EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
+        //将opengles环境设置为当前
+        egl.eglMakeCurrent(dpy, surface, surface, context);
+        //获取当前opengles画布
+        GL10 gl = (GL10)context.getGL();
+
+        initGL(gl);
+
+        mIsRunning = true;
+        while (mIsRunning) {
+            synchronized (mSurfaceHolder) {
+                tick();
+
+                drawFrame(gl);
+
+                //显示绘制结果到屏幕上
+                egl.eglSwapBuffers(dpy, surface);
+            }
+        }
+
+        egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+        egl.eglDestroySurface(dpy, surface);
+        egl.eglDestroyContext(dpy, context);
+        egl.eglTerminate(dpy);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mSurfaceHolder = holder;
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        mSurfaceHolder = holder;
+        mWidth = width;
+        mHeight = height;
+        new Thread(this).start();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        mIsRunning = false;
+    }
+
+    private void initGL(GL10 gl) {
+        GLES30.glViewport(0, 0, mWidth, mHeight);
+        mPlayground = new Playground(mWidth, mHeight);
 
         //编译顶点着色程序
         String vertexShaderStr = ShaderUtil.loadAssets(this, "vertex_recorder.glsl");
@@ -88,16 +187,7 @@ public class RecorderActivity extends ActionBarActivity
         mTextureId = GlUtil.loadTexture(this, R.drawable.ball);
     }
 
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-        GLES30.glViewport(0, 0, width, height);
-        mPlayground = new Playground(width, height);
-        // 启动小球运动程序
-        new Thread(this).start();
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl) {
+    private void drawFrame(GL10 gl) {
         GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                 | GL10.GL_DEPTH_BUFFER_BIT);
@@ -119,18 +209,15 @@ public class RecorderActivity extends ActionBarActivity
         GLES30.glDisableVertexAttribArray(0);
     }
 
-    @Override
-    public void run() {
-        mIsRunning = true;
-        while (mIsRunning) {
-            SystemClock.sleep(33);
-            mPlayground.ball.step();
-            mVertexArray[0] = mPlayground.ball.getX();
-            mVertexArray[1] = mPlayground.ball.getY();
+    private void tick() {
+        mLastTickTimeMillis = SystemClock.elapsedRealtime();
 
-            mVertexBuffer.put(mVertexArray);
-            mVertexBuffer.position(0);
-        }
+        mPlayground.ball.step();
+        mVertexArray[0] = mPlayground.ball.getX();
+        mVertexArray[1] = mPlayground.ball.getY();
+
+        mVertexBuffer.put(mVertexArray);
+        mVertexBuffer.position(0);
     }
 
     public class Ball {

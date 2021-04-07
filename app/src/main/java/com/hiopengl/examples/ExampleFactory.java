@@ -30,9 +30,9 @@ public class ExampleFactory {
         androidGraphicRendering.addItem(cameraWithOpenGLES);
 
         ExampleCategory screenRecorder = new ExampleCategory("Screen Recorder");
-        screenRecorder.addItem(new ExampleInfo("Draw Twice", "com.hiopengl.android.recorder.RecorderActivity"));
-        screenRecorder.addItem(new ExampleInfo("glBlitFramebuffer", ""));
-        screenRecorder.addItem(new ExampleInfo("FBO blitx2", ""));
+        screenRecorder.addItem(new ExampleInfo("Draw Twice", "com.hiopengl.android.recorder.DrawTwiceActivity"));
+        screenRecorder.addItem(new ExampleInfo("glBlitFramebuffer", "com.hiopengl.android.recorder.GlBlitFramebufferActivity"));
+        screenRecorder.addItem(new ExampleInfo("FBO blit x2", "com.hiopengl.android.recorder.FBOBlitx2Activity"));
         androidGraphicRendering.addItem(screenRecorder);
 
         ExampleCategory quickstartForAndroidARCore = new ExampleCategory("Quickstart for Android ARCore");
