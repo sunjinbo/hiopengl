@@ -30,7 +30,7 @@ public class ExampleFactory {
         androidGraphicRendering.addItem(cameraWithOpenGLES);
 
         ExampleCategory screenRecorder = new ExampleCategory("Screen Recorder");
-        screenRecorder.addItem(new ExampleInfo("Draw Twice", ""));
+        screenRecorder.addItem(new ExampleInfo("Draw Twice", "com.hiopengl.android.recorder.RecorderActivity"));
         screenRecorder.addItem(new ExampleInfo("glBlitFramebuffer", ""));
         screenRecorder.addItem(new ExampleInfo("FBO blitx2", ""));
         androidGraphicRendering.addItem(screenRecorder);

@@ -77,7 +77,7 @@ public class Texture2DActivity extends ActionBarActivity {
         private FloatBuffer textBuffer;
 
         //3个定点，等腰直角
-        float triangleCoords[] ={
+        float triangleCoords[] = {
                 -0.5f, -0.5f, 0.0f,  // bottom left
                 0.5f,  0.5f, 0.0f, // top
                 0.5f, -0.5f, 0.0f, // bottom right
