@@ -42,7 +42,7 @@ public class RecorderActivity extends ActionBarActivity
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLSurfaceView.setRenderer(this);
 
-        ShaderUtil.setEGLContextClientVersion(3);
+//        ShaderUtil.setEGLContextClientVersion(3);
 
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mVertexArray.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
@@ -83,6 +83,9 @@ public class RecorderActivity extends ActionBarActivity
         mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
         //在OpenGLES环境中使用程序
         GLES30.glUseProgram(mProgram);
+
+        // 生成ball纹理
+        mTextureId = GlUtil.loadTexture(this, R.drawable.ball);
     }
 
     @Override
@@ -98,11 +101,6 @@ public class RecorderActivity extends ActionBarActivity
         GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                 | GL10.GL_DEPTH_BUFFER_BIT);
-
-        if (mTextureId < 0) {
-            // 生成ball纹理
-            mTextureId = GlUtil.loadTexture(this, R.drawable.texture);
-        }
 
         // 设置当前活动的纹理单元为纹理单元0
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
