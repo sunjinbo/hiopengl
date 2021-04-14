@@ -19,20 +19,18 @@ public class DrawTwiceActivity extends RecorderActivity {
         //显示绘制结果到屏幕上
         EGL14.eglSwapBuffers(mEGLDisplay, mScreenSurface);
 
-        if (mVideoEncoder != null) {
-            if (mVideoEncoder.isRecording()) {
-                mVideoEncoder.frameAvailableSoon();
+        if (mVideoEncoder != null && mVideoEncoder.isRecording()) {
+            mVideoEncoder.frameAvailableSoon();
 
-                EGL14.eglMakeCurrent(mEGLDisplay, mEncoderSurface, mEncoderSurface, mEGLContext);
+            EGL14.eglMakeCurrent(mEGLDisplay, mEncoderSurface, mEncoderSurface, mEGLContext);
 
-                drawPlayground();
+            drawPlayground();
 
-                EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEncoderSurface, frameTimeNanos);
+            EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEncoderSurface, frameTimeNanos);
 
-                EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
+            EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
 
-                EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
-            }
+            EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
         }
     }
 }

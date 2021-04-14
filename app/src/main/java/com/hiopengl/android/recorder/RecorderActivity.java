@@ -174,6 +174,7 @@ public abstract class RecorderActivity extends ActionBarActivity
         mSurfaceHolder = holder;
         mWidth = width;
         mHeight = height;
+        onSizeChanged(width, height);
     }
 
     @Override
@@ -189,6 +190,10 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     abstract void drawFrame(long frameTimeNanos);
+
+    protected void onSizeChanged(int width, int height) {
+
+    }
 
     protected void initEGL() {
         mEGLDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
