@@ -7,4 +7,9 @@ public class FBOBlitx2Activity extends RecorderActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
+    @Override
+    void drawFrame(long frameTimeNanos) {
+
+    }
 }

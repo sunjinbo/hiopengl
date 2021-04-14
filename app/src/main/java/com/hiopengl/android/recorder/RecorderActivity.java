@@ -1,42 +1,60 @@
 package com.hiopengl.android.recorder;
 
+import android.opengl.EGL14;
 import android.opengl.EGLExt;
 import android.opengl.GLES30;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
+import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
+import android.opengl.EGLConfig;
+import android.opengl.EGLContext;
+import android.opengl.EGLDisplay;
+import android.opengl.EGLSurface;
+
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.opengl.EGL14.EGL_BLUE_SIZE;
-import static android.opengl.EGL14.EGL_DEPTH_SIZE;
-import static android.opengl.EGL14.EGL_GREEN_SIZE;
-import static android.opengl.EGL14.EGL_NONE;
-import static android.opengl.EGL14.EGL_RED_SIZE;
-import static android.opengl.EGL14.EGL_RENDERABLE_TYPE;
-
-public class RecorderActivity extends ActionBarActivity
-        implements SurfaceHolder.Callback, Runnable {
+public abstract class RecorderActivity extends ActionBarActivity
+        implements SurfaceHolder.Callback, Runnable, Choreographer.FrameCallback {
 
     protected static final float BALL_RADIUS = 100f;
+    protected static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+    /**
+     * Constructor flag: surface must be recordable.  This discourages EGL from using a
+     * pixel format that cannot be converted efficiently to something usable by the video
+     * encoder.
+     */
+    public static final int FLAG_RECORDABLE = 0x01;
+
+    /**
+     * Constructor flag: ask for GLES3, fall back to GLES2 if not available.  Without this
+     * flag, GLES2 is used.
+     */
+    public static final int FLAG_TRY_GLES3 = 0x02;
+
+    // Android-specific extension.
+    private static final int EGL_RECORDABLE_ANDROID = 0x3142;
 
     protected SurfaceView mSurfaceView;
     protected SurfaceHolder mSurfaceHolder;
@@ -57,6 +75,18 @@ public class RecorderActivity extends ActionBarActivity
 
     protected long mLastTickTimeMillis = 0;
 
+    protected VideoEncoderCore mEncoderCore;
+    protected TextureMovieEncoder2 mVideoEncoder;
+
+    protected EGLSurface mEncoderSurface;
+    protected EGLSurface mScreenSurface;
+
+    protected RenderHandler mRenderHandler;
+
+    protected EGLDisplay mEGLDisplay;
+    protected EGLContext mEGLContext;
+    protected EGLConfig mEGLConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +99,11 @@ public class RecorderActivity extends ActionBarActivity
                 if (mIsRecording) {
                     mIsRecording = false;
                     mRecordButton.setText("START RECORD");
+                    mRenderHandler.stopRecord();
                 } else {
                     mIsRecording = true;
                     mRecordButton.setText("STOP RECORD");
+                    mRenderHandler.startRecord();
                 }
             }
         });
@@ -89,6 +121,20 @@ public class RecorderActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mRenderHandler != null) {
+            Choreographer.getInstance().postFrameCallback(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Choreographer.getInstance().removeFrameCallback(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mIsRunning = false;
@@ -96,63 +142,31 @@ public class RecorderActivity extends ActionBarActivity
 
     @Override
     public void run() {
-        //创建一个EGL实例
-        EGL10 egl = (EGL10) EGLContext.getEGL();
-        //
-        EGLDisplay dpy = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-        //初始化EGLDisplay
-        int[] version = new int[2];
-        egl.eglInitialize(dpy, version);
+        Looper.prepare();
 
-        int[] configSpec = {
-                EGL_RENDERABLE_TYPE, EGLExt.EGL_OPENGL_ES3_BIT_KHR,
-                EGL_RED_SIZE, 5,
-                EGL_GREEN_SIZE, 6,
-                EGL_BLUE_SIZE, 5,
-                EGL_DEPTH_SIZE, 1,
-                EGL_NONE
-        };
+        initEGL();
 
-        EGLConfig[] configs = new EGLConfig[1];
-        int[] num_config = new int[1];
-        //选择config创建opengl运行环境
-        egl.eglChooseConfig(dpy, configSpec, configs, 1, num_config);
-        EGLConfig config = configs[0];
-        int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 3,
-                EGL10.EGL_NONE };
-        EGLContext context = egl.eglCreateContext(dpy, config,
-                EGL10.EGL_NO_CONTEXT, attrib_list);
-        //创建新的surface
-        EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
-        //将opengles环境设置为当前
-        egl.eglMakeCurrent(dpy, surface, surface, context);
-        //获取当前opengles画布
-        GL10 gl = (GL10)context.getGL();
+        int[] surfaceAttribs = { EGL14.EGL_NONE };
+        mScreenSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, mEGLConfig, mSurfaceHolder,
+                surfaceAttribs, 0);
+        EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
 
-        initGL(gl);
+        initProgram();
 
-        mIsRunning = true;
-        while (mIsRunning) {
-            synchronized (mSurfaceHolder) {
-                tick();
+        mRenderHandler = new RenderHandler();
+        Choreographer.getInstance().postFrameCallback(this);
+        Looper.loop();
 
-                drawFrame(gl);
-
-                //显示绘制结果到屏幕上
-                egl.eglSwapBuffers(dpy, surface);
-            }
-        }
-
-        egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-        egl.eglDestroySurface(dpy, surface);
-        egl.eglDestroyContext(dpy, context);
-        egl.eglTerminate(dpy);
+        EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
+        EGL14.eglDestroySurface(mEGLDisplay, mScreenSurface);
+        EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
+        EGL14.eglTerminate(mEGLDisplay);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
+        new Thread(this).start();
     }
 
     @Override
@@ -160,7 +174,6 @@ public class RecorderActivity extends ActionBarActivity
         mSurfaceHolder = holder;
         mWidth = width;
         mHeight = height;
-        new Thread(this).start();
     }
 
     @Override
@@ -168,7 +181,38 @@ public class RecorderActivity extends ActionBarActivity
         mIsRunning = false;
     }
 
-    private void initGL(GL10 gl) {
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        // start the draw events
+        Choreographer.getInstance().postFrameCallback(this);
+        mRenderHandler.doFrame(frameTimeNanos);
+    }
+
+    abstract void drawFrame(long frameTimeNanos);
+
+    protected void initEGL() {
+        mEGLDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
+        int[] version = new int[2];
+        if (!EGL14.eglInitialize(mEGLDisplay, version, 0, version, 1)) {
+            mEGLDisplay = null;
+            throw new RuntimeException("unable to initialize EGL14");
+        }
+
+        EGLConfig config = getConfig(FLAG_RECORDABLE | FLAG_TRY_GLES3, 3);
+        int[] attrib3_list = {
+                EGL14.EGL_CONTEXT_CLIENT_VERSION, 3,
+                EGL14.EGL_NONE
+        };
+        EGLContext context = EGL14.eglCreateContext(mEGLDisplay, config, EGL14.EGL_NO_CONTEXT,
+                attrib3_list, 0);
+        if (EGL14.eglGetError() == EGL14.EGL_SUCCESS) {
+            //Log.d(TAG, "Got GLES 3 config");
+            mEGLConfig = config;
+            mEGLContext = context;
+        }
+    }
+
+    protected void initProgram() {
         GLES30.glViewport(0, 0, mWidth, mHeight);
         mPlayground = new Playground(mWidth, mHeight);
 
@@ -187,7 +231,40 @@ public class RecorderActivity extends ActionBarActivity
         mTextureId = GlUtil.loadTexture(this, R.drawable.ball);
     }
 
-    private void drawFrame(GL10 gl) {
+    protected EGLConfig getConfig(int flags, int version) {
+        int renderableType = EGL14.EGL_OPENGL_ES2_BIT;
+        if (version >= 3) {
+            renderableType |= EGLExt.EGL_OPENGL_ES3_BIT_KHR;
+        }
+
+        // The actual surface is generally RGBA or RGBX, so situationally omitting alpha
+        // doesn't really help.  It can also lead to a huge performance hit on glReadPixels()
+        // when reading into a GL_RGBA buffer.
+        int[] attribList = {
+                EGL14.EGL_RED_SIZE, 8,
+                EGL14.EGL_GREEN_SIZE, 8,
+                EGL14.EGL_BLUE_SIZE, 8,
+                EGL14.EGL_ALPHA_SIZE, 8,
+                //EGL14.EGL_DEPTH_SIZE, 16,
+                //EGL14.EGL_STENCIL_SIZE, 8,
+                EGL14.EGL_RENDERABLE_TYPE, renderableType,
+                EGL14.EGL_NONE, 0,      // placeholder for recordable [@-3]
+                EGL14.EGL_NONE
+        };
+        if ((flags & FLAG_RECORDABLE) != 0) {
+            attribList[attribList.length - 3] = EGL_RECORDABLE_ANDROID;
+            attribList[attribList.length - 2] = 1;
+        }
+        EGLConfig[] configs = new EGLConfig[1];
+        int[] numConfigs = new int[1];
+        if (!EGL14.eglChooseConfig(mEGLDisplay, attribList, 0, configs, 0, configs.length,
+                numConfigs, 0)) {
+            return null;
+        }
+        return configs[0];
+    }
+
+    protected void drawPlayground() {
         GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                 | GL10.GL_DEPTH_BUFFER_BIT);
@@ -209,7 +286,7 @@ public class RecorderActivity extends ActionBarActivity
         GLES30.glDisableVertexAttribArray(0);
     }
 
-    private void tick() {
+    protected void tick() {
         mLastTickTimeMillis = SystemClock.elapsedRealtime();
 
         mPlayground.ball.step();
@@ -218,6 +295,74 @@ public class RecorderActivity extends ActionBarActivity
 
         mVertexBuffer.put(mVertexArray);
         mVertexBuffer.position(0);
+    }
+
+    protected void startRecording() {
+        File outputFile = new File(getExternalCacheDir(), "camera-test.mp4");
+        try {
+            mEncoderCore = new VideoEncoderCore(1280, 720, 4000000, outputFile);
+            mVideoEncoder = new TextureMovieEncoder2(mEncoderCore);
+            int[] surfaceAttribs = { EGL14.EGL_NONE };
+            mEncoderSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, mEGLConfig, mEncoderCore.getInputSurface(),
+                    surfaceAttribs, 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
+    protected void stopRecording() {
+        if (mVideoEncoder != null) {
+            if (mVideoEncoder.isRecording()) {
+                mVideoEncoder.stopRecording();
+            }
+            mVideoEncoder = null;
+        }
+
+        if (mEncoderSurface != null) {
+            EGL14.eglDestroySurface(mEGLDisplay, mEncoderSurface);
+            mEncoderSurface = null;
+        }
+    }
+
+    public class RenderHandler extends Handler {
+
+        private final static int MSG_START_RECORD = 1;
+        private final static int MSG_STOP_RECORD = 2;
+        private final static int MSG_DO_FRAME = 3;
+
+        public void startRecord() {
+            sendEmptyMessage(MSG_START_RECORD);
+        }
+
+        public void stopRecord() {
+            sendEmptyMessage(MSG_STOP_RECORD);
+        }
+
+        public void doFrame(long frameTimeNanos) {
+            sendMessage(obtainMessage(RenderHandler.MSG_DO_FRAME,
+                    (int) (frameTimeNanos >> 32), (int) frameTimeNanos));
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what) {
+                case MSG_START_RECORD:
+                    startRecording();
+                    break;
+                case MSG_STOP_RECORD:
+                    stopRecording();
+                    break;
+                case MSG_DO_FRAME:
+                    long timestamp = (((long) msg.arg1) << 32) |
+                            (((long) msg.arg2) & 0xffffffffL);
+                    drawFrame(timestamp);
+                    break;
+            }
+        }
     }
 
     public class Ball {
