@@ -151,6 +151,8 @@ public abstract class RecorderActivity extends ActionBarActivity
                 surfaceAttribs, 0);
         EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
 
+        onSizeChanged(mWidth, mHeight);
+
         initProgram();
 
         mRenderHandler = new RenderHandler();
@@ -174,7 +176,6 @@ public abstract class RecorderActivity extends ActionBarActivity
         mSurfaceHolder = holder;
         mWidth = width;
         mHeight = height;
-        onSizeChanged(width, height);
     }
 
     @Override
@@ -273,6 +274,8 @@ public abstract class RecorderActivity extends ActionBarActivity
         GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                 | GL10.GL_DEPTH_BUFFER_BIT);
+
+        GLES30.glUseProgram(mProgram);
 
         // 设置当前活动的纹理单元为纹理单元0
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
