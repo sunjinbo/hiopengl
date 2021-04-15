@@ -18,8 +18,10 @@ import androidx.annotation.NonNull;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
+import com.hiopengl.utils.CodecUtil;
 import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
+import com.hiopengl.utils.TimeUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,7 @@ import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
 import android.opengl.EGLSurface;
+import android.widget.Toast;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -86,6 +89,11 @@ public abstract class RecorderActivity extends ActionBarActivity
     protected EGLDisplay mEGLDisplay;
     protected EGLContext mEGLContext;
     protected EGLConfig mEGLConfig;
+
+    private Object mReadyFence = new Object();      // guards ready/running
+    private boolean mReady;
+
+    private File mOutputFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +150,11 @@ public abstract class RecorderActivity extends ActionBarActivity
 
     @Override
     public void run() {
+        synchronized (mReadyFence) {
+            mReady = true;
+            mReadyFence.notify();
+        }
+
         Looper.prepare();
 
         initEGL();
@@ -176,6 +189,13 @@ public abstract class RecorderActivity extends ActionBarActivity
         mSurfaceHolder = holder;
         mWidth = width;
         mHeight = height;
+        while (!mReady) {
+            try {
+                mReadyFence.wait();
+            } catch (InterruptedException ie) {
+                // ignore
+            }
+        }
     }
 
     @Override
@@ -271,6 +291,8 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     protected void drawPlayground() {
+        GLES30.glViewport(0, 0, mWidth, mHeight);
+
         GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                 | GL10.GL_DEPTH_BUFFER_BIT);
@@ -306,9 +328,11 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     protected void startRecording() {
-        File outputFile = new File(getExternalCacheDir(), "camera-test.mp4");
+        mOutputFile = new File(getExternalCacheDir(), TimeUtil.getCurrentTime() + ".mp4");
         try {
-            mEncoderCore = new VideoEncoderCore(1280, 720, 4000000, outputFile);
+            int width = CodecUtil.getSize(mWidth);
+            int height = CodecUtil.getSize(mHeight);
+            mEncoderCore = new VideoEncoderCore(width, height, 4000000, mOutputFile);
             mVideoEncoder = new TextureMovieEncoder2(mEncoderCore);
             int[] surfaceAttribs = { EGL14.EGL_NONE };
             mEncoderSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, mEGLConfig, mEncoderCore.getInputSurface(),
@@ -363,6 +387,12 @@ public abstract class RecorderActivity extends ActionBarActivity
                     break;
                 case MSG_STOP_RECORD:
                     stopRecording();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RecorderActivity.this, mOutputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case MSG_DO_FRAME:
                     long timestamp = (((long) msg.arg1) << 32) |

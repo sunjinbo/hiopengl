@@ -29,7 +29,7 @@ public class GlBlitFramebufferActivity extends RecorderActivity {
 
             GLES30.glBlitFramebuffer(
                     0, 0, getWidth(), getHeight(),
-                    0, 0, 1280, 720,
+                    0, 0, getWidth(), getHeight(),
                     GLES30.GL_COLOR_BUFFER_BIT, GLES30.GL_NEAREST);
 
             EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEncoderSurface, frameTimeNanos);
