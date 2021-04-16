@@ -124,6 +124,4 @@ public class FBOBlitx2Activity extends RecorderActivity {
 
         GlUtil.checkGlError("prepareFramebuffer done");
     }
-
-
 }

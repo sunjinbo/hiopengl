@@ -40,7 +40,6 @@
         <activity android:name=".android.graphics.CanvasTextureViewActivity" />
         <activity android:name=".android.graphics.CanvasViewActivity" />
         <activity android:name=".advanced.ScissorTestActivity" />
-        <activity android:name=".advanced.FBOActivity" />
         <activity android:name=".advanced.BlendingActivity" />
         <activity android:name=".basic.MultipleShaderActivity" />
         <activity android:name=".advanced.StencilTestActivity" />
