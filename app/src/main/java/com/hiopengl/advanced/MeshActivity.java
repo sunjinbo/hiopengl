@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.hiopengl.R;
+import com.hiopengl.advanced.model.Cube;
 import com.hiopengl.advanced.model.Mesh;
 import com.hiopengl.advanced.model.Object3D;
 import com.hiopengl.advanced.model.Plane;
@@ -100,7 +101,7 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
     }
 
     public void onCubeClick(View view) {
-
+        mType = Mesh.Cube;
     }
 
     public void onCylinderClick(View view) {
@@ -123,6 +124,9 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
                     break;
                 case Sphere:
                     mObject3D = new Sphere(this, 1f, 10, 10);
+                    break;
+                case Cube:
+                    mObject3D = new Cube(this, 2);
                     break;
                 default:
                     break;
