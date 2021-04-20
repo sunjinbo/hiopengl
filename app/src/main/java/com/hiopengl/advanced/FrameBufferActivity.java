@@ -96,7 +96,7 @@ public class FrameBufferActivity extends ActionBarActivity implements GLSurfaceV
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES30.glViewport(0, 0, width, height);
         mTextureDrawer = new TextureDrawer(this,
-                "vertext_grey_texture.glsl", "fragment_grey_texture.glsl",
+                "vertex_grey_texture.glsl", "fragment_grey_texture.glsl",
                 width, height);
         prepareFramebuffer(width, height);
     }

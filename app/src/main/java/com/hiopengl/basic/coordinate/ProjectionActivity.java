@@ -139,7 +139,7 @@ public class ProjectionActivity extends ActionBarActivity {
 
         public ProjectionRenderer(Context context) {
             mContext = context;
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(triangleCoords.length*4);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(triangleCoords.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
             vertexBuffer = byteBuffer.asFloatBuffer();
             //把这门语法() 推送给GPU
