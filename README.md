@@ -1,7 +1,7 @@
 # hiopengl
 HiOpenGL is roadmap project for learning OpenGL ES on android platform.
 
- Android Graphic Rendering
+Android Graphic Rendering
    View and Renderer
      GLSurfaceView + OpenGL ES
      TextureView + OpenGL ES
@@ -23,7 +23,7 @@ HiOpenGL is roadmap project for learning OpenGL ES on android platform.
      FBO blit x2
    Quickstart for Android ARCore (Not Implementation yet)
 
- Getting Started with OpenGL ES
+Getting Started with OpenGL ES
    Coordinate Transformations
      Modeling and Viewing
      Projection
@@ -39,7 +39,7 @@ HiOpenGL is roadmap project for learning OpenGL ES on android platform.
      Mipmap Texture
    RBO(Render Buffer Object) (Not Implementation yet)
 
- Advanced Technology with OpenGL ES
+Advanced Technology with OpenGL ES
    Face culling
    Mesh
    Frame Buffer
@@ -57,12 +57,12 @@ HiOpenGL is roadmap project for learning OpenGL ES on android platform.
    Model Loading (Not Implementation yet)
    Assimp (Not Implementation yet)
 
- OpenGL ES in Practice
-   Polyhedron
-   Particle
-   Text Rendering (Not Implementation yet)
-   Skybox (Not Implementation yet)
-   Collision Detection (Not Implementation yet)
-   Touch & Drag (Not Implementation yet)
+OpenGL ES in Practice
+ Polyhedron
+ Particle
+ Text Rendering (Not Implementation yet)
+ Skybox (Not Implementation yet)
+ Collision Detection (Not Implementation yet)
+ Touch & Drag (Not Implementation yet)
 
 
