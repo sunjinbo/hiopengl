@@ -1,7 +1,7 @@
 # hiopengl
 `HiOpenGL` is roadmap project for learning OpenGL ES on android platform.
 
-##### Android Graphic Rendering
+##### `Android Graphic Rendering`
 - [x] View and Renderer
   - [x] GLSurfaceView + OpenGL ES
   - [x] TextureView + OpenGL ES
@@ -23,7 +23,7 @@
   - [x] FBO blit x2
 - [ ] Quickstart for Android ARCore
 
-##### Getting Started with OpenGL ES
+##### `Getting Started with OpenGL ES`
 - [x] Coordinate Transformations
   - [x] Modeling and Viewing
   - [x] Projection
@@ -39,7 +39,7 @@
   - [x] Mipmap Texture
 - [ ] RBO(Render Buffer Object)
 
-##### Advanced Technology with OpenGL ES
+##### `Advanced Technology with OpenGL ES`
 - [x] Face culling
 - [x] Mesh
 - [x] Frame Buffer
@@ -57,7 +57,7 @@
 - [ ] ~~Model Loading~~
 - [ ] Assimp
 
-##### OpenGL ES in Practice
+##### `OpenGL ES in Practice`
 - [x] Polyhedron
 - [x] Particle
 - [ ] Text Rendering
