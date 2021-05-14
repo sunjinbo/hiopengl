@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -23,7 +24,7 @@ public abstract class Object3D {
     //顶点数据缓冲区
     protected FloatBuffer mVertexBuffer;
 
-    protected IntBuffer mIndicesBuffer;
+    protected ShortBuffer mIndicesBuffer;
 
     protected int mVertexSize = 0;
 
@@ -42,6 +43,7 @@ public abstract class Object3D {
     public abstract Mesh getType();
 
     public void draw(GL10 gl, float[] mvpMatrix) {
+
         GLES30.glUseProgram(mProgram);
 
         int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
@@ -78,7 +80,7 @@ public abstract class Object3D {
 
     }
 
-    protected void setData(float[] vertices, int[] indices) {
+    protected void setData(float[] vertices, short[] indices) {
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
         mVertexBuffer = byteBuffer.asFloatBuffer();
@@ -86,9 +88,9 @@ public abstract class Object3D {
         mVertexBuffer.position(0);
         mNumVertices = vertices.length / 3;
 
-        byteBuffer = ByteBuffer.allocateDirect(indices.length * 4);
+        byteBuffer = ByteBuffer.allocateDirect(indices.length * 2);
         byteBuffer.order(ByteOrder.nativeOrder());
-        mIndicesBuffer = byteBuffer.asIntBuffer();
+        mIndicesBuffer = byteBuffer.asShortBuffer();
         mIndicesBuffer.put(indices);
         mIndicesBuffer.position(0);
         mNumIndices = indices.length;

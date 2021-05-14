@@ -5,6 +5,5 @@ uniform mat4 vMatrix;
 
 void main() {
      gl_Position  = vMatrix * vPosition;
-     //gl_Position = vPosition;
-     gl_PointSize = 1.0;
+     gl_PointSize = 10.0;
 }

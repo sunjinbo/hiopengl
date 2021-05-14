@@ -31,7 +31,7 @@ public class Sphere extends Object3D {
         int vertIndex = 0;
 
         int numIndices = 2 * mSegmentsW * (mSegmentsH - 1) * 3;
-        int[] indices = new int[numIndices];
+        short[] indices = new short[numIndices];
         int index = 0;
 
         for (j = 0; j <= mSegmentsH; ++j) {
@@ -51,10 +51,10 @@ public class Sphere extends Object3D {
                 if(indices.length==0) continue;
 
                 if (i > 0 && j > 0) {
-                    int a = (mSegmentsW + 1) * j + i;
-                    int b = (mSegmentsW + 1) * j + i - 1;
-                    int c = (mSegmentsW + 1) * (j - 1) + i - 1;
-                    int d = (mSegmentsW + 1) * (j - 1) + i;
+                    short a = (short)((mSegmentsW + 1) * j + i);
+                    short b = (short)(((mSegmentsW + 1) * j + i - 1));
+                    short c = (short)(((mSegmentsW + 1) * (j - 1) + i - 1));
+                    short d = (short)(((mSegmentsW + 1) * (j - 1) + i));
 
                     if (j == mSegmentsH) {
                         indices[index++] = a;

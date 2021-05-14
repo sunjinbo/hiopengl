@@ -12,6 +12,7 @@ import com.hiopengl.advanced.model.Cylinder;
 import com.hiopengl.advanced.model.Mesh;
 import com.hiopengl.advanced.model.Object3D;
 import com.hiopengl.advanced.model.Plane;
+import com.hiopengl.advanced.model.Primitive;
 import com.hiopengl.advanced.model.Sphere;
 import com.hiopengl.base.ActionBarActivity;
 
@@ -20,12 +21,13 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Renderer {
 
-    private Mesh mType = Mesh.Plane;
+    private Mesh mType = Mesh.Primitive;
     private GLSurfaceView mGLSurfaceView;
     private Object3D mObject3D;
     private int mWidth;
     private int mHeight;
 
+    private final float[] mModelMatrix = new float[16];
     //相机矩阵
     private final float[] mViewMatrix = new float[16];
     //ViewModel矩阵
@@ -73,7 +75,13 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
                 0f,0f,0f,// 目标物的中心坐标
                 0f,1.0f,0.0f);// 相机方向
 
+        Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.setIdentityM(mViewModelMatrix, 0);
+
+        final float ratio = (float) mWidth / mHeight;
+        Matrix.frustumM(mProjectMatrix,0, -ratio, ratio,-1f,1f, 1f,333f);
+        Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
     }
 
     @Override
@@ -84,11 +92,7 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
 
         Object3D obj3d = getObject();
         if (obj3d != null) {
-            final float ratio = (float) mWidth / mHeight;
-            Matrix.frustumM(mProjectMatrix,0, -ratio, ratio,-1f,1f, 1f,333f);
-            Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mObject3D.getModelMatrix(), 0);
-            Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
-
+            Matrix.rotateM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
             obj3d.draw(gl, mMVPMatrix);
         }
     }
@@ -131,6 +135,9 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
                     break;
                 case Cylinder:
                     mObject3D = new Cylinder(this, 1, 1, 10, 10);
+                    break;
+                case Primitive:
+                    mObject3D = new Primitive(this);
                     break;
                 default:
                     break;

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import com.hiopengl.examples.ExampleFactory;
 import com.hiopengl.examples.ExampleInfo;
 import com.hiopengl.examples.ExampleItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private ListView mListView;
     private ExampleItemAdapter mExampleAdapter;

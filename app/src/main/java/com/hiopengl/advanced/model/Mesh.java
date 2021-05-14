@@ -6,5 +6,6 @@ public enum Mesh {
     Cube,
     Cylinder,
     Cone,
-    Pyramid
+    Pyramid,
+    Primitive
 }

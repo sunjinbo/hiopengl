@@ -28,7 +28,7 @@ public class Plane extends Object3D {
         float[] vertices = new float[mVertexSize * 3];
         int vertexCount = 0;
 
-        int[] indices = new int[mSegmentsW * mSegmentsH * 6];
+        short[] indices = new short[mSegmentsW * mSegmentsH * 6];
 
         for (i = 0; i <= mSegmentsW; i++) {
             for (j = 0; j <= mSegmentsH; j++) {
@@ -51,13 +51,13 @@ public class Plane extends Object3D {
                 int ur = (col + 1) * colspan + row;
                 int lr = ur + 1;
 
-                indices[indexCount++] = ur;
-                indices[indexCount++] = lr;
-                indices[indexCount++] = ul;
+                indices[indexCount++] = (short)ur;
+                indices[indexCount++] = (short)lr;
+                indices[indexCount++] = (short)ul;
 
-                indices[indexCount++] = lr;
-                indices[indexCount++] = ll;
-                indices[indexCount++] = ul;
+                indices[indexCount++] = (short)lr;
+                indices[indexCount++] = (short)ll;
+                indices[indexCount++] = (short)ul;
             }
         }
 
