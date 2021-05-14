@@ -121,7 +121,7 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
         if (mObject3D == null || mObject3D.getType() != mType) {
             switch (mType) {
                 case Plane:
-                    mObject3D = new Plane(this,2, 2, 10, 10);
+                    mObject3D = new Plane(this,2, 2, 4, 4);
                     break;
                 case Sphere:
                     mObject3D = new Sphere(this, 1f, 10, 10);

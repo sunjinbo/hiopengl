@@ -9,6 +9,7 @@ import android.opengl.EGLExt;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
+import android.opengl.GLES32;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.Surface;

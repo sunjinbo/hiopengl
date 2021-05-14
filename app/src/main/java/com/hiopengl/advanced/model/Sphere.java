@@ -30,6 +30,10 @@ public class Sphere extends Object3D {
         int i, j;
         int vertIndex = 0;
 
+        int numIndices = 2 * mSegmentsW * (mSegmentsH - 1) * 3;
+        int[] indices = new int[numIndices];
+        int index = 0;
+
         for (j = 0; j <= mSegmentsH; ++j) {
             float horAngle = (float) (Math.PI * j / mSegmentsH);
             float z = mRadius * (float) Math.cos(horAngle);
@@ -43,11 +47,37 @@ public class Sphere extends Object3D {
                 vertices[vertIndex++] = x;
                 vertices[vertIndex++] = z;
                 vertices[vertIndex++] = y;
+
+                if(indices.length==0) continue;
+
+                if (i > 0 && j > 0) {
+                    int a = (mSegmentsW + 1) * j + i;
+                    int b = (mSegmentsW + 1) * j + i - 1;
+                    int c = (mSegmentsW + 1) * (j - 1) + i - 1;
+                    int d = (mSegmentsW + 1) * (j - 1) + i;
+
+                    if (j == mSegmentsH) {
+                        indices[index++] = a;
+                        indices[index++] = c;
+                        indices[index++] = d;
+                    } else if (j == 1) {
+                        indices[index++] = a;
+                        indices[index++] = b;
+                        indices[index++] = c;
+                    } else {
+                        indices[index++] = a;
+                        indices[index++] = b;
+                        indices[index++] = c;
+                        indices[index++] = a;
+                        indices[index++] = c;
+                        indices[index++] = d;
+                    }
+                }
             }
         }
 
         mVertexSize = numVertices;
 
-        setData(vertices);
+        setData(vertices, indices);
     }
 }

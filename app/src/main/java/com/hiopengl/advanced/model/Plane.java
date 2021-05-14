@@ -28,6 +28,8 @@ public class Plane extends Object3D {
         float[] vertices = new float[mVertexSize * 3];
         int vertexCount = 0;
 
+        int[] indices = new int[mSegmentsW * mSegmentsH * 6];
+
         for (i = 0; i <= mSegmentsW; i++) {
             for (j = 0; j <= mSegmentsH; j++) {
                 float v1 = ((float) i / (float) mSegmentsW - 0.5f) * mWidth;
@@ -40,6 +42,25 @@ public class Plane extends Object3D {
             }
         }
 
-        setData(vertices);
+        int colspan = mSegmentsH + 1;
+        int indexCount = 0;
+        for (int col = 0; col < mSegmentsW; col++) {
+            for (int row = 0; row < mSegmentsH; row++) {
+                int ul = col * colspan + row;
+                int ll = ul + 1;
+                int ur = (col + 1) * colspan + row;
+                int lr = ur + 1;
+
+                indices[indexCount++] = ur;
+                indices[indexCount++] = lr;
+                indices[indexCount++] = ul;
+
+                indices[indexCount++] = lr;
+                indices[indexCount++] = ll;
+                indices[indexCount++] = ul;
+            }
+        }
+
+        setData(vertices, indices);
     }
 }

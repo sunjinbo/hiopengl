@@ -12,6 +12,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".advanced.GeometryShaderActivity"></activity>
 
         <meta-data
             android:name="com.android.graphics.developerdriver.enable"

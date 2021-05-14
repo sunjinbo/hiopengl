@@ -80,6 +80,7 @@ public class ExampleFactory {
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context and Texture", "com.hiopengl.advanced.SharedContextActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Model Loading", "com.hiopengl.advanced.ModelLoadingActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", "com.hiopengl.advanced.AssimpActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Geometry Shader", "com.hiopengl.advanced.GeometryShaderActivity"));
 
         all.addItem(advancedTechnologyWithOpenGLES);
 
