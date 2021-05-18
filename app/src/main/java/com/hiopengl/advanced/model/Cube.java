@@ -61,7 +61,6 @@ public class Cube extends Object3D {
                 -0.5f, 0.5f, 0.5f,
                 -0.5f, 0.5f, -0.5f
         };
-        mNumVertices = 24;
 
         float[] bc = new float[vertices.length];
         for (int i = 0; i < bc.length; ++i) {

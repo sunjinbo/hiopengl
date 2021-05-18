@@ -12,7 +12,9 @@ import com.hiopengl.advanced.model.Cylinder;
 import com.hiopengl.advanced.model.Mesh;
 import com.hiopengl.advanced.model.Object3D;
 import com.hiopengl.advanced.model.Plane;
+import com.hiopengl.advanced.model.Pyramid;
 import com.hiopengl.advanced.model.Sphere;
+import com.hiopengl.advanced.model.Torus;
 import com.hiopengl.base.ActionBarActivity;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -112,12 +114,12 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
         mType = Mesh.Cylinder;
     }
 
-    public void onConeClick(View view) {
-
+    public void onTorusClick(View view) {
+        mType = Mesh.Torus;
     }
 
     public void onPyramidClick(View view) {
-
+        mType = Mesh.Pyramid;
     }
 
     private Object3D getObject() {
@@ -134,6 +136,12 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
                     break;
                 case Cylinder:
                     mObject3D = new Cylinder(this, 1, 1, 10, 10);
+                    break;
+                case Pyramid:
+                    mObject3D = new Pyramid(this);
+                    break;
+                case Torus:
+                    mObject3D = new Torus(this, 0.8f, 0.4f, 20, 20);
                     break;
                 default:
                     break;

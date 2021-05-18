@@ -5,6 +5,6 @@ public enum Mesh {
     Sphere,
     Cube,
     Cylinder,
-    Cone,
+    Torus,
     Pyramid
 }
