@@ -25,9 +25,14 @@ public class Cylinder extends Object3D {
 
     private void initVertex() {
         int numVertices = (mSegmentsC + 1) * (mSegmentsL + 1);
+        int numIndices = 2 * mSegmentsC * mSegmentsL * 3;
+
         float[] vertices = new float[numVertices * 3];
+        short[] indices = new short[numIndices];
+
         int i, j;
         int vertIndex = 0, index = 0;
+        final float normLen = 1.0f / mRadius;
 
         for (j = 0; j <= mSegmentsL; ++j) {
             float z = mLength * ((float)j/(float)mSegmentsL) - mLength / 2.0f;
@@ -40,9 +45,21 @@ public class Cylinder extends Object3D {
                 vertices[vertIndex++] = x;
                 vertices[vertIndex++] = y;
                 vertices[vertIndex++] = z;
+                if (i > 0 && j > 0) {
+                    int a = (mSegmentsC + 1) * j + i;
+                    int b = (mSegmentsC + 1) * j + i - 1;
+                    int c = (mSegmentsC + 1) * (j - 1) + i - 1;
+                    int d = (mSegmentsC + 1) * (j - 1) + i;
+                    indices[index++] = (short)a;
+                    indices[index++] = (short)b;
+                    indices[index++] = (short)c;
+                    indices[index++] = (short)a;
+                    indices[index++] = (short)c;
+                    indices[index++] = (short)d;
+                }
             }
         }
-        mNumVertices = numVertices;
-        setData(vertices);
+
+        setData(vertices, indices);
     }
 }

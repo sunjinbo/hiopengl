@@ -13,6 +13,6 @@ float edgeFactor(){
 }
 
 void main() {
-    fragColor.rgb = mix(vec3(0.0), vec3(1.0), edgeFactor());
+    fragColor.rgb = mix(vec3(0.0, 0.0, 0.0), vec3(1.0, 1.0, 1.0), edgeFactor());
     fragColor.a = 1.0;
 }

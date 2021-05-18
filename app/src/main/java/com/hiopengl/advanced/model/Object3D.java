@@ -38,6 +38,9 @@ public abstract class Object3D {
     public abstract Mesh getType();
 
     public void draw(GL10 gl, float[] mvpMatrix) {
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+        GLES30.glDepthFunc(GLES30.GL_LESS);
+
         GLES30.glUseProgram(mProgram);
 
         int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
@@ -74,12 +77,26 @@ public abstract class Object3D {
         GLES30.glUseProgram(mProgram);
     }
 
-    protected void setData(float[] vertices) {
+    protected void setData(float[] vertices, short[] indices) {
+        float[] vt = new float[indices.length * 3];
+        float[] bc = new float[indices.length * 3];
 
-    }
+        for (int i = 0; i < indices.length; ++i) {
+            short ix = indices[i];
+            vt[i * 3 + 0] = vertices[ix * 3];
+            vt[i * 3 + 1] = vertices[ix * 3 + 1];
+            vt[i * 3 + 2] = vertices[ix * 3 + 2];
+        }
 
-    protected void setData(float[] vertices, short[] barycentrics) {
+        for (int i = 0; i < bc.length; ++i) {
+            if (i % 9 == 0 || i % 9 == 4 || i % 9 == 8) {
+                bc[i] = 1f;
+            } else {
+                bc[i] = 0f;
+            }
+        }
 
+        setData(vt, bc);
     }
 
     protected void setData(float[] vertices, float[] barycentrics) {

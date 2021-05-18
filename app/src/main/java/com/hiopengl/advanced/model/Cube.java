@@ -19,25 +19,59 @@ public class Cube extends Object3D {
     private void initVertex() {
         float halfSize = mSize * .5f;
         float[] vertices = {
-                halfSize, halfSize, halfSize, 			-halfSize, halfSize, halfSize,
-                -halfSize, -halfSize, halfSize,			halfSize, -halfSize, halfSize, // 0-1-2-3 front
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
 
-                halfSize, halfSize, -halfSize,			 halfSize, halfSize, halfSize,
-                halfSize, -halfSize, halfSize,			 halfSize, -halfSize, -halfSize, // 5-0-3-4 right
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
 
-                -halfSize, halfSize, -halfSize,			halfSize, halfSize, -halfSize,
-                halfSize, -halfSize, -halfSize, 		-halfSize, -halfSize, -halfSize, // 6-5-4-7 back
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
 
-                -halfSize, halfSize, halfSize, 			-halfSize, halfSize, -halfSize,
-                -halfSize, -halfSize, -halfSize,		-halfSize,-halfSize, halfSize, // 1-6-7-2 left
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
 
-                -halfSize, halfSize, halfSize,			 halfSize, halfSize, halfSize,
-                halfSize, halfSize, -halfSize,			-halfSize, halfSize, -halfSize,  // 1-0-5-6 top
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
 
-                halfSize, -halfSize, halfSize, 			-halfSize, -halfSize, halfSize,
-                -halfSize, -halfSize, -halfSize,		halfSize, -halfSize, -halfSize, // 3-2-7-4 bottom
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f
         };
         mNumVertices = 24;
-        setData(vertices);
+
+        float[] bc = new float[vertices.length];
+        for (int i = 0; i < bc.length; ++i) {
+            if (i % 9 == 0 || i % 9 == 4 || i % 9 == 8) {
+                bc[i] = 1f;
+            } else {
+                bc[i] = 0f;
+            }
+        }
+
+        setData(vertices, bc);
     }
 }

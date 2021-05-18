@@ -12,7 +12,6 @@ import com.hiopengl.advanced.model.Cylinder;
 import com.hiopengl.advanced.model.Mesh;
 import com.hiopengl.advanced.model.Object3D;
 import com.hiopengl.advanced.model.Plane;
-import com.hiopengl.advanced.model.Primitive;
 import com.hiopengl.advanced.model.Sphere;
 import com.hiopengl.base.ActionBarActivity;
 
@@ -21,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Renderer {
 
-    private Mesh mType = Mesh.Primitive;
+    private Mesh mType = Mesh.Plane;
     private GLSurfaceView mGLSurfaceView;
     private Object3D mObject3D;
     private int mWidth;
@@ -135,9 +134,6 @@ public class MeshActivity extends ActionBarActivity implements GLSurfaceView.Ren
                     break;
                 case Cylinder:
                     mObject3D = new Cylinder(this, 1, 1, 10, 10);
-                    break;
-                case Primitive:
-                    mObject3D = new Primitive(this);
                     break;
                 default:
                     break;
