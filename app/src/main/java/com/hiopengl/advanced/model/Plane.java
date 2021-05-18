@@ -24,8 +24,8 @@ public class Plane extends Object3D {
 
     private void initVertex() {
         int i, j;
-        mVertexSize = (mSegmentsW + 1) * (mSegmentsH + 1);
-        float[] vertices = new float[mVertexSize * 3];
+        mNumVertices = (mSegmentsW + 1) * (mSegmentsH + 1);
+        float[] vertices = new float[mNumVertices * 3];
         int vertexCount = 0;
 
         short[] indices = new short[mSegmentsW * mSegmentsH * 6];

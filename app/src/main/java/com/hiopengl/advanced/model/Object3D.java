@@ -9,7 +9,6 @@ import com.hiopengl.utils.ShaderUtil;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -18,20 +17,16 @@ public abstract class Object3D {
 
     protected int mProgram = -1;
 
-    //模型矩阵
+    // 模型矩阵
     protected final float[] mModelMatrix = new float[16];
 
-    //顶点数据缓冲区
-    protected FloatBuffer mVertexBuffer;
-
-    protected ShortBuffer mIndicesBuffer;
-
-    protected int mVertexSize = 0;
+    // 顶点数据缓冲区
+    protected FloatBuffer mVertexBuffer; // 坐标点
+    protected FloatBuffer mBaryBuffer; // 重心坐标的坐标
 
     protected int mNumVertices = 0;
-    protected int mNumIndices = 0;
 
-    //上下文
+    // 上下文
     protected Context mContext;
 
     protected Object3D(Context context) {
@@ -43,7 +38,6 @@ public abstract class Object3D {
     public abstract Mesh getType();
 
     public void draw(GL10 gl, float[] mvpMatrix) {
-
         GLES30.glUseProgram(mProgram);
 
         int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"vMatrix");
@@ -51,11 +45,15 @@ public abstract class Object3D {
 
         int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
         GLES30.glEnableVertexAttribArray(aPositionLocation);
-        //x y z 所以数据size 是3
-        GLES30.glVertexAttribPointer(aPositionLocation,3,GLES30.GL_FLOAT,false,0, mVertexBuffer);
+        GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mVertexBuffer);
 
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, mNumIndices, GLES30.GL_UNSIGNED_SHORT, mIndicesBuffer);
+        int baryLocation = GLES30.glGetAttribLocation(mProgram,"vBary");
+        GLES30.glEnableVertexAttribArray(baryLocation);
+        GLES30.glVertexAttribPointer(baryLocation,3, GLES30.GL_FLOAT,false,0, mBaryBuffer);
 
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, mNumVertices);
+
+        GLES30.glDisableVertexAttribArray(baryLocation);
         GLES30.glDisableVertexAttribArray(aPositionLocation);
     }
 
@@ -80,7 +78,11 @@ public abstract class Object3D {
 
     }
 
-    protected void setData(float[] vertices, short[] indices) {
+    protected void setData(float[] vertices, short[] barycentrics) {
+
+    }
+
+    protected void setData(float[] vertices, float[] barycentrics) {
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
         mVertexBuffer = byteBuffer.asFloatBuffer();
@@ -88,11 +90,10 @@ public abstract class Object3D {
         mVertexBuffer.position(0);
         mNumVertices = vertices.length / 3;
 
-        byteBuffer = ByteBuffer.allocateDirect(indices.length * 2);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        mIndicesBuffer = byteBuffer.asShortBuffer();
-        mIndicesBuffer.put(indices);
-        mIndicesBuffer.position(0);
-        mNumIndices = indices.length;
+        ByteBuffer byteBuffer2 = ByteBuffer.allocateDirect(barycentrics.length * 4);
+        byteBuffer2.order(ByteOrder.nativeOrder());
+        mBaryBuffer = byteBuffer2.asFloatBuffer();
+        mBaryBuffer.put(barycentrics);
+        mBaryBuffer.position(0);
     }
 }

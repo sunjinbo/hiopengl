@@ -42,7 +42,7 @@ public class Cylinder extends Object3D {
                 vertices[vertIndex++] = z;
             }
         }
-        mVertexSize = numVertices;
+        mNumVertices = numVertices;
         setData(vertices);
     }
 }

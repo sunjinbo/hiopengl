@@ -37,7 +37,7 @@ public class Cube extends Object3D {
                 halfSize, -halfSize, halfSize, 			-halfSize, -halfSize, halfSize,
                 -halfSize, -halfSize, -halfSize,		halfSize, -halfSize, -halfSize, // 3-2-7-4 bottom
         };
-        mVertexSize = 24;
+        mNumVertices = 24;
         setData(vertices);
     }
 }

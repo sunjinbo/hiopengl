@@ -14,7 +14,7 @@ public class Primitive extends Object3D {
     }
 
     private void initVertex() {
-        float[] vertices = new float[3 * 4]; // 两个三角形8
+        float[] vertices = new float[3 * 6]; // 两个三角形8
         vertices[0] = 0f; // A
         vertices[1] = 0f;
         vertices[2] = 0f;
@@ -31,15 +31,23 @@ public class Primitive extends Object3D {
         vertices[10] = 0f;
         vertices[11] = 0f;
 
-        short[] indices = new short[6];
-        indices[0] = 0;
-        indices[1] = 1;
-        indices[2] = 2;
+        vertices[12] = 0f; // A
+        vertices[13] = 0f;
+        vertices[14] = 0f;
 
-        indices[3] = 0;
-        indices[4] = 2;
-        indices[5] = 3;
+        vertices[15] = 0f; // C
+        vertices[16] = -1f;
+        vertices[17] = 0f;
+        
+        float[] barycentrics = new float[3 * 6];
+        for (int i = 0; i < barycentrics.length; ++i) {
+            if (i % 9 == 0 || i % 9 == 4 || i % 9 == 8) {
+                barycentrics[i] = 1f;
+            } else {
+                barycentrics[i] = 0f;
+            }
+        }
 
-        setData(vertices, indices);
+        setData(vertices, barycentrics);
     }
 }

@@ -76,8 +76,6 @@ public class Sphere extends Object3D {
             }
         }
 
-        mVertexSize = numVertices;
-
         setData(vertices, indices);
     }
 }
