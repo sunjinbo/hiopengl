@@ -36,7 +36,7 @@ public class OpenGLDrawer {
     public void draw(GL10 gl) {
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
+        gl.glRotatef(0.1f, 0f, 0f, 0f);
         gl.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         gl.glPointSize(18f);
         gl.glLoadIdentity();

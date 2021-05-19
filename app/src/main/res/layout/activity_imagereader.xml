@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".android.reader.ImageReaderActivity">
 
     <SurfaceView
         android:id="@+id/surface_view"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/frame"
+        android:background="#f8f8f8"
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:layout_gravity="top|right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/screenshot"
+            android:padding="1dp"
+            android:layout_gravity="center"
+            android:layout_margin="1dp"
+            android:layout_width="105dp"
+            android:layout_height="240dp" />
+
+    </FrameLayout>
 
     <Button
         android:onClick="onTakeScreenshotClick"
@@ -22,4 +39,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</LinearLayout>
+</FrameLayout>
