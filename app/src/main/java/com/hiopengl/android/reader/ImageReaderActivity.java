@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -93,9 +94,8 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
                 EGL10.EGL_NO_CONTEXT, null);
         // 创建新的surface
         EGLSurface drawSurface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
-        EGLSurface readSurface = egl.eglCreateWindowSurface(dpy, config, mSurface, null);
         // 将OpenGL环境设置为当前
-        egl.eglMakeCurrent(dpy, drawSurface, readSurface, context);
+        egl.eglMakeCurrent(dpy, drawSurface, drawSurface, context);
         // 获取当前OpenGL画布
         GL10 gl = (GL10)context.getGL();
 
@@ -115,9 +115,14 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
         egl.eglDestroySurface(dpy, drawSurface);
-        egl.eglDestroySurface(dpy, readSurface);
         egl.eglDestroyContext(dpy, context);
         egl.eglTerminate(dpy);
+    }
+
+    public void onTakeScreenshotClick(View view) {
+        synchronized (this) {
+
+        }
     }
 
     private void render(GL10 gl) {

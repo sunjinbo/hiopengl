@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -95,6 +96,8 @@ public abstract class RecorderActivity extends ActionBarActivity
 
     private File mOutputFile;
 
+    private boolean mIsDestroy = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +134,7 @@ public abstract class RecorderActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (mRenderHandler != null) {
+        if (mRenderHandler != null && mIsRunning) {
             Choreographer.getInstance().postFrameCallback(this);
         }
     }
@@ -146,6 +149,7 @@ public abstract class RecorderActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
         mIsRunning = false;
+        mIsDestroy = true;
     }
 
     @Override
@@ -189,11 +193,13 @@ public abstract class RecorderActivity extends ActionBarActivity
         mSurfaceHolder = holder;
         mWidth = width;
         mHeight = height;
-        while (!mReady) {
-            try {
-                mReadyFence.wait();
-            } catch (InterruptedException ie) {
-                // ignore
+        synchronized (mReadyFence) {
+            while (!mReady) {
+                try {
+                    mReadyFence.wait();
+                } catch (InterruptedException ie) {
+                    // ignore
+                }
             }
         }
     }
@@ -205,9 +211,12 @@ public abstract class RecorderActivity extends ActionBarActivity
 
     @Override
     public void doFrame(long frameTimeNanos) {
-        // start the draw events
-        Choreographer.getInstance().postFrameCallback(this);
-        mRenderHandler.doFrame(frameTimeNanos);
+        Log.d("record", "doFrame(long frameTimeNanos)");
+        if (!mIsDestroy) {
+            // start the draw events
+            Choreographer.getInstance().postFrameCallback(this);
+            mRenderHandler.doFrame(frameTimeNanos);
+        }
     }
 
     abstract void drawFrame(long frameTimeNanos);
@@ -271,8 +280,6 @@ public abstract class RecorderActivity extends ActionBarActivity
                 EGL14.EGL_GREEN_SIZE, 8,
                 EGL14.EGL_BLUE_SIZE, 8,
                 EGL14.EGL_ALPHA_SIZE, 8,
-                //EGL14.EGL_DEPTH_SIZE, 16,
-                //EGL14.EGL_STENCIL_SIZE, 8,
                 EGL14.EGL_RENDERABLE_TYPE, renderableType,
                 EGL14.EGL_NONE, 0,      // placeholder for recordable [@-3]
                 EGL14.EGL_NONE
@@ -387,12 +394,7 @@ public abstract class RecorderActivity extends ActionBarActivity
                     break;
                 case MSG_STOP_RECORD:
                     stopRecording();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(RecorderActivity.this, mOutputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(RecorderActivity.this, mOutputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show());
                     break;
                 case MSG_DO_FRAME:
                     long timestamp = (((long) msg.arg1) << 32) |
