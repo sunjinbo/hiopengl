@@ -22,7 +22,7 @@ public class ExampleFactory {
         openGLTextureReader.addItem(new ExampleInfo("glReadPixels", "com.hiopengl.android.reader.GLReadPixelsActivity"));
         openGLTextureReader.addItem(new ExampleInfo("ImageReader", "com.hiopengl.android.reader.ImageReaderActivity"));
         openGLTextureReader.addItem(new ExampleInfo("OpenGL PBO", "com.hiopengl.android.reader.PBOActivity"));
-        openGLTextureReader.addItem(new ExampleInfo("HardwareBuffer", "com.hiopengl.android.reader.HardwareBufferActivity"));
+        openGLTextureReader.addItem(new ExampleInfo("HardwareBuffer", ""));
         androidGraphicRendering.addItem(openGLTextureReader);
 
         ExampleCategory cameraWithOpenGLES = new ExampleCategory("Camera with OpenGL ES");
@@ -78,7 +78,6 @@ public class ExampleFactory {
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Lighting", "com.hiopengl.advanced.LightingActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Materials", "com.hiopengl.advanced.MaterialActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context and Texture", "com.hiopengl.advanced.SharedContextActivity"));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Model Loading", "com.hiopengl.advanced.ModelLoadingActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", "com.hiopengl.advanced.AssimpActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Geometry Shader", "com.hiopengl.advanced.GeometryShaderActivity"));
 

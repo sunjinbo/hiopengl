@@ -55,7 +55,6 @@ public class CanvasSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void run() {
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             Canvas canvas = mSurfaceHolder.lockCanvas();
             if (canvas != null) {
                 try {
@@ -66,6 +65,7 @@ public class CanvasSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     mSurfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
+            SystemClock.sleep(333);
         }
     }
 }

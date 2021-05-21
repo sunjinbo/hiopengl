@@ -97,13 +97,13 @@ public class OpenGLTextureView extends TextureView implements TextureView.Surfac
         mDrawer = new OpenGLDrawer();
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             synchronized (mSurfaceTexture) {
                 mDrawer.draw(gl);
 
                 //显示绘制结果到屏幕上
                 egl.eglSwapBuffers(dpy, surface);
             }
+            SystemClock.sleep(333);
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);

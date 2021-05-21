@@ -142,7 +142,6 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
 
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             synchronized (mSurfaceHolder) {
                 render(gl);
 
@@ -157,6 +156,7 @@ public class ImageReaderActivity extends ActionBarActivity implements SurfaceHol
 
                 egl.eglMakeCurrent(mEGLDisplay, mDrawSurface, mDrawSurface, mEGLContext);
             }
+            SystemClock.sleep(333);
         }
 
         egl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);

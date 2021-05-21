@@ -186,7 +186,6 @@ public class CameraFilterActivity extends ActionBarActivity
 
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             synchronized (mSurfaceTexture) {
                 updateTexture();
                 drawFrame(gl);
@@ -194,6 +193,7 @@ public class CameraFilterActivity extends ActionBarActivity
                 //显示绘制结果到屏幕上
                 egl.eglSwapBuffers(dpy, surface);
             }
+            SystemClock.sleep(333);
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);

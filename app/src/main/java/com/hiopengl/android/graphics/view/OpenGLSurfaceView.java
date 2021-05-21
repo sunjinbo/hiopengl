@@ -94,13 +94,13 @@ public class OpenGLSurfaceView extends SurfaceView implements SurfaceHolder.Call
         mDrawer = new OpenGLDrawer();
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             synchronized (mSurfaceHolder) {
                 mDrawer.draw(gl);
 
                 //显示绘制结果到屏幕上
                 egl.eglSwapBuffers(dpy, surface);
             }
+            SystemClock.sleep(333);
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);

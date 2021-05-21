@@ -69,7 +69,6 @@ public class CanvasTextureView extends TextureView implements TextureView.Surfac
     public void run() {
         mRunning = true;
         while (mRunning) {
-            SystemClock.sleep(333);
             Canvas canvas = mSurface.lockCanvas(mRect);
             if (canvas != null) {
                 try {
@@ -80,6 +79,7 @@ public class CanvasTextureView extends TextureView implements TextureView.Surfac
                     mSurface.unlockCanvasAndPost(canvas);
                 }
             }
+            SystemClock.sleep(333);
         }
     }
 }
