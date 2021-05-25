@@ -3,7 +3,6 @@ package com.hiopengl.practices;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLDebugHelper;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
@@ -134,15 +133,11 @@ public class SkyboxActivity extends ActionBarActivity {
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             GLES30.glViewport(0, 0, width, height);
 
-            float ratio = (float) width / (float) height;
-            Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-            Matrix.setLookAtM(mViewMatrix, 0,
-                    0f, 0f, 5f,
-                    0f, 0f, 0f,
-                    0f, 1f, 0f);
-            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+            float ratio = (float) width / height;
+            // 设置透视投影
+            Matrix.frustumM(mProjectionMatrix,0, -ratio, ratio,-1f,1f,1f,333f);
         }
-
+        private float mAngle = 0;
         @Override
         public void onDrawFrame(GL10 gl) {
             GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
@@ -152,7 +147,26 @@ public class SkyboxActivity extends ActionBarActivity {
 
             GLES30.glDepthFunc(GLES30.GL_LEQUAL);
 
-            Matrix.rotateM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
+            gl.glEnable(GL10.GL_CULL_FACE);
+            gl.glCullFace(GLES30.GL_BACK);
+            gl.glFrontFace(GLES30.GL_CCW);
+
+            float dx = (float) (2 * Math.sin(mAngle));
+            float dz = (float) (2 * Math.cos(mAngle));
+
+            mAngle += 1.f;
+
+            if (mAngle > 360) mAngle = 0f;
+
+            // 设置相机位置
+            Matrix.setLookAtM(mViewMatrix,0,
+                    0f,0.0f, 0f,// 摄像机坐标
+                    dx,0.3f, dz,// 目标物的中心坐标
+                    0f,1.0f,0.0f);// 相机方向
+            // 接着是摄像机顶部的方向了，如下图，很显然相机旋转，up的方向就会改变，这样就会会影响到绘制图像的角度。
+            // 例如设置up方向为y轴正方向，upx = 0,upy = 1,upz = 0。这是相机正对着目标图像
+            // 计算变换矩阵
+            Matrix.multiplyMM(mMVPMatrix,0, mProjectionMatrix,0, mViewMatrix,0);
 
             int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"mvp");
             GLES30.glUniformMatrix4fv(uMatrixLocation,1,false, mMVPMatrix,0);
