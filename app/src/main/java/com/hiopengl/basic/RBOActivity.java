@@ -4,9 +4,11 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.os.Bundle;
 
 import com.hiopengl.R;
+import com.hiopengl.advanced.model.Pyramid;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
@@ -56,11 +58,11 @@ public class RBOActivity extends ActionBarActivity {
         private int mWidth;
         private int mHeight;
 
-        private float[] VertexArray = new float[]{
+        private Pyramid mPyramid;
 
-        };
-
-        private FloatBuffer mVertexBuffer;
+        private float[] mViewMatrix = new float[16]; // 相机矩阵
+        private float[] mProjectionMatrix = new float[16]; // 投影矩阵
+        private float[] mMVPMatrix = new float[16];
 
         public RBORenderer(Context context) {
             mContext = context;
@@ -73,7 +75,6 @@ public class RBOActivity extends ActionBarActivity {
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                     | GL10.GL_DEPTH_BUFFER_BIT);
 
-            initProgram();
             initData();
         }
 
@@ -83,27 +84,31 @@ public class RBOActivity extends ActionBarActivity {
             mWidth = width;
             mHeight = height;
 
+            float ratio = (float) width / (float) height;
+            Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+            Matrix.setLookAtM(mViewMatrix, 0,
+                    0f, 0f, 5f,
+                    0f, 0f, 0f,
+                    0f, 1f, 0f);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+
             initFrameBuffer();
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
+
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
             GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                     | GL10.GL_DEPTH_BUFFER_BIT);
 
-            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
+            mPyramid.draw(gl, mMVPMatrix);
 
-            GLES30.glUseProgram(mProgram);
+            GLES30.glBindFramebuffer(GLES30.GL_DRAW_FRAMEBUFFER, 0);
 
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mVertexBuffer);
-            GlUtil.checkGl3Error("glVertexAttribPointer");
-
-            GLES30.glDrawArrays(GLES30.GL_POINTS, 0, 3);
-
-            GLES30.glDisableVertexAttribArray(aPositionLocation);
+            GLES30.glBindFramebuffer(GLES30.GL_READ_FRAMEBUFFER, mFramebuffer);
 
             GLES30.glReadBuffer(GLES30.GL_COLOR_ATTACHMENT0);
             GlUtil.checkGl3Error("glReadBuffer");
@@ -111,7 +116,6 @@ public class RBOActivity extends ActionBarActivity {
                 0, 0, mWidth, mHeight,
                 GLES30.GL_COLOR_BUFFER_BIT,
                 GLES30.GL_NEAREST);
-            GlUtil.checkGl3Error("glBlitFramebuffer");
         }
 
         private void initProgram() {
@@ -156,10 +160,8 @@ public class RBOActivity extends ActionBarActivity {
         }
 
         private void initData() {
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(VertexArray.length * 4);
-            byteBuffer.order(ByteOrder.nativeOrder());
-            mVertexBuffer = byteBuffer.asFloatBuffer();
-            mVertexBuffer.position(0);
+            mPyramid = new Pyramid(mContext);
+            Matrix.setIdentityM(mMVPMatrix, 0);
         }
 
         private void checkFramebufferStatus() {
