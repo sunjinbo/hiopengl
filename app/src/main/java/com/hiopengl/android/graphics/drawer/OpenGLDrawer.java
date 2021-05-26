@@ -13,11 +13,10 @@ public class OpenGLDrawer {
             0.0f , 0.4f * 1.732f , 0.0f ,
     };
 
-    ByteBuffer vbb;
     FloatBuffer vertex;
 
     public OpenGLDrawer() {
-        vbb = ByteBuffer.allocateDirect(vertexArray.length * 4);
+        ByteBuffer vbb = ByteBuffer.allocateDirect(vertexArray.length * 4);
         vbb.order(ByteOrder.nativeOrder());
         vertex = vbb.asFloatBuffer();
         vertex.put(vertexArray);
