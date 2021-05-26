@@ -67,6 +67,51 @@ public class SkyboxActivity extends ActionBarActivity {
                 R.drawable.front
         };
 
+        private float cubeVertices[] = {
+                // Positions          // Texture Coords
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+                0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        };
+
         private float skyboxVertices[] = {
                 // Positions
                 -1.0f,  1.0f, -1.0f,
@@ -116,7 +161,6 @@ public class SkyboxActivity extends ActionBarActivity {
 
         private float[] mViewMatrix = new float[16]; // 相机矩阵
         private float[] mProjectionMatrix = new float[16]; // 投影矩阵
-        private float[] mMVPMatrix = new float[16]; // 最终变换的矩阵
 
         public SkyboxRenderer(Context context) {
             mContext = context;
@@ -134,10 +178,10 @@ public class SkyboxActivity extends ActionBarActivity {
             GLES30.glViewport(0, 0, width, height);
 
             float ratio = (float) width / height;
-            // 设置透视投影
-            Matrix.frustumM(mProjectionMatrix,0, -ratio, ratio,-1f,1f,1f,333f);
+            Matrix.frustumM(mProjectionMatrix,0, -ratio, ratio,-1f,1f,0.1f, 100.0f);
+            Matrix.setIdentityM(mViewMatrix, 0);
         }
-        private float mAngle = 0;
+
         @Override
         public void onDrawFrame(GL10 gl) {
             GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
@@ -145,31 +189,14 @@ public class SkyboxActivity extends ActionBarActivity {
 
             GLES30.glUseProgram(mProgram);
 
-            GLES30.glDepthFunc(GLES30.GL_LEQUAL);
+            GLES30.glDepthMask(false);
 
-            gl.glEnable(GL10.GL_CULL_FACE);
-            gl.glCullFace(GLES30.GL_BACK);
-            gl.glFrontFace(GLES30.GL_CCW);
+            Matrix.rotateM(mViewMatrix, 0, 0.1f, 0f, 1f, 0f);
+            int viewLocation = GLES30.glGetUniformLocation(mProgram,"view");
+            GLES30.glUniformMatrix4fv(viewLocation,1,false, mViewMatrix,0);
 
-            float dx = (float) (2 * Math.sin(mAngle));
-            float dz = (float) (2 * Math.cos(mAngle));
-
-            mAngle += 1.f;
-
-            if (mAngle > 360) mAngle = 0f;
-
-            // 设置相机位置
-            Matrix.setLookAtM(mViewMatrix,0,
-                    0f,0.0f, 0f,// 摄像机坐标
-                    dx,0.3f, dz,// 目标物的中心坐标
-                    0f,1.0f,0.0f);// 相机方向
-            // 接着是摄像机顶部的方向了，如下图，很显然相机旋转，up的方向就会改变，这样就会会影响到绘制图像的角度。
-            // 例如设置up方向为y轴正方向，upx = 0,upy = 1,upz = 0。这是相机正对着目标图像
-            // 计算变换矩阵
-            Matrix.multiplyMM(mMVPMatrix,0, mProjectionMatrix,0, mViewMatrix,0);
-
-            int uMatrixLocation = GLES30.glGetUniformLocation(mProgram,"mvp");
-            GLES30.glUniformMatrix4fv(uMatrixLocation,1,false, mMVPMatrix,0);
+            int projectionLocation = GLES30.glGetUniformLocation(mProgram,"projection");
+            GLES30.glUniformMatrix4fv(projectionLocation,1,false, mProjectionMatrix,0);
 
             int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"position");
             GLES30.glEnableVertexAttribArray(aPositionLocation);
@@ -187,7 +214,7 @@ public class SkyboxActivity extends ActionBarActivity {
 
             GLES30.glDisableVertexAttribArray(aPositionLocation);
 
-            GLES30.glDepthFunc(GLES30.GL_LESS);
+            GLES30.glDepthMask(true);
         }
 
         private void initProgram() {
@@ -246,7 +273,7 @@ public class SkyboxActivity extends ActionBarActivity {
 
                 GLES30.glTexImage2D(
                         GLES30.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                        GLES30.GL_RGB, width, height, 0, GLES30.GL_RGB, GLES30.GL_UNSIGNED_BYTE, buffer
+                        GLES30.GL_RGBA, width, height, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, buffer
                 );
             }
 
