@@ -39,5 +39,8 @@ public abstract class OpenGL3Drawer {
         //连接程序
         mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
         GlUtil.checkGl3Error("Check GL Program!");
+        //使用程序
+        GLES30.glUseProgram(mProgram);
+        GlUtil.checkGl3Error("Check USE Program!");
     }
 }

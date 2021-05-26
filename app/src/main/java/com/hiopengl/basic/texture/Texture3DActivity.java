@@ -3,6 +3,7 @@ package com.hiopengl.basic.texture;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -175,7 +176,8 @@ public class Texture3DActivity extends ActionBarActivity {
 
             // 初始化VAO
             buffers[0] = 0;
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
+            //GLES30.glGenBuffers(buffers.length, buffers, 0);
+            GLES30.glGenVertexArrays(buffers.length, buffers, 0);
             if (buffers[0] == 0) {
                 throw new RuntimeException();
             }
@@ -183,6 +185,7 @@ public class Texture3DActivity extends ActionBarActivity {
             vaoBufferId = buffers[0];
 
             GLES30.glBindVertexArray(vaoBufferId);
+            GlUtil.checkGl3Error("glBindVertexArray");
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboBufferId);
             int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"vPosition");

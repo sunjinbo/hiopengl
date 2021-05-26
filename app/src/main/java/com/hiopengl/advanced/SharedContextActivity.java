@@ -1,6 +1,9 @@
 package com.hiopengl.advanced;
 
 import android.opengl.EGLExt;
+import android.opengl.GLES20;
+import android.opengl.GLES30;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.SurfaceHolder;
@@ -11,6 +14,7 @@ import com.hiopengl.android.graphics.drawer.CubeDrawer;
 import com.hiopengl.android.graphics.drawer.OpenGLDrawer;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.base.NotImplementationActivity;
+import com.hiopengl.utils.GlUtil;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -46,6 +50,9 @@ public class SharedContextActivity extends ActionBarActivity {
         private SurfaceHolder mSurfaceHolder;
         private CubeDrawer mDrawer;
         private int mWidth, mHeight;
+
+        private int mFramebuffer;
+        private int mColorRenderBuffer;
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
@@ -106,12 +113,29 @@ public class SharedContextActivity extends ActionBarActivity {
 //            mSurfaceView2.getHolder().addCallback(renderer);
 
             mDrawer = new CubeDrawer(SharedContextActivity.this);
+            GlUtil.checkGl3Error("check CubeDrawer");
             mDrawer.setSize(gl, mWidth, mHeight);
+
+            initFrameBuffer();
 
             mIsRunning = true;
             while (mIsRunning) {
                 synchronized (mSurfaceHolder) {
+                    GLES30.glBindFramebuffer(GLES30.GL_DRAW_FRAMEBUFFER, mFramebuffer);
+
                     mDrawer.draw(gl);
+
+                    GLES30.glBindFramebuffer(GLES30.GL_DRAW_FRAMEBUFFER, 0);
+
+                    GLES30.glBindFramebuffer(GLES30.GL_READ_FRAMEBUFFER, mFramebuffer);
+
+                    GLES30.glReadBuffer(GLES30.GL_COLOR_ATTACHMENT0);
+                    GlUtil.checkGl3Error("glReadBuffer");
+
+                    GLES30.glBlitFramebuffer(0, 0, mWidth, mHeight,
+                            0, 0, mWidth, mHeight,
+                            GLES30.GL_COLOR_BUFFER_BIT,
+                            GLES30.GL_NEAREST);
 
                     //显示绘制结果到屏幕上
                     egl.eglSwapBuffers(dpy, surface);
@@ -122,6 +146,36 @@ public class SharedContextActivity extends ActionBarActivity {
             egl.eglDestroySurface(dpy, surface);
             egl.eglDestroyContext(dpy, context);
             egl.eglTerminate(dpy);
+        }
+
+        private void initFrameBuffer() {
+            GlUtil.checkGl3Error("initFrameBuffer");
+
+            final int[] ids = new int[1];
+            GLES30.glGenFramebuffers(1, ids, 0);
+            GlUtil.checkGl3Error("glGenFramebuffers");
+            mFramebuffer = ids[0];
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
+            GlUtil.checkGl3Error("glBindFramebuffer " + mFramebuffer);
+
+            // Create a color buffer and bind it.
+            GLES30.glGenRenderbuffers(1, ids, 0);
+            GlUtil.checkGl3Error("glGenRenderbuffers");
+            mColorRenderBuffer = ids[0];
+            GLES30.glBindRenderbuffer(GLES30.GL_RENDERBUFFER, mColorRenderBuffer);
+            GlUtil.checkGl3Error("glBindRenderbuffer " + mColorRenderBuffer);
+            GLES30.glRenderbufferStorage(GLES30.GL_RENDERBUFFER, GLES30.GL_RGBA8, mWidth, mHeight);
+            GlUtil.checkGl3Error("glRenderbufferStorage");
+            GLES30.glFramebufferRenderbuffer(GLES30.GL_DRAW_FRAMEBUFFER, GLES30.GL_COLOR_ATTACHMENT0, GLES30.GL_RENDERBUFFER, mColorRenderBuffer);
+            GlUtil.checkGl3Error("glFramebufferRenderbuffer");
+            GLES30.glBindRenderbuffer(GLES30.GL_RENDERBUFFER, 0);
+
+            int status = GLES30.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+            if (status != GLES30.GL_FRAMEBUFFER_COMPLETE) {
+                throw new RuntimeException("framebuffer is not complete!");
+            }
+
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0);
         }
 
         private int loadTexture() {

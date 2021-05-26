@@ -172,7 +172,7 @@ public class LightingActivity extends ActionBarActivity {
 
             // 初始化VAO
             buffers[0] = 0;
-            GLES30.glGenBuffers(buffers.length, buffers, 0);
+            GLES30.glGenVertexArrays(buffers.length, buffers, 0);
             if (buffers[0] == 0) {
                 throw new RuntimeException();
             }

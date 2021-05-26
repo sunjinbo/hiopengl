@@ -5,6 +5,7 @@ import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.os.Bundle;
 
+import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -104,10 +105,10 @@ public class VertexBufferOpenGL30Activity extends VertexActivity {
     }
 
     private void initVertexArrayObject() {
-        int[] buffer = new int[1];
-        GLES30.glGenBuffers(buffer.length, buffer, 0);
+        int[] buffers = new int[1];
+        GLES30.glGenVertexArrays(buffers.length, buffers, 0);
 
-        mVAO = buffer[0];
+        mVAO = buffers[0];
 
         GLES30.glBindVertexArray(mVAO);
 

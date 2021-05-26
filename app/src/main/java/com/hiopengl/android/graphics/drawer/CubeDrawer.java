@@ -5,6 +5,8 @@ import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 
+import com.hiopengl.utils.GlUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -92,8 +94,11 @@ public class CubeDrawer extends OpenGL3Drawer {
     public CubeDrawer(Context context) {
         super(context);
         initVertexBuffer();
+        GlUtil.checkGl3Error("initVertexBuffer");
         initVertexBufferObject();
+        GlUtil.checkGl3Error("initVertexBufferObject");
         initVertexArrayObject();
+        GlUtil.checkGl3Error("initVertexArrayObject");
     }
 
     @Override
@@ -174,24 +179,32 @@ public class CubeDrawer extends OpenGL3Drawer {
     }
 
     private void initVertexArrayObject() {
-        int[] buffer = new int[1];
-        GLES30.glGenBuffers(buffer.length, buffer, 0);
+        int[] buffers = new int[1];
+        //GLES30.glGenBuffers(buffer.length, buffer, 0);
+        GLES30.glGenVertexArrays(buffers.length, buffers, 0);
+        GlUtil.checkGl3Error("glGenBuffers");
 
-        mVAO = buffer[0];
+        mVAO = buffers[0];
 
         GLES30.glBindVertexArray(mVAO);
+        GlUtil.checkGl3Error("glBindVertexArray");
 
         // 关联位置数据
         GLES30.glEnableVertexAttribArray(0);
+        GlUtil.checkGl3Error("glEnableVertexAttribArray 0");
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mPositionVBO);
+        GlUtil.checkGl3Error("glBindBuffer 0");
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 0, 0);
+        GlUtil.checkGl3Error("glVertexAttribPointer 0");
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GlUtil.checkGl3Error("glEnableVertexAttribArray 0");
 
         // 关联颜色数据
         GLES30.glEnableVertexAttribArray(1);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mColorVBO);
         GLES30.glVertexAttribPointer(1, 4, GLES30.GL_FLOAT, false, 0, 0);
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GlUtil.checkGl3Error("glEnableVertexAttribArray 1");
 
         GLES30.glBindVertexArray(0);
     }
