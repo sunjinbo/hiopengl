@@ -11,11 +11,6 @@ import com.hiopengl.R;
 import com.hiopengl.advanced.model.Pyramid;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.GlUtil;
-import com.hiopengl.utils.ShaderUtil;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -49,18 +44,19 @@ public class RBOActivity extends ActionBarActivity {
 
     private class RBORenderer implements GLSurfaceView.Renderer {
         private Context mContext;
-        private int mProgram;
 
         private int mFramebuffer;
         private int mColorRenderBuffer;
-        private int mDepthRenderBuffer;
 
         private int mWidth;
         private int mHeight;
+        private float mRatio;
 
         private Pyramid mPyramid;
 
+        private float[] mModelMatrix = new float[16]; // 模型矩阵
         private float[] mViewMatrix = new float[16]; // 相机矩阵
+        private float[] mViewModelMatrix = new float[16];
         private float[] mProjectionMatrix = new float[16]; // 投影矩阵
         private float[] mMVPMatrix = new float[16];
 
@@ -80,29 +76,37 @@ public class RBOActivity extends ActionBarActivity {
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            GLES30.glViewport(0, 0, width, height);
             mWidth = width;
             mHeight = height;
 
-            float ratio = (float) width / (float) height;
-            Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+            GLES30.glViewport(0, 0, mWidth, mHeight);
+
+            mRatio = (float) width / (float) height;
+            Matrix.frustumM(mProjectionMatrix, 0, -mRatio, mRatio, -1, 1, 3, 7);
             Matrix.setLookAtM(mViewMatrix, 0,
                     0f, 0f, 5f,
                     0f, 0f, 0f,
                     0f, 1f, 0f);
-            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
             initFrameBuffer();
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
-            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
+            GLES30.glBindFramebuffer(GLES30.GL_DRAW_FRAMEBUFFER, mFramebuffer);
 
-            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFramebuffer);
             GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                     | GL10.GL_DEPTH_BUFFER_BIT);
+
+            Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);
+            Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewModelMatrix, 0);
+
+            // 顶点坐标顺序需要调整
+            // GLES30.glEnable(GLES30.GL_CULL_FACE);
+            // GLES30.glCullFace(GLES30.GL_FRONT);
+            // GLES30.glFrontFace(GLES30.GL_CCW);
 
             mPyramid.draw(gl, mMVPMatrix);
 
@@ -112,26 +116,11 @@ public class RBOActivity extends ActionBarActivity {
 
             GLES30.glReadBuffer(GLES30.GL_COLOR_ATTACHMENT0);
             GlUtil.checkGl3Error("glReadBuffer");
+
             GLES30.glBlitFramebuffer(0, 0, mWidth, mHeight,
                 0, 0, mWidth, mHeight,
                 GLES30.GL_COLOR_BUFFER_BIT,
                 GLES30.GL_NEAREST);
-        }
-
-        private void initProgram() {
-            //编译顶点着色程序
-            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_rbo.glsl");
-            int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
-            GlUtil.checkGl3Error("Check Vertex Shader!");
-            //编译片段着色程序
-            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_rbo.glsl");
-            int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
-            GlUtil.checkGl3Error("Check Fragment Shader!");
-            //连接程序
-            mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
-            GlUtil.checkGl3Error("Check GL Program!");
-
-            GLES30.glUseProgram(mProgram);
         }
 
         private void initFrameBuffer() {
@@ -161,6 +150,10 @@ public class RBOActivity extends ActionBarActivity {
 
         private void initData() {
             mPyramid = new Pyramid(mContext);
+            Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.setIdentityM(mViewMatrix, 0);
+            Matrix.setIdentityM(mViewModelMatrix, 0);
+            Matrix.setIdentityM(mProjectionMatrix, 0);
             Matrix.setIdentityM(mMVPMatrix, 0);
         }
 
