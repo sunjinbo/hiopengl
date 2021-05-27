@@ -61,6 +61,8 @@ public class ExampleFactory {
         texture.addItem(new ExampleInfo("2D Texture", "com.hiopengl.basic.texture.Texture2DActivity"));
         texture.addItem(new ExampleInfo("3D Texture", "com.hiopengl.basic.texture.Texture3DActivity"));
         texture.addItem(new ExampleInfo("Mipmap Texture", "com.hiopengl.basic.texture.TextureMipmapActivity"));
+        texture.addItem(new ExampleInfo("Cubemaps Texture", "com.hiopengl.basic.texture.TextureCubemapsActivity"));
+        texture.addItem(new ExampleInfo("Video Texture", "com.hiopengl.basic.texture.TextureVideoActivity"));
         gettingStartedWithOpenGLES.addItem(texture);
 
         gettingStartedWithOpenGLES.addItem(new ExampleInfo("RBO(Render Buffer Object)", "com.hiopengl.basic.RBOActivity"));
