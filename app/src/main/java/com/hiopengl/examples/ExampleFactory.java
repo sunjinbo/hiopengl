@@ -80,7 +80,7 @@ public class ExampleFactory {
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Lighting", "com.hiopengl.advanced.LightingActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Materials", "com.hiopengl.advanced.MaterialActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context", "com.hiopengl.advanced.SharedContextActivity"));
-        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", "com.hiopengl.advanced.AssimpActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", ""));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Geometry Shader", "com.hiopengl.advanced.GeometryShaderActivity"));
 
         all.addItem(advancedTechnologyWithOpenGLES);
@@ -88,7 +88,7 @@ public class ExampleFactory {
         ExampleCategory openGLESInPractice = new ExampleCategory("OpenGL® ES in Practice");
         openGLESInPractice.addItem(new ExampleInfo("Polyhedron", "com.hiopengl.practices.PolyhedronActivity"));
         openGLESInPractice.addItem(new ExampleInfo("Particle", "com.hiopengl.practices.ParticleActivity"));
-        openGLESInPractice.addItem(new ExampleInfo("Text Rendering", "com.hiopengl.practices.TextRenderingActivity"));
+        openGLESInPractice.addItem(new ExampleInfo("Text Rendering", ""));
         openGLESInPractice.addItem(new ExampleInfo("Skybox", "com.hiopengl.practices.SkyboxActivity"));
 
         all.addItem(openGLESInPractice);
