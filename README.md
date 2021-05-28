@@ -13,7 +13,7 @@
 - [ ] OpenGL Texture Reader
   - [x] glReadPixels
   - [x] ImageReader
-  - [ ] OpenGL PBO
+  - [x] OpenGL PBO
   - [ ] HardwareBuffer
 - [x] Camera With OpenGL ES
   - [x] Camera Filter
@@ -37,7 +37,9 @@
   - [x] 2D Texture
   - [x] 3D Texture
   - [x] Mipmap Texture
-- [ ] RBO(Render Buffer Object)
+  - [x] Cubemaps Texture
+  - [x] Video Texture 
+- [x] RBO(Render Buffer Object)
 
 ##### `Advanced Technology with OpenGL ES`
 - [x] Face culling
@@ -53,15 +55,14 @@
   - [ ] Spot Light
   - [ ] Multiple Light
 - [x] Materials
-- [ ] Shared Context and Texture 
-- [ ] ~~Model Loading~~
+- [x] Shared Context and Texture 
 - [ ] Assimp
 
 ##### `OpenGL ES in Practice`
 - [x] Polyhedron
 - [x] Particle
 - [ ] Text Rendering
-- [ ] Skybox
+- [x] Skybox
 - [ ] Collision Detection
 - [ ] Touch & Drag
 
