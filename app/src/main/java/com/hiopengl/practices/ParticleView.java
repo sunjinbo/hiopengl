@@ -5,10 +5,14 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 
+import com.hiopengl.R;
+import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
 
 import java.nio.ByteBuffer;
@@ -38,6 +42,8 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
     private Path mPath;
     private PathMeasure mPathMeasure;
     private int mWidth, mHeight;
+
+    private int mTextureId;
 
     public ParticleView(Context context) {
         super(context);
@@ -69,6 +75,8 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mData.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
         mFloatBuffer = byteBuffer.asFloatBuffer();
+
+        mTextureId = GlUtil.loadTexture(getContext(), R.drawable.dot);
 
         new Thread(this).start();
     }
@@ -105,7 +113,7 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
             mData[i * LENGTH_OF_PARTICLE] = x;
             mData[i * LENGTH_OF_PARTICLE + 1] = y;
             mData[i * LENGTH_OF_PARTICLE + 2] = 0.0f;
-            mData[i * LENGTH_OF_PARTICLE + 3] = p.getLife() / 255f;
+            mData[i * LENGTH_OF_PARTICLE + 3] = (float) p.getLife() / 255f;
 
             mParticleList.add(p);
         }
@@ -120,6 +128,14 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         GLES20.glUseProgram(mProgramId);
+
+        // 设置当前活动的纹理单元为纹理单元0
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        // 将纹理ID绑定到当前活动的纹理单元上
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+        // 将纹理单元传递片段着色器的u_TextureUnit
+        int uTextureLocation = GLES30.glGetUniformLocation(mProgramId,"u_Texture");
+        GLES30.glUniform1i(uTextureLocation, 0);
 
         int aPositionLocation = GLES20.glGetAttribLocation(mProgramId, A_POSITION);
         GLES20.glEnableVertexAttribArray(aPositionLocation);
@@ -147,7 +163,10 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
                 mData[i * LENGTH_OF_PARTICLE + 1] = y;
                 mData[i * LENGTH_OF_PARTICLE + 2] = 0.0f;
                 mData[i * LENGTH_OF_PARTICLE + 3] = mParticleList.get(i).getLife() / 255f;
+
+                Log.d("particle", "w = " + mData[i * LENGTH_OF_PARTICLE + 3]);
             }
+
             mFloatBuffer.put(mData);
             mFloatBuffer.position(0);
 
