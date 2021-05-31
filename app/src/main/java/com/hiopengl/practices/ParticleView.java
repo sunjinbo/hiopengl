@@ -45,6 +45,8 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     private int mTextureId;
 
+    private boolean mIsRunning = false;
+
     public ParticleView(Context context) {
         super(context);
         initView(context);
@@ -53,6 +55,17 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
     public ParticleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mIsRunning = false;
     }
 
     private void initView(Context context) {
@@ -78,6 +91,7 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
 
         mTextureId = GlUtil.loadTexture(getContext(), R.drawable.dot);
 
+        mIsRunning = true;
         new Thread(this).start();
     }
 
@@ -147,7 +161,7 @@ public class ParticleView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     @Override
     public void run() {
-        while (true) {
+        while (mIsRunning) {
             long startTime = SystemClock.elapsedRealtime();
 
             float[] arr = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
