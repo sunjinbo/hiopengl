@@ -23,6 +23,7 @@ public class ExampleFactory {
         openGLTextureReader.addItem(new ExampleInfo("ImageReader", "com.hiopengl.android.reader.ImageReaderActivity"));
         openGLTextureReader.addItem(new ExampleInfo("OpenGL PBO", "com.hiopengl.android.reader.PBOActivity"));
         openGLTextureReader.addItem(new ExampleInfo("HardwareBuffer", ""));
+        openGLTextureReader.addItem(new ExampleInfo("glReadPixels(RGB->YUV)", "com.hiopengl.android.reader.GLReadPixelsYUVActivity"));
         androidGraphicRendering.addItem(openGLTextureReader);
 
         ExampleCategory cameraWithOpenGLES = new ExampleCategory("Camera with OpenGL ES");
@@ -36,7 +37,7 @@ public class ExampleFactory {
         androidGraphicRendering.addItem(screenRecorder);
 
         ExampleCategory quickstartForAndroidARCore = new ExampleCategory("Quickstart for Android ARCore");
-        quickstartForAndroidARCore.addItem(new ExampleInfo("ARCore Kickoff", ""));
+        quickstartForAndroidARCore.addItem(new ExampleInfo("ARCore Kickoff", "com.hiopengl.android.arcore.ARCoreKickoffActivity"));
         androidGraphicRendering.addItem(quickstartForAndroidARCore);
 
         all.addItem(androidGraphicRendering);

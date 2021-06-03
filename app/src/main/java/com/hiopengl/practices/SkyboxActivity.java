@@ -55,8 +55,10 @@ public class SkyboxActivity extends ActionBarActivity {
 
         private Context mContext;
 
-        private int mProgram;
-        private int mCubeTexture = 0;
+        private int mSkyboxProgram;
+        private int mSkyboxTexture = 0;
+
+        private int mCubeProgram;
 
         private int skyboxTextures[] = {
                 R.drawable.right,
@@ -157,10 +159,13 @@ public class SkyboxActivity extends ActionBarActivity {
                 1.0f, -1.0f,  1.0f
         };
 
-        private FloatBuffer mVertexBuffer;
+        private FloatBuffer mSkyboxBuffer;
+        private FloatBuffer mCubeBuffer;
 
+        private float[] mModelMatrix = new float[16]; // 相机矩阵
         private float[] mViewMatrix = new float[16]; // 相机矩阵
         private float[] mProjectionMatrix = new float[16]; // 投影矩阵
+        private float[] mCameraPos = new float[9];
 
         public SkyboxRenderer(Context context) {
             mContext = context;
@@ -169,8 +174,12 @@ public class SkyboxActivity extends ActionBarActivity {
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
-            initProgram();
-            initData();
+
+            initCubeProgram();
+            initCubeData();
+
+            initSkyboxProgram();
+            initSkyboxData();
         }
 
         @Override
@@ -178,6 +187,7 @@ public class SkyboxActivity extends ActionBarActivity {
             GLES30.glViewport(0, 0, width, height);
 
             float ratio = (float) width / height;
+            Matrix.setIdentityM(mModelMatrix, 0);
             Matrix.frustumM(mProjectionMatrix,0, -ratio, ratio,-1f,1f,0.1f, 100.0f);
             Matrix.setIdentityM(mViewMatrix, 0);
         }
@@ -187,37 +197,11 @@ public class SkyboxActivity extends ActionBarActivity {
             GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-            GLES30.glUseProgram(mProgram);
-
-            GLES30.glDepthMask(false);
-
-            Matrix.rotateM(mViewMatrix, 0, 0.1f, 0f, 1f, 0f);
-            int viewLocation = GLES30.glGetUniformLocation(mProgram,"view");
-            GLES30.glUniformMatrix4fv(viewLocation,1,false, mViewMatrix,0);
-
-            int projectionLocation = GLES30.glGetUniformLocation(mProgram,"projection");
-            GLES30.glUniformMatrix4fv(projectionLocation,1,false, mProjectionMatrix,0);
-
-            int aPositionLocation = GLES30.glGetAttribLocation(mProgram,"position");
-            GLES30.glEnableVertexAttribArray(aPositionLocation);
-            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mVertexBuffer);
-
-            // 设置当前活动的纹理单元为纹理单元0
-            GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-            // 将纹理ID绑定到当前活动的纹理单元上
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, mCubeTexture);
-            // 将纹理单元传递片段着色器的u_TextureUnit
-            int uTextureLocation = GLES30.glGetUniformLocation(mProgram,"skybox");
-            GLES30.glUniform1i(uTextureLocation, 0);
-
-            GLES20.glDrawArrays(GL10.GL_TRIANGLES, 0, 36);
-
-            GLES30.glDisableVertexAttribArray(aPositionLocation);
-
-            GLES30.glDepthMask(true);
+            drawCube();
+//            drawSkybox();
         }
 
-        private void initProgram() {
+        private void initSkyboxProgram() {
             //编译顶点着色程序
             String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_skybox.glsl");
             int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
@@ -227,26 +211,57 @@ public class SkyboxActivity extends ActionBarActivity {
             int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
             GlUtil.checkGl3Error("Check Fragment Shader!");
             //连接程序
-            mProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
+            mSkyboxProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
             GlUtil.checkGl3Error("Check GL Program!");
         }
 
-        private void initData() {
+        private void initSkyboxData() {
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(skyboxVertices.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
-            mVertexBuffer = byteBuffer.asFloatBuffer();
-            mVertexBuffer.put(skyboxVertices);
-            mVertexBuffer.position(0);
+            mSkyboxBuffer = byteBuffer.asFloatBuffer();
+            mSkyboxBuffer.put(skyboxVertices);
+            mSkyboxBuffer.position(0);
 
             List<Bitmap> faces = new ArrayList<>();
             for (int i = 0; i < skyboxTextures.length; ++i) {
                 faces.add(BitmapFactory.decodeResource(getResources(), skyboxTextures[i]));
             }
 
-            mCubeTexture = loadCubeMap(faces);
+            mSkyboxTexture = loadCubemapsTexture(faces);
         }
 
-        private int loadCubeMap(List<Bitmap> faces) {
+        private void drawSkybox() {
+            GLES30.glUseProgram(mSkyboxProgram);
+
+            GLES30.glDepthMask(false);
+
+            Matrix.rotateM(mViewMatrix, 0, 0.1f, 0f, 1f, 0f);
+            int viewLocation = GLES30.glGetUniformLocation(mSkyboxProgram,"view");
+            GLES30.glUniformMatrix4fv(viewLocation,1,false, mViewMatrix,0);
+
+            int projectionLocation = GLES30.glGetUniformLocation(mSkyboxProgram,"projection");
+            GLES30.glUniformMatrix4fv(projectionLocation,1,false, mProjectionMatrix,0);
+
+            int aPositionLocation = GLES30.glGetAttribLocation(mSkyboxProgram,"position");
+            GLES30.glEnableVertexAttribArray(aPositionLocation);
+            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mSkyboxBuffer);
+
+            // 设置当前活动的纹理单元为纹理单元0
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+            // 将纹理ID绑定到当前活动的纹理单元上
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, mSkyboxTexture);
+            // 将纹理单元传递片段着色器的u_TextureUnit
+            int uTextureLocation = GLES30.glGetUniformLocation(mSkyboxProgram,"skybox");
+            GLES30.glUniform1i(uTextureLocation, 0);
+
+            GLES20.glDrawArrays(GL10.GL_TRIANGLES, 0, 36);
+
+            GLES30.glDisableVertexAttribArray(aPositionLocation);
+
+            GLES30.glDepthMask(true);
+        }
+
+        private int loadCubemapsTexture(List<Bitmap> faces) {
             final int[] textureObjectIds = new int[1];
             int textureID;
             GLES30.glGenTextures(1, textureObjectIds, 0);
@@ -285,6 +300,65 @@ public class SkyboxActivity extends ActionBarActivity {
             GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, 0);
 
             return textureID;
+        }
+
+        private void initCubeProgram() {
+            //编译顶点着色程序
+            String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_cube.glsl");
+            int vertexShaderId = ShaderUtil.compileVertexShader(vertexShaderStr);
+            GlUtil.checkGl3Error("Check Vertex Shader!");
+            //编译片段着色程序
+            String fragmentShaderStr = ShaderUtil.loadAssets(mContext, "fragment_cube.glsl");
+            int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShaderStr);
+            GlUtil.checkGl3Error("Check Fragment Shader!");
+            //连接程序
+            mCubeProgram = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
+            GlUtil.checkGl3Error("Check GL Program!");
+        }
+
+        private void initCubeData() {
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(cubeVertices.length * 4);
+            byteBuffer.order(ByteOrder.nativeOrder());
+            mCubeBuffer = byteBuffer.asFloatBuffer();
+            mCubeBuffer.put(cubeVertices);
+            mCubeBuffer.position(0);
+        }
+
+        private void drawCube() {
+            GLES30.glUseProgram(mCubeProgram);
+
+            GLES30.glDepthMask(false);
+
+            int modelLocation = GLES30.glGetUniformLocation(mCubeProgram,"model");
+            GLES30.glUniformMatrix4fv(modelLocation,1,false, mModelMatrix,0);
+            int viewLocation = GLES30.glGetUniformLocation(mCubeProgram,"view");
+            GLES30.glUniformMatrix4fv(viewLocation,1,false, mViewMatrix,0);
+            int projectionLocation = GLES30.glGetUniformLocation(mCubeProgram,"projection");
+            GLES30.glUniformMatrix4fv(projectionLocation,1,false, mProjectionMatrix,0);
+            int cameraPosLocation = GLES30.glGetUniformLocation(mCubeProgram,"cameraPos");
+            GLES30.glUniformMatrix3fv(cameraPosLocation,1,false, mCameraPos,0);
+
+            int aPositionLocation = GLES30.glGetAttribLocation(mCubeProgram,"position");
+            GLES30.glEnableVertexAttribArray(aPositionLocation);
+            GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mCubeBuffer);
+
+            int aNormalLocation = GLES30.glGetAttribLocation(mCubeProgram,"normal");
+            GLES30.glEnableVertexAttribArray(aNormalLocation);
+            GLES30.glVertexAttribPointer(aNormalLocation,3, GLES30.GL_FLOAT,false,3 * 4, mCubeBuffer);
+
+            // 设置当前活动的纹理单元为纹理单元0
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+            // 将纹理ID绑定到当前活动的纹理单元上
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, mSkyboxTexture);
+            // 将纹理单元传递片段着色器的u_TextureUnit
+            int uTextureLocation = GLES30.glGetUniformLocation(mSkyboxProgram,"skybox");
+            GLES30.glUniform1i(uTextureLocation, 0);
+
+            GLES20.glDrawArrays(GL10.GL_TRIANGLES, 0, 36);
+
+            GLES30.glDisableVertexAttribArray(aPositionLocation);
+
+            GLES30.glDepthMask(true);
         }
     }
 }
