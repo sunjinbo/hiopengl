@@ -71,47 +71,92 @@ public class SkyboxActivity extends ActionBarActivity {
 
         private float cubeVertices[] = {
                 // Positions          // Texture Coords
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f,  0.5f, -0.5f,
+                0.5f,  0.5f, -0.5f,
+                -0.5f,  0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
 
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f, -0.5f,  0.5f,
+                0.5f, -0.5f,  0.5f,
+                0.5f,  0.5f,  0.5f,
+                0.5f,  0.5f,  0.5f,
+                -0.5f,  0.5f,  0.5f,
+                -0.5f, -0.5f,  0.5f,
 
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,
+                -0.5f,  0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f,  0.5f,
+                -0.5f,  0.5f,  0.5f,
 
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                0.5f,  0.5f,  0.5f,
+                0.5f,  0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f,  0.5f,
+                0.5f,  0.5f,  0.5f,
 
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f,  0.5f,
+                0.5f, -0.5f,  0.5f,
+                -0.5f, -0.5f,  0.5f,
+                -0.5f, -0.5f, -0.5f,
 
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+                -0.5f,  0.5f, -0.5f,
+                0.5f,  0.5f, -0.5f,
+                0.5f,  0.5f,  0.5f,
+                0.5f,  0.5f,  0.5f,
+                -0.5f,  0.5f,  0.5f,
+                -0.5f,  0.5f, -0.5f
+        };
+
+        private float texVertices[] = {
+                // Positions          // Texture Coords
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+
+                0.0f, 1.0f,
+                1.0f, 1.0f,
+                1.0f, 0.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 1.0f,
+
+                0.0f, 1.0f,
+                1.0f, 1.0f,
+                1.0f, 0.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 1.0f
         };
 
         private float skyboxVertices[] = {
@@ -161,11 +206,14 @@ public class SkyboxActivity extends ActionBarActivity {
 
         private FloatBuffer mSkyboxBuffer;
         private FloatBuffer mCubeBuffer;
+        private FloatBuffer mTexBuffer;
 
         private float[] mModelMatrix = new float[16]; // 相机矩阵
         private float[] mViewMatrix = new float[16]; // 相机矩阵
         private float[] mProjectionMatrix = new float[16]; // 投影矩阵
         private float[] mCameraPos = new float[9];
+
+        private int mCubeTextureId;
 
         public SkyboxRenderer(Context context) {
             mContext = context;
@@ -190,6 +238,10 @@ public class SkyboxActivity extends ActionBarActivity {
             Matrix.setIdentityM(mModelMatrix, 0);
             Matrix.frustumM(mProjectionMatrix,0, -ratio, ratio,-1f,1f,0.1f, 100.0f);
             Matrix.setIdentityM(mViewMatrix, 0);
+            Matrix.setLookAtM(mViewMatrix,0,
+                    0,0, 0.5f,// 摄像机坐标
+                    0f,0f,0f,// 目标物的中心坐标
+                    0f,1.0f,0.0f);// 相机方向
         }
 
         @Override
@@ -198,7 +250,7 @@ public class SkyboxActivity extends ActionBarActivity {
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
             drawCube();
-//            drawSkybox();
+            drawSkybox();
         }
 
         private void initSkyboxProgram() {
@@ -322,39 +374,45 @@ public class SkyboxActivity extends ActionBarActivity {
             mCubeBuffer = byteBuffer.asFloatBuffer();
             mCubeBuffer.put(cubeVertices);
             mCubeBuffer.position(0);
+
+            byteBuffer = ByteBuffer.allocateDirect(texVertices.length * 4);
+            byteBuffer.order(ByteOrder.nativeOrder());
+            mTexBuffer = byteBuffer.asFloatBuffer();
+            mTexBuffer.put(texVertices);
+            mTexBuffer.position(0);
+
+            mCubeTextureId = GlUtil.loadTexture(mContext, R.drawable.texture);
         }
 
         private void drawCube() {
             GLES30.glUseProgram(mCubeProgram);
 
             GLES30.glDepthMask(false);
-
+            Matrix.rotateM(mViewMatrix, 0, 0.1f, 0f, 1f, 0f);
             int modelLocation = GLES30.glGetUniformLocation(mCubeProgram,"model");
             GLES30.glUniformMatrix4fv(modelLocation,1,false, mModelMatrix,0);
             int viewLocation = GLES30.glGetUniformLocation(mCubeProgram,"view");
             GLES30.glUniformMatrix4fv(viewLocation,1,false, mViewMatrix,0);
             int projectionLocation = GLES30.glGetUniformLocation(mCubeProgram,"projection");
             GLES30.glUniformMatrix4fv(projectionLocation,1,false, mProjectionMatrix,0);
-            int cameraPosLocation = GLES30.glGetUniformLocation(mCubeProgram,"cameraPos");
-            GLES30.glUniformMatrix3fv(cameraPosLocation,1,false, mCameraPos,0);
 
-            int aPositionLocation = GLES30.glGetAttribLocation(mCubeProgram,"position");
+            int aPositionLocation = GLES30.glGetAttribLocation(mCubeProgram,"aPos");
             GLES30.glEnableVertexAttribArray(aPositionLocation);
             GLES30.glVertexAttribPointer(aPositionLocation,3, GLES30.GL_FLOAT,false,0, mCubeBuffer);
 
-            int aNormalLocation = GLES30.glGetAttribLocation(mCubeProgram,"normal");
-            GLES30.glEnableVertexAttribArray(aNormalLocation);
-            GLES30.glVertexAttribPointer(aNormalLocation,3, GLES30.GL_FLOAT,false,3 * 4, mCubeBuffer);
+            int aTexCoordsLocation = GLES30.glGetAttribLocation(mCubeProgram,"aTexCoords");
+            GLES30.glEnableVertexAttribArray(aTexCoordsLocation);
+            GLES30.glVertexAttribPointer(aTexCoordsLocation,2, GLES30.GL_FLOAT,false,0, mTexBuffer);
 
+            // 将纹理单元传递片段着色器的u_TextureUnit
+            int uTextureLocation = GLES30.glGetUniformLocation(mCubeProgram,"texture1");
+            GLES30.glUniform1i(uTextureLocation, 0);
             // 设置当前活动的纹理单元为纹理单元0
             GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
             // 将纹理ID绑定到当前活动的纹理单元上
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, mSkyboxTexture);
-            // 将纹理单元传递片段着色器的u_TextureUnit
-            int uTextureLocation = GLES30.glGetUniformLocation(mSkyboxProgram,"skybox");
-            GLES30.glUniform1i(uTextureLocation, 0);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mCubeTextureId);
 
-            GLES20.glDrawArrays(GL10.GL_TRIANGLES, 0, 36);
+            GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 36);
 
             GLES30.glDisableVertexAttribArray(aPositionLocation);
 

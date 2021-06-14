@@ -128,6 +128,8 @@ public class CubeDrawer extends OpenGL3Drawer {
         GLES30.glClearColor(0.2F, 0.2F, 0.2F, 1.0F);
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
 
+        GLES30.glViewport(0, 0, mWidth, mHeight);
+
         GLES30.glUseProgram(mProgram);
 
         Matrix.rotateM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f, 0.0f);

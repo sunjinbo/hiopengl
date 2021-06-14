@@ -12,6 +12,7 @@ public abstract class OpenGL3Drawer {
 
     protected Context mContext;
     protected int mProgram;
+    protected int mWidth, mHeight;
 
     protected OpenGL3Drawer(Context context) {
         mContext = context;
@@ -23,7 +24,9 @@ public abstract class OpenGL3Drawer {
     public abstract void draw(GL10 gl);
 
     public void setSize(GL10 gl, int width, int height) {
-        GLES30.glViewport(0, 0, width, height);
+        mWidth = width;
+        mHeight = height;
+        GLES30.glViewport(0, 0, mWidth, mHeight);
     }
 
     private void initProgram() {

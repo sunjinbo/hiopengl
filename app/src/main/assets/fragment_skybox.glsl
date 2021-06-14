@@ -1,12 +1,14 @@
 #version 300 es
+
 precision mediump float;
 
-uniform samplerCube skybox;
+out vec4 FragColor;
 
 in vec3 TexCoords;
 
-out vec4 fragColor;
+uniform samplerCube skybox;
 
-void main() {
-    fragColor = texture(skybox, TexCoords);
+void main()
+{
+    FragColor = texture(skybox, TexCoords);
 }

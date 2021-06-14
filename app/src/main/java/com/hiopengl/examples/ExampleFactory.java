@@ -12,6 +12,7 @@ public class ExampleFactory {
         viewAndRenderer.addItem(new ExampleInfo("GLSurfaceView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLGLSurfaceViewActivity"));
         viewAndRenderer.addItem(new ExampleInfo("TextureView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLTextureViewActivity"));
         viewAndRenderer.addItem(new ExampleInfo("SurfaceView + OpenGL ES", "com.hiopengl.android.graphics.OpenGLSurfaceViewActivity"));
+        viewAndRenderer.addItem(new ExampleInfo("SurfaceTexture + OpenGL ES", "com.hiopengl.android.graphics.OpenGLSurfaceTextureActivity"));
         viewAndRenderer.addItem(new ExampleInfo("View + Canvas", "com.hiopengl.android.graphics.CanvasViewActivity"));
         viewAndRenderer.addItem(new ExampleInfo("SurfaceView + Canvas", "com.hiopengl.android.graphics.CanvasSurfaceViewActivity"));
         viewAndRenderer.addItem(new ExampleInfo("TextureView + Canvas", "com.hiopengl.android.graphics.CanvasTextureViewActivity"));
