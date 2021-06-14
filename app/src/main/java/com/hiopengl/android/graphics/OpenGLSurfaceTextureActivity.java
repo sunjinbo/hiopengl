@@ -36,6 +36,8 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
     private TextureDrawer mDrawer;
     private OpenGLProducer mOpenGLProducer;
 
+    private EGLContext mSharedContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,7 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+
         mRunning = false;
         if (mOpenGLProducer != null) {
             mOpenGLProducer.stop();
@@ -97,6 +100,8 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         EGLContext context = egl.eglCreateContext(dpy, config,
                 EGL10.EGL_NO_CONTEXT, ctxAttr);
 
+        mSharedContext = context;
+
         //创建新的surface
         EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceHolder, null);
         //将opengles环境设置为当前
@@ -105,7 +110,7 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         GL10 gl = (GL10)context.getGL();
 
         final int textureId = generateTexture(mWidth, mHeight);
-        mSurfaceTexture = new SurfaceTexture(textureId);
+        mSurfaceTexture = new SurfaceTexture(textureId, true);
         mOpenGLProducer = new OpenGLProducer(this, mSurfaceTexture, mWidth, mHeight);
         mOpenGLProducer.start();
 
@@ -213,7 +218,7 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
             };
 
             EGLContext context = egl.eglCreateContext(dpy, config,
-                    EGL10.EGL_NO_CONTEXT, ctxAttr);
+                    mSharedContext, ctxAttr);
 
             //创建新的surface
             EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceTexture, null);
@@ -232,6 +237,8 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
                     //显示绘制结果到屏幕上
                     egl.eglSwapBuffers(dpy, surface);
                 }
+
+                //mSurfaceTexture.releaseTexImage();
 
                 SystemClock.sleep(333);
             }

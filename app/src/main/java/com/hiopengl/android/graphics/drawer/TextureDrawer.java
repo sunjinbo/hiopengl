@@ -18,19 +18,19 @@ public class TextureDrawer extends OpenGL3Drawer {
 
     //3个定点，等腰直角
     float triangleCoords[] = {
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            0.5f,  0.5f, 0.0f, // top
-            0.5f, -0.5f, 0.0f, // bottom right
-            0.5f,  0.5f, 0.0f, // top
-            -0.5f, 0.5f, 0.0f  // top left
+            -1f, -1f, 0.0f,  // bottom left
+            1f,  1f, 0.0f, // top
+            1f, -1f, 0.0f, // bottom right
+            1f,  1f, 0.0f, // top
+            -1f, 1f, 0.0f  // top left
     };
 
     float textCoords[] ={
             0.0f,  0.0f, // bottom left
-            2.0f, 2.0f, // top
-            2.0f, 0.0f,  // bottom right
-            2.0f,  2.0f, // top
-            0.0f, 2.0f // top left
+            1.0f, 1.0f, // top
+            1.0f, 0.0f,  // bottom right
+            1.0f,  1.0f, // top
+            0.0f, 1.0f // top left
     };
 
     public TextureDrawer(Context context, int textureId) {
