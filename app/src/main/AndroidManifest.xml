@@ -15,7 +15,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".android.graphics.OpenGLSurfaceTextureActivity"></activity>
+        <activity android:name=".android.recorder.OffscreenActivity"></activity>
+        <activity android:name=".android.graphics.OpenGLSurfaceTextureActivity" />
         <activity android:name=".android.reader.GLReadPixelsYUVActivity" />
         <activity android:name=".android.arcore.ARCoreKickoffActivity" />
         <activity android:name=".basic.texture.TextureCubemapsActivity" />

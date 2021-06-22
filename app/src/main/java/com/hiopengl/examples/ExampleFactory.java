@@ -35,6 +35,7 @@ public class ExampleFactory {
         screenRecorder.addItem(new ExampleInfo("Draw Twice", "com.hiopengl.android.recorder.DrawTwiceActivity"));
         screenRecorder.addItem(new ExampleInfo("glBlitFramebuffer", "com.hiopengl.android.recorder.GlBlitFramebufferActivity"));
         screenRecorder.addItem(new ExampleInfo("FBO blit x2", "com.hiopengl.android.recorder.FBOBlitx2Activity"));
+        screenRecorder.addItem(new ExampleInfo("Off-screen", "com.hiopengl.android.recorder.OffscreenActivity"));
         androidGraphicRendering.addItem(screenRecorder);
 
         ExampleCategory quickstartForAndroidARCore = new ExampleCategory("Quickstart for Android ARCore");
