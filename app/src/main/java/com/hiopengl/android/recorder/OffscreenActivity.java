@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Choreographer;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -22,19 +23,32 @@ import androidx.annotation.NonNull;
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.CodecUtil;
+import com.hiopengl.utils.DisplayUtil;
 import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.ShaderUtil;
 import com.hiopengl.utils.TimeUtil;
+import com.hiopengl.utils.Timer;
 
 import java.io.File;
 import java.io.IOException;
 
+import javax.microedition.khronos.opengles.GL10;
+
 public class OffscreenActivity extends ActionBarActivity
-        implements Runnable, Choreographer.FrameCallback {
+        implements Runnable, Choreographer.FrameCallback, Timer.Callback {
 
     private static final int FLAG_RECORDABLE = 0x01;
     private static final int FLAG_TRY_GLES3 = 0x02;
     private static final int EGL_RECORDABLE_ANDROID = 0x3142;
+
+    private enum State {
+        NotStart,
+        Recording,
+        Playing,
+        Error
+    }
+
+    private State mCurrentState = State.NotStart;
 
     private VideoView mVideoView;
     private ProgressBar mProgressBar;
@@ -47,7 +61,7 @@ public class OffscreenActivity extends ActionBarActivity
     private EGLConfig mEGLConfig;
 
     private EGLSurface mEncoderSurface;
-    private EGLSurface mScreenSurface;
+    private EGLSurface mOffScreenSurface;
 
     private RenderHandler mRenderHandler;
 
@@ -62,6 +76,8 @@ public class OffscreenActivity extends ActionBarActivity
     private int mWidth;
     private int mHeight;
 
+    private Timer mTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +85,21 @@ public class OffscreenActivity extends ActionBarActivity
         ShaderUtil.setEGLContextClientVersion(3);
         mVideoView = findViewById(R.id.video_view);
         mProgressBar = findViewById(R.id.progress_bar);
+        mTimer = new Timer(5, this);
+        mRenderHandler = new RenderHandler();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mRenderHandler != null && mIsRunning) {
-            Choreographer.getInstance().postFrameCallback(this);
+        if (mCurrentState == State.NotStart) {
+            mCurrentState = State.Recording;
+            new Thread(this).start();
+            mWidth = DisplayUtil.dp2px(this, 240);
+            mHeight = DisplayUtil.dp2px(this, 240);
+
+            mRenderHandler.startRecord();
+            mTimer.start();
         }
     }
 
@@ -93,6 +117,20 @@ public class OffscreenActivity extends ActionBarActivity
     }
 
     @Override
+    public void onTimerExpired() {
+        mRenderHandler.stopRecord();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mVideoView.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mVideoView.setVideoPath(mOutputFile.getAbsolutePath());
+                mVideoView.start();
+            }
+        });
+    }
+
+    @Override
     public void run() {
         synchronized (mReadyFence) {
             mReady = true;
@@ -101,25 +139,20 @@ public class OffscreenActivity extends ActionBarActivity
 
         Looper.prepare();
 
-        Looper.loop();
-
         initEGL();
 
         int[] surfaceAttribs = { EGL14.EGL_NONE };
-        mScreenSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, mEGLConfig, mSurfaceHolder,
+        mOffScreenSurface = EGL14.eglCreatePbufferSurface(mEGLDisplay, mEGLConfig,
                 surfaceAttribs, 0);
-        EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
-
-        onSizeChanged(mWidth, mHeight);
+        EGL14.eglMakeCurrent(mEGLDisplay, mOffScreenSurface, mOffScreenSurface, mEGLContext);
 
         initProgram();
 
-        mRenderHandler = new RenderHandler();
         Choreographer.getInstance().postFrameCallback(this);
         Looper.loop();
 
         EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
-        EGL14.eglDestroySurface(mEGLDisplay, mScreenSurface);
+        EGL14.eglDestroySurface(mEGLDisplay, mOffScreenSurface);
         EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
         EGL14.eglTerminate(mEGLDisplay);
     }
@@ -168,7 +201,22 @@ public class OffscreenActivity extends ActionBarActivity
     }
 
     private void drawFrame(long frameTimeNanos) {
+        if (mVideoEncoder != null && mVideoEncoder.isRecording()) {
+            mVideoEncoder.frameAvailableSoon();
 
+            EGL14.eglMakeCurrent(mEGLDisplay, mEncoderSurface, mEncoderSurface, mEGLContext);
+
+            GLES30.glViewport(0, 0, mWidth, mHeight);
+            GLES30.glClearColor(0.0F, 1.0F, 0.0F, 1.0F);
+            GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
+                    | GL10.GL_DEPTH_BUFFER_BIT);
+
+            EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEncoderSurface, frameTimeNanos);
+
+            EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
+
+//            EGL14.eglMakeCurrent(mEGLDisplay, mOffScreenSurface, mOffScreenSurface, mEGLContext);
+        }
     }
 
     private void initEGL() {
@@ -198,7 +246,7 @@ public class OffscreenActivity extends ActionBarActivity
 
     }
 
-    protected EGLConfig getConfig(int flags, int version) {
+    private EGLConfig getConfig(int flags, int version) {
         int renderableType = EGL14.EGL_OPENGL_ES2_BIT;
         if (version >= 3) {
             renderableType |= EGLExt.EGL_OPENGL_ES3_BIT_KHR;
@@ -235,6 +283,10 @@ public class OffscreenActivity extends ActionBarActivity
         private final static int MSG_STOP_RECORD = 2;
         private final static int MSG_DO_FRAME = 3;
 
+        public void prepare() {
+            sendEmptyMessage(MSG_START_RECORD);
+        }
+
         public void startRecord() {
             sendEmptyMessage(MSG_START_RECORD);
         }
@@ -252,6 +304,15 @@ public class OffscreenActivity extends ActionBarActivity
         public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case MSG_START_RECORD:
+                    synchronized (mReadyFence) {
+                        while (!mReady) {
+                            try {
+                                mReadyFence.wait();
+                            } catch (InterruptedException ie) {
+                                // ignore
+                            }
+                        }
+                    }
                     startRecording();
                     break;
                 case MSG_STOP_RECORD:
