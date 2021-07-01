@@ -18,6 +18,11 @@ import androidx.annotation.NonNull;
 import com.hiopengl.R;
 
 public class OffscreenRecorderActivity extends RecorderActivity implements MediaPlayer.OnCompletionListener {
+
+    private static final long VIDEO_DURATION = 12000L; // milliseconds
+    private static final long CODEC_SPEED = 4;
+    private static final long CODEC_DURATION = VIDEO_DURATION / CODEC_SPEED; // milliseconds
+
     private VideoView mVideoView;
     private ProgressBar mProgressBar;
     private OffscreenHandler mOffscreenHandler;
@@ -48,8 +53,10 @@ public class OffscreenRecorderActivity extends RecorderActivity implements Media
             long startTime = SystemClock.elapsedRealtimeNanos();
             while (mIsRunning) {
                 // start the draw events
-                SystemClock.sleep(10);
-                mRenderHandler.doFrame(SystemClock.elapsedRealtimeNanos());
+                SystemClock.sleep(8);
+                long internalTime = SystemClock.elapsedRealtimeNanos() - startTime;
+                internalTime *= 4;
+                mRenderHandler.doFrame(startTime + internalTime);
             }
         }).start();
     }
@@ -59,7 +66,9 @@ public class OffscreenRecorderActivity extends RecorderActivity implements Media
         Log.d(TAG, "doFrame(long frameTimeNanos) - " + frameTimeNanos);
 
         if (mIsRecording) {
-            tick();
+            for (int i = 0; i < CODEC_SPEED; i++) {
+                tick();
+            }
 
             drawPlayground();
 
@@ -126,7 +135,7 @@ public class OffscreenRecorderActivity extends RecorderActivity implements Media
                     break;
                 case MSG_START_RECORDER:
                     startRecording();
-                    sendEmptyMessageDelayed(MSG_STOP_RECORDER, 10000);
+                    sendEmptyMessageDelayed(MSG_STOP_RECORDER, CODEC_DURATION);
                     break;
                 case MSG_STOP_RECORDER:
                     stopRecording();
