@@ -4,6 +4,8 @@ import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.os.Bundle;
 
+import android.util.Log;
+import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -13,8 +15,7 @@ import com.hiopengl.R;
 
 // Sync with the recording.
 public abstract class SyncRecorderActivity extends RecorderActivity
-        implements SurfaceHolder.Callback {
-
+        implements SurfaceHolder.Callback, Choreographer.FrameCallback {
     protected SurfaceView mSurfaceView;
     protected SurfaceHolder mSurfaceHolder;
     protected Button mRecordButton;
@@ -43,6 +44,21 @@ public abstract class SyncRecorderActivity extends RecorderActivity
         mSurfaceView.getHolder().addCallback(this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mRenderHandler != null && mIsRecording) {
+            Choreographer.getInstance().postFrameCallback(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Choreographer.getInstance().removeFrameCallback(this);
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mSurfaceHolder = holder;
@@ -60,6 +76,21 @@ public abstract class SyncRecorderActivity extends RecorderActivity
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         stopRecorderLooper();
+    }
+
+    @Override
+    public void tickFrame() {
+        Choreographer.getInstance().postFrameCallback(this);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        Log.d(TAG, "doFrame(long frameTimeNanos) - " + frameTimeNanos);
+        if (!mIsDestroy) {
+            // start the draw events
+            Choreographer.getInstance().postFrameCallback(this);
+            mRenderHandler.doFrame(frameTimeNanos);
+        }
     }
 
     @Override

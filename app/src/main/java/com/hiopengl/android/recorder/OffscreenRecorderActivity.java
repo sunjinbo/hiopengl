@@ -7,6 +7,8 @@ import android.opengl.EGLSurface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
@@ -16,10 +18,10 @@ import androidx.annotation.NonNull;
 import com.hiopengl.R;
 
 public class OffscreenRecorderActivity extends RecorderActivity implements MediaPlayer.OnCompletionListener {
-
     private VideoView mVideoView;
     private ProgressBar mProgressBar;
     private OffscreenHandler mOffscreenHandler;
+    private boolean mIsRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,22 @@ public class OffscreenRecorderActivity extends RecorderActivity implements Media
     }
 
     @Override
-    void drawFrame(long frameTimeNanos) {
+    public void tickFrame() {
+        mIsRunning = true;
+        new Thread(() -> {
+            long startTime = SystemClock.elapsedRealtimeNanos();
+            while (mIsRunning) {
+                // start the draw events
+                SystemClock.sleep(10);
+                mRenderHandler.doFrame(SystemClock.elapsedRealtimeNanos());
+            }
+        }).start();
+    }
+
+    @Override
+    public void drawFrame(long frameTimeNanos) {
+        Log.d(TAG, "doFrame(long frameTimeNanos) - " + frameTimeNanos);
+
         if (mIsRecording) {
             tick();
 
@@ -113,6 +130,7 @@ public class OffscreenRecorderActivity extends RecorderActivity implements Media
                     break;
                 case MSG_STOP_RECORDER:
                     stopRecording();
+                    mIsRunning = false;
                     sendEmptyMessageDelayed(MSG_RELEASE_RECORDER, 555);
                     break;
                 case MSG_RELEASE_RECORDER:

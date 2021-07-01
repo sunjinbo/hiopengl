@@ -36,9 +36,8 @@ import android.widget.Toast;
 
 import javax.microedition.khronos.opengles.GL10;
 
-public abstract class RecorderActivity extends ActionBarActivity
-    implements Runnable, Choreographer.FrameCallback {
-
+public abstract class RecorderActivity extends ActionBarActivity implements Runnable {
+    protected static final String TAG = "codec";
     protected static final float BALL_RADIUS = 100f;
     protected static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
     /**
@@ -104,20 +103,6 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mRenderHandler != null && mIsRecording) {
-            Choreographer.getInstance().postFrameCallback(this);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Choreographer.getInstance().removeFrameCallback(this);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mIsDestroy = true;
@@ -143,7 +128,7 @@ public abstract class RecorderActivity extends ActionBarActivity
         initProgram();
 
         mRenderHandler = new RenderHandler();
-        Choreographer.getInstance().postFrameCallback(this);
+        tickFrame(); // start-up of drawing frame
         Looper.loop();
 
         EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
@@ -152,16 +137,7 @@ public abstract class RecorderActivity extends ActionBarActivity
         EGL14.eglTerminate(mEGLDisplay);
     }
 
-    @Override
-    public void doFrame(long frameTimeNanos) {
-        Log.d("record", "doFrame(long frameTimeNanos)");
-        if (!mIsDestroy) {
-            // start the draw events
-            Choreographer.getInstance().postFrameCallback(this);
-            mRenderHandler.doFrame(frameTimeNanos);
-        }
-    }
-
+    abstract void tickFrame();
     abstract void drawFrame(long frameTimeNanos);
     abstract EGLSurface createSurface();
 
