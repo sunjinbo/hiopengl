@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference;
  */
 public class TextureMovieEncoder2 implements Runnable {
     private static final String TAG = "codec";
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
 
     private static final int MSG_STOP_RECORDING = 1;
     private static final int MSG_FRAME_AVAILABLE = 2;
@@ -83,6 +83,8 @@ public class TextureMovieEncoder2 implements Runnable {
      * has completed).
      */
     public void stopRecording() {
+        Log.d(TAG, "Encoder: stopRecording()");
+
         mHandler.sendMessage(mHandler.obtainMessage(MSG_STOP_RECORDING));
         // We don't know when these will actually finish (or even start).  We don't want to
         // delay the UI thread though, so we return immediately.
@@ -104,6 +106,7 @@ public class TextureMovieEncoder2 implements Runnable {
      * to wake the encoder thread up to do work so the producer side doesn't block.
      */
     public void frameAvailableSoon() {
+        Log.d(TAG, "Encoder: frameAvailableSoon()");
         synchronized (mReadyFence) {
             if (!mReady) {
                 return;

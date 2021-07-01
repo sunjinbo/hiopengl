@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.hiopengl.utils.GlUtil;
 
-public class FBOBlitx2Activity extends RecorderActivity {
+public class FBOBlitx2Activity extends SyncRecorderActivity {
 
     // Used for off-screen rendering.
     private int mOffscreenTexture;
@@ -32,7 +32,7 @@ public class FBOBlitx2Activity extends RecorderActivity {
 
         drawTexture(mOffscreenTexture);
 
-        EGL14.eglSwapBuffers(mEGLDisplay, mScreenSurface);
+        EGL14.eglSwapBuffers(mEGLDisplay, mWindowsSurface);
 
         if (mVideoEncoder != null && mVideoEncoder.isRecording()) {
             mVideoEncoder.frameAvailableSoon();
@@ -42,7 +42,7 @@ public class FBOBlitx2Activity extends RecorderActivity {
             EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEncoderSurface, frameTimeNanos);
             EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
 
-            EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
+            EGL14.eglMakeCurrent(mEGLDisplay, mWindowsSurface, mWindowsSurface, mEGLContext);
         }
     }
 

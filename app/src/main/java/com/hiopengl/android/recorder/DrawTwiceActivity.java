@@ -4,7 +4,7 @@ import android.opengl.EGL14;
 import android.opengl.EGLExt;
 import android.os.Bundle;
 
-public class DrawTwiceActivity extends RecorderActivity {
+public class DrawTwiceActivity extends SyncRecorderActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,7 +17,7 @@ public class DrawTwiceActivity extends RecorderActivity {
         drawPlayground();
 
         //显示绘制结果到屏幕上
-        EGL14.eglSwapBuffers(mEGLDisplay, mScreenSurface);
+        EGL14.eglSwapBuffers(mEGLDisplay, mWindowsSurface);
 
         if (mVideoEncoder != null && mVideoEncoder.isRecording()) {
             mVideoEncoder.frameAvailableSoon();
@@ -30,7 +30,7 @@ public class DrawTwiceActivity extends RecorderActivity {
 
             EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
 
-            EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
+            EGL14.eglMakeCurrent(mEGLDisplay, mWindowsSurface, mWindowsSurface, mEGLContext);
         }
     }
 }

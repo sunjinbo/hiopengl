@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".android.recorder.OffscreenActivity">
+    tools:context=".android.recorder.OffscreenRecorderActivity">
 
     <VideoView
         android:id="@+id/video_view"
         android:layout_gravity="center"
-        android:layout_width="240dp"
-        android:layout_height="240dp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

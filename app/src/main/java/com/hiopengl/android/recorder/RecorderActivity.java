@@ -10,10 +10,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Choreographer;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 
@@ -21,6 +17,7 @@ import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.CodecUtil;
 import com.hiopengl.utils.GlUtil;
+import com.hiopengl.utils.LogUtil;
 import com.hiopengl.utils.ShaderUtil;
 import com.hiopengl.utils.TimeUtil;
 
@@ -40,7 +37,7 @@ import android.widget.Toast;
 import javax.microedition.khronos.opengles.GL10;
 
 public abstract class RecorderActivity extends ActionBarActivity
-        implements SurfaceHolder.Callback, Runnable, Choreographer.FrameCallback {
+    implements Runnable, Choreographer.FrameCallback {
 
     protected static final float BALL_RADIUS = 100f;
     protected static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
@@ -60,8 +57,6 @@ public abstract class RecorderActivity extends ActionBarActivity
     // Android-specific extension.
     private static final int EGL_RECORDABLE_ANDROID = 0x3142;
 
-    protected SurfaceView mSurfaceView;
-    protected SurfaceHolder mSurfaceHolder;
     protected Playground mPlayground;
     protected int mWidth;
     protected int mHeight;
@@ -72,9 +67,6 @@ public abstract class RecorderActivity extends ActionBarActivity
     protected float mVertexArray[] = {
             -0.5f, -0.4f, 0.0f, BALL_RADIUS * 2 };
 
-    protected boolean mIsRunning = false;
-
-    protected Button mRecordButton;
     protected boolean mIsRecording = false;
 
     protected long mLastTickTimeMillis = 0;
@@ -83,7 +75,7 @@ public abstract class RecorderActivity extends ActionBarActivity
     protected TextureMovieEncoder2 mVideoEncoder;
 
     protected EGLSurface mEncoderSurface;
-    protected EGLSurface mScreenSurface;
+    protected EGLSurface mWindowsSurface;
 
     protected RenderHandler mRenderHandler;
 
@@ -91,36 +83,16 @@ public abstract class RecorderActivity extends ActionBarActivity
     protected EGLContext mEGLContext;
     protected EGLConfig mEGLConfig;
 
-    private Object mReadyFence = new Object();      // guards ready/running
-    private boolean mReady;
+    protected Object mReadyFence = new Object();      // guards ready/running
+    protected boolean mReady;
 
-    private File mOutputFile;
+    protected File mOutputFile;
 
-    private boolean mIsDestroy = false;
+    protected boolean mIsDestroy = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recorder);
-
-        mRecordButton = findViewById(R.id.recorder);
-        mRecordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsRecording) {
-                    mIsRecording = false;
-                    mRecordButton.setText("START RECORD");
-                    mRenderHandler.stopRecord();
-                } else {
-                    mIsRecording = true;
-                    mRecordButton.setText("STOP RECORD");
-                    mRenderHandler.startRecord();
-                }
-            }
-        });
-
-        mSurfaceView = findViewById(R.id.surface_view);
-        mSurfaceView.getHolder().addCallback(this);
 
         ShaderUtil.setEGLContextClientVersion(3);
 
@@ -134,7 +106,7 @@ public abstract class RecorderActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (mRenderHandler != null && mIsRunning) {
+        if (mRenderHandler != null && mIsRecording) {
             Choreographer.getInstance().postFrameCallback(this);
         }
     }
@@ -148,7 +120,6 @@ public abstract class RecorderActivity extends ActionBarActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mIsRunning = false;
         mIsDestroy = true;
     }
 
@@ -163,10 +134,9 @@ public abstract class RecorderActivity extends ActionBarActivity
 
         initEGL();
 
-        int[] surfaceAttribs = { EGL14.EGL_NONE };
-        mScreenSurface = EGL14.eglCreateWindowSurface(mEGLDisplay, mEGLConfig, mSurfaceHolder,
-                surfaceAttribs, 0);
-        EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
+        mWindowsSurface = createSurface();
+
+        EGL14.eglMakeCurrent(mEGLDisplay, mWindowsSurface, mWindowsSurface, mEGLContext);
 
         onSizeChanged(mWidth, mHeight);
 
@@ -177,36 +147,9 @@ public abstract class RecorderActivity extends ActionBarActivity
         Looper.loop();
 
         EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
-        EGL14.eglDestroySurface(mEGLDisplay, mScreenSurface);
+        EGL14.eglDestroySurface(mEGLDisplay, mWindowsSurface);
         EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
         EGL14.eglTerminate(mEGLDisplay);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mSurfaceHolder = holder;
-        new Thread(this).start();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        mSurfaceHolder = holder;
-        mWidth = width;
-        mHeight = height;
-        synchronized (mReadyFence) {
-            while (!mReady) {
-                try {
-                    mReadyFence.wait();
-                } catch (InterruptedException ie) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mIsRunning = false;
     }
 
     @Override
@@ -220,9 +163,30 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     abstract void drawFrame(long frameTimeNanos);
+    abstract EGLSurface createSurface();
 
     protected void onSizeChanged(int width, int height) {
 
+    }
+
+    protected void startRecorderLooper() {
+        new Thread(this).start();
+    }
+
+    protected void stopRecorderLooper() {
+        mRenderHandler.removeMessages(RenderHandler.MSG_DO_FRAME);
+    }
+
+    protected void waitUntilLooperReady() {
+        synchronized (mReadyFence) {
+            while (!mReady) {
+                try {
+                    mReadyFence.wait();
+                } catch (InterruptedException ie) {
+                    // ignore
+                }
+            }
+        }
     }
 
     protected void initEGL() {
@@ -335,6 +299,7 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     protected void startRecording() {
+        mIsRecording = true;
         mOutputFile = new File(getExternalCacheDir(), TimeUtil.getCurrentTime() + ".mp4");
         try {
             int width = CodecUtil.getSize(mWidth);
@@ -354,6 +319,8 @@ public abstract class RecorderActivity extends ActionBarActivity
     }
 
     protected void stopRecording() {
+        mIsRecording = false;
+
         if (mVideoEncoder != null) {
             if (mVideoEncoder.isRecording()) {
                 mVideoEncoder.stopRecording();
@@ -388,19 +355,23 @@ public abstract class RecorderActivity extends ActionBarActivity
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case MSG_START_RECORD:
-                    startRecording();
-                    break;
-                case MSG_STOP_RECORD:
-                    stopRecording();
-                    runOnUiThread(() -> Toast.makeText(RecorderActivity.this, mOutputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show());
-                    break;
-                case MSG_DO_FRAME:
-                    long timestamp = (((long) msg.arg1) << 32) |
-                            (((long) msg.arg2) & 0xffffffffL);
-                    drawFrame(timestamp);
-                    break;
+            try {
+                switch (msg.what) {
+                    case MSG_START_RECORD:
+                        startRecording();
+                        break;
+                    case MSG_STOP_RECORD:
+                        stopRecording();
+                        runOnUiThread(() -> Toast.makeText(RecorderActivity.this, mOutputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show());
+                        break;
+                    case MSG_DO_FRAME:
+                        long timestamp = (((long) msg.arg1) << 32) |
+                                (((long) msg.arg2) & 0xffffffffL);
+                        drawFrame(timestamp);
+                        break;
+                }
+            } catch (Exception e) {
+                LogUtil.e(e.getMessage());
             }
         }
     }

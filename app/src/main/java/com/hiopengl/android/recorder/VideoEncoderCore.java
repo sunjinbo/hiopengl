@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
  */
 public class VideoEncoderCore {
     private static final String TAG = "codec";
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
 
     // TODO: these ought to be configurable as well
     private static final String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
@@ -124,6 +124,7 @@ public class VideoEncoderCore {
         ByteBuffer[] encoderOutputBuffers = mEncoder.getOutputBuffers();
         while (true) {
             int encoderStatus = mEncoder.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
+            Log.d(TAG, "encoderStatus = " + encoderStatus);
             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // no output available yet
                 if (!endOfStream) {

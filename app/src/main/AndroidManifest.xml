@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".android.recorder.OffscreenActivity"></activity>
+        <activity android:name=".android.recorder.OffscreenRecorderActivity"></activity>
         <activity android:name=".android.graphics.OpenGLSurfaceTextureActivity" />
         <activity android:name=".android.reader.GLReadPixelsYUVActivity" />
         <activity android:name=".android.arcore.ARCoreKickoffActivity" />
@@ -32,7 +32,7 @@
         <activity android:name=".android.recorder.DrawTwiceActivity" />
         <activity android:name=".android.recorder.GlBlitFramebufferActivity" />
         <activity android:name=".android.recorder.FBOBlitx2Activity" />
-        <activity android:name=".android.recorder.RecorderActivity" />
+        <activity android:name=".android.recorder.SyncRecorderActivity" />
         <activity android:name=".practices.SkyboxActivity" />
         <activity android:name=".practices.TextRenderingActivity" />
         <activity android:name=".advanced.AssimpActivity" />

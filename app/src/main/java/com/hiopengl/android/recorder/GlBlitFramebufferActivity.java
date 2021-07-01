@@ -6,7 +6,7 @@ import android.opengl.EGLSurface;
 import android.opengl.GLES30;
 import android.os.Bundle;
 
-public class GlBlitFramebufferActivity extends RecorderActivity {
+public class GlBlitFramebufferActivity extends SyncRecorderActivity {
 
     private int mScreenWidth = -1;
     private int mScreenHeight = -1;
@@ -25,7 +25,7 @@ public class GlBlitFramebufferActivity extends RecorderActivity {
         if (mVideoEncoder != null && mVideoEncoder.isRecording()) {
             mVideoEncoder.frameAvailableSoon();
 
-            EGL14.eglMakeCurrent(mEGLDisplay, mEncoderSurface, mScreenSurface, mEGLContext);
+            EGL14.eglMakeCurrent(mEGLDisplay, mEncoderSurface, mWindowsSurface, mEGLContext);
 
             GLES30.glBlitFramebuffer(
                     0, 0, getWidth(), getHeight(),
@@ -36,15 +36,15 @@ public class GlBlitFramebufferActivity extends RecorderActivity {
 
             EGL14.eglSwapBuffers(mEGLDisplay, mEncoderSurface);
 
-            EGL14.eglMakeCurrent(mEGLDisplay, mScreenSurface, mScreenSurface, mEGLContext);
+            EGL14.eglMakeCurrent(mEGLDisplay, mWindowsSurface, mWindowsSurface, mEGLContext);
         }
 
-        EGL14.eglSwapBuffers(mEGLDisplay, mScreenSurface);
+        EGL14.eglSwapBuffers(mEGLDisplay, mWindowsSurface);
     }
 
     public int getWidth() {
         if (mScreenWidth < 0) {
-            return querySurface(mScreenSurface, EGL14.EGL_WIDTH);
+            return querySurface(mWindowsSurface, EGL14.EGL_WIDTH);
         } else {
             return mScreenWidth;
         }
@@ -52,7 +52,7 @@ public class GlBlitFramebufferActivity extends RecorderActivity {
 
     public int getHeight() {
         if (mScreenHeight < 0) {
-            return querySurface(mScreenSurface, EGL14.EGL_HEIGHT);
+            return querySurface(mWindowsSurface, EGL14.EGL_HEIGHT);
         } else {
             return mScreenHeight;
         }
