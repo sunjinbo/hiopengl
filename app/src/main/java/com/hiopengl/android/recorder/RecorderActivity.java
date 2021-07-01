@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
-import android.view.Choreographer;
 
 import androidx.annotation.NonNull;
 
