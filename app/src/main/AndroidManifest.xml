@@ -51,6 +51,9 @@
         <activity android:name=".android.reader.GLReadPixelsActivity" />
         <activity android:name=".android.graphics.CanvasTextureViewActivity" />
         <activity android:name=".android.graphics.CanvasViewActivity" />
+        <activity android:name=".android.codec.VideoDecodeActivity" />
+        <activity android:name=".android.codec.VideoEncodeActivity" />
+        <activity android:name=".android.codec.VideoExtractorActivity" />
         <activity android:name=".advanced.ScissorTestActivity" />
         <activity android:name=".advanced.BlendingActivity" />
         <activity android:name=".basic.MultipleShaderActivity" />
@@ -77,6 +80,7 @@
         <activity android:name=".android.graphics.OpenGLSurfaceViewActivity" />
         <activity android:name=".android.graphics.OpenGLTextureViewActivity" />
         <activity android:name=".android.graphics.OpenGLGLSurfaceViewActivity" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">

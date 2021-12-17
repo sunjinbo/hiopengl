@@ -38,6 +38,12 @@ public class ExampleFactory {
         screenRecorder.addItem(new ExampleInfo("Off-screen recording", "com.hiopengl.android.recorder.OffscreenRecorderActivity"));
         androidGraphicRendering.addItem(screenRecorder);
 
+        ExampleCategory mediaCodec = new ExampleCategory("Video Codec");
+        mediaCodec.addItem(new ExampleInfo("Video Extractor", "com.hiopengl.android.codec.VideoExtractorActivity"));
+        mediaCodec.addItem(new ExampleInfo("Video Decode", "com.hiopengl.android.codec.VideoDecodeActivity"));
+        mediaCodec.addItem(new ExampleInfo("Video Encode", "com.hiopengl.android.codec.VideoEncodeActivity"));
+        androidGraphicRendering.addItem(mediaCodec);
+
         ExampleCategory quickstartForAndroidARCore = new ExampleCategory("Quickstart for Android ARCore");
         quickstartForAndroidARCore.addItem(new ExampleInfo("ARCore Kickoff", "com.hiopengl.android.arcore.ARCoreKickoffActivity"));
         androidGraphicRendering.addItem(quickstartForAndroidARCore);
