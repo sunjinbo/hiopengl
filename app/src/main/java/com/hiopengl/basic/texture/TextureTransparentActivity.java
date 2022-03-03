@@ -3,14 +3,15 @@ package com.hiopengl.basic.texture;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.os.Bundle;
-import android.view.View;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
+import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.LogUtil;
 import com.hiopengl.utils.ShaderUtil;
 
@@ -21,26 +22,18 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class Texture2DActivity extends ActionBarActivity {
-    private enum TextureType {
-        REPEAT,
-        MIRRORED_REPEAT,
-        CLAMP_TO_EDGE
-    }
-
-    private TextureType mTextureType = TextureType.REPEAT;
-    private TextureType mNextTextureType = TextureType.REPEAT;
+public class TextureTransparentActivity extends ActionBarActivity {
     private GLSurfaceView mGLSurfaceView;
-    private Texture2DRenderer mGLRenderer;
+    private TransparentRenderer mGLRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_texture_2d);
+        setContentView(R.layout.activity_texture_transparent);
 
         mGLSurfaceView = findViewById(R.id.gl_surface_view);
         mGLSurfaceView.setEGLContextClientVersion(3);
-        mGLRenderer = new Texture2DRenderer(this);
+        mGLRenderer = new TransparentRenderer(this);
         mGLSurfaceView.setRenderer(mGLRenderer);
     }
 
@@ -56,19 +49,7 @@ public class Texture2DActivity extends ActionBarActivity {
         mGLSurfaceView.onResume();
     }
 
-    public void onRepeatClick(View v) {
-        mNextTextureType = TextureType.REPEAT;
-    }
-
-    public void onMirroredRepeatClick(View v) {
-        mNextTextureType = TextureType.MIRRORED_REPEAT;
-    }
-
-    public void onClampToEdgeClick(View v) {
-        mNextTextureType = TextureType.CLAMP_TO_EDGE;
-    }
-
-    protected class Texture2DRenderer implements GLSurfaceView.Renderer {
+    protected class TransparentRenderer implements GLSurfaceView.Renderer {
         private Context mContext;
 
         //渲染程序
@@ -79,32 +60,32 @@ public class Texture2DActivity extends ActionBarActivity {
         //3个定点，等腰直角
         float triangleCoords[] = {
                 -0.5f, -0.5f, 0.0f,  // bottom left
-                0.5f,  0.5f, 0.0f, // top
+                0.5f, 0.5f, 0.0f, // top
                 0.5f, -0.5f, 0.0f, // bottom right
-                0.5f,  0.5f, 0.0f, // top
+                0.5f, 0.5f, 0.0f, // top
                 -0.5f, 0.5f, 0.0f  // top left
         };
 
-        float textCoords[] ={
-                0.0f,  0.0f, // bottom left
+        float textCoords[] = {
+                0.0f, 0.0f, // bottom left
                 1.0f, 1.0f, // top
                 1.0f, 0.0f,  // bottom right
-                1.0f,  1.0f, // top
+                1.0f, 1.0f, // top
                 0.0f, 1.0f // top left
         };
 
         // 纹理
         private int mTextureId;
 
-        public Texture2DRenderer(Context context) {
+        public TransparentRenderer(Context context) {
             mContext = context;
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(triangleCoords.length*4);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(triangleCoords.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
             vertexBuffer = byteBuffer.asFloatBuffer();
             vertexBuffer.put(triangleCoords);
             vertexBuffer.position(0);
 
-            byteBuffer = ByteBuffer.allocateDirect(textCoords.length*4);
+            byteBuffer = ByteBuffer.allocateDirect(textCoords.length * 4);
             byteBuffer.order(ByteOrder.nativeOrder());
             textBuffer = byteBuffer.asFloatBuffer();
             textBuffer.put(textCoords);
@@ -113,7 +94,7 @@ public class Texture2DActivity extends ActionBarActivity {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            GLES30.glClearColor(0.0f,0.0f,0.0f,1.0f);
+            GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
             //编译顶点着色程序
             String vertexShaderStr = ShaderUtil.loadAssets(mContext, "vertex_texture_2d.glsl");
@@ -126,7 +107,7 @@ public class Texture2DActivity extends ActionBarActivity {
             //在OpenGLES环境中使用程序
             GLES30.glUseProgram(mProgram);
 
-            mTextureId = loadTexture(mContext, R.drawable.cat, mTextureType);
+            mTextureId = loadTexture(mContext, R.drawable.ball);
         }
 
         @Override
@@ -136,16 +117,14 @@ public class Texture2DActivity extends ActionBarActivity {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-            GLES30.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+            GLES30.glClearColor(0.0F, 1.0F, 0.0F, 1.0F);
             GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                     | GL10.GL_DEPTH_BUFFER_BIT);
 
-            if (mNextTextureType != mTextureType) {
-                mTextureId = loadTexture(mContext, R.drawable.cat, mNextTextureType);
-                mTextureType = mNextTextureType;
-            }
+            GLES30.glEnable(GLES30.GL_BLEND);
+            GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
 
-            GLES30.glVertexAttribPointer(0,3, GLES30.GL_FLOAT,false,0, vertexBuffer);
+            GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 0, vertexBuffer);
             GLES30.glEnableVertexAttribArray(0);
 
             GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 0, textBuffer);
@@ -156,7 +135,7 @@ public class Texture2DActivity extends ActionBarActivity {
             // 将纹理ID绑定到当前活动的纹理单元上
             GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
             // 将纹理单元传递片段着色器的u_TextureUnit
-            int uTextureLocation = GLES30.glGetUniformLocation(mProgram,"uTexture");
+            int uTextureLocation = GLES30.glGetUniformLocation(mProgram, "uTexture");
             GLES30.glUniform1i(uTextureLocation, 0);
 
             GLES30.glDrawArrays(GLES30.GL_TRIANGLE_FAN, 0, 5);
@@ -166,7 +145,7 @@ public class Texture2DActivity extends ActionBarActivity {
             GLES30.glDisableVertexAttribArray(1);
         }
 
-        private int loadTexture(Context context, int resourceId, TextureType type) {
+        private int loadTexture(Context context, int resourceId) {
             final int[] textureObjectIds = new int[1];
             // 1. 创建纹理对象
             GLES30.glGenTextures(1, textureObjectIds, 0);
@@ -200,9 +179,9 @@ public class Texture2DActivity extends ActionBarActivity {
                 GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureObjectIds[0]);
 
                 GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D,
-                        GLES30.GL_TEXTURE_WRAP_S, getTextureType(type));
+                        GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
                 GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D,
-                        GLES30.GL_TEXTURE_WRAP_T, getTextureType(type));
+                        GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
 
                 // 3. 设置纹理过滤参数:解决纹理缩放过程中的锯齿问题。若不设置，则会导致纹理为黑色
                 GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
@@ -232,18 +211,6 @@ public class Texture2DActivity extends ActionBarActivity {
             } else {
                 GLES30.glDeleteTextures(1, textureObjectIds, 0);
                 return -1;
-            }
-        }
-
-        private int getTextureType(TextureType type) {
-            switch (type) {
-                case MIRRORED_REPEAT:
-                    return GLES30.GL_MIRRORED_REPEAT;
-                case CLAMP_TO_EDGE:
-                    return GLES30.GL_CLAMP_TO_EDGE;
-                case REPEAT:
-                default:
-                    return GLES30.GL_REPEAT;
             }
         }
     }

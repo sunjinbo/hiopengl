@@ -244,6 +244,9 @@ public abstract class RecorderActivity extends ActionBarActivity implements Runn
 
         GLES30.glUseProgram(mProgram);
 
+        GLES30.glEnable(GLES30.GL_BLEND);
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
+
         // 设置当前活动的纹理单元为纹理单元0
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         // 将纹理ID绑定到当前活动的纹理单元上

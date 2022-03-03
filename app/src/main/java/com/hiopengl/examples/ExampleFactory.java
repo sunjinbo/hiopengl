@@ -69,6 +69,7 @@ public class ExampleFactory {
         ExampleCategory texture = new ExampleCategory("Texture");
         texture.addItem(new ExampleInfo("2D Texture", "com.hiopengl.basic.texture.Texture2DActivity"));
         texture.addItem(new ExampleInfo("3D Texture", "com.hiopengl.basic.texture.Texture3DActivity"));
+        texture.addItem(new ExampleInfo("Transparent Texture", "com.hiopengl.basic.texture.TextureTransparentActivity"));
         texture.addItem(new ExampleInfo("Mipmap Texture", "com.hiopengl.basic.texture.TextureMipmapActivity"));
         texture.addItem(new ExampleInfo("Cubemaps Texture", "com.hiopengl.basic.texture.TextureCubemapsActivity"));
         texture.addItem(new ExampleInfo("Video Texture", "com.hiopengl.basic.texture.TextureVideoActivity"));
