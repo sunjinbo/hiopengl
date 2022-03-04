@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
+import com.hiopengl.utils.BitmapUtil;
 import com.hiopengl.utils.LogUtil;
 import com.hiopengl.utils.ShaderUtil;
 

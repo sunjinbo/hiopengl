@@ -99,6 +99,7 @@ public class ExampleFactory {
         openGLESInPractice.addItem(new ExampleInfo("Polyhedron", "com.hiopengl.practices.PolyhedronActivity"));
         openGLESInPractice.addItem(new ExampleInfo("Particle", "com.hiopengl.practices.ParticleActivity"));
         openGLESInPractice.addItem(new ExampleInfo("Text Rendering", ""));
+        openGLESInPractice.addItem(new ExampleInfo("360 Panorama", "com.hiopengl.practices.PanoramaActivity"));
         openGLESInPractice.addItem(new ExampleInfo("Skybox", "com.hiopengl.practices.SkyboxActivity"));
 
         all.addItem(openGLESInPractice);
