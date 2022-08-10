@@ -4,6 +4,8 @@ import android.content.Context;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES30;
 
+import com.hiopengl.utils.GlUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -69,12 +71,15 @@ public class ExternalOESTextureDrawer extends OpenGL3Drawer {
                 | GL10.GL_DEPTH_BUFFER_BIT);
 
         GLES30.glUseProgram(mProgram);
+        GlUtil.checkGl3Error("glUseProgram");
 
         GLES30.glVertexAttribPointer(0,3, GLES30.GL_FLOAT,false,0, vertexBuffer);
         GLES30.glEnableVertexAttribArray(0);
+        GlUtil.checkGl3Error("glVertexAttribPointer");
 
         GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 0, textBuffer);
         GLES30.glEnableVertexAttribArray(1);
+        GlUtil.checkGl3Error("glVertexAttribPointer");
 
         // 设置当前活动的纹理单元为纹理单元0
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
@@ -83,8 +88,10 @@ public class ExternalOESTextureDrawer extends OpenGL3Drawer {
         // 将纹理单元传递片段着色器的u_TextureUnit
         int uTextureLocation = GLES30.glGetUniformLocation(mProgram,"uTexture");
         GLES30.glUniform1i(uTextureLocation, 0);
+        GlUtil.checkGl3Error("glBindTexture");
 
         GLES30.glDrawArrays(GLES30.GL_TRIANGLE_FAN, 0, 5);
+        GlUtil.checkGl3Error("glDrawArrays");
 
         //禁止顶点数组的句柄
         GLES30.glDisableVertexAttribArray(0);

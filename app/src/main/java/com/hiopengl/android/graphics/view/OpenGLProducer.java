@@ -14,13 +14,18 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.EGLExt.EGL_RECORDABLE_ANDROID;
 
+import com.hiopengl.utils.GlUtil;
+import com.hiopengl.utils.LogUtil;
+
 public class OpenGLProducer implements Runnable {
 
+    private EGLContext mSharedContext;
     private SurfaceTexture mSurfaceTexture;
     private int mWidth, mHeight;
     private boolean mIsRunning = false;
 
-    public OpenGLProducer(SurfaceTexture surfaceTexture, int width, int height) {
+    public OpenGLProducer(EGLContext context, SurfaceTexture surfaceTexture, int width, int height) {
+        mSharedContext = context;
         mSurfaceTexture = surfaceTexture;
         mWidth = width;
         mHeight = height;
@@ -62,22 +67,33 @@ public class OpenGLProducer implements Runnable {
         EGLContext context = egl.eglCreateContext(dpy, config,
                 EGL10.EGL_NO_CONTEXT, ctxAttr);
         EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceTexture, null);
+
         egl.eglMakeCurrent(dpy, surface, surface, context);
         GL10 gl = (GL10)context.getGL();
-
+        int err = egl.eglGetError();
+        LogUtil.d("err = " + err);
         mIsRunning = true;
         while (mIsRunning) {
-            synchronized (mSurfaceTexture) {
-                GLES30.glViewport(0, 0, mWidth, mHeight);
-                GLES30.glClearColor(1.0F, 0.0F, 0.0F, 1.0F); // draw red background
-                GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
-                        | GL10.GL_DEPTH_BUFFER_BIT);
+            try {
+                synchronized (this) {
+                    GLES30.glViewport(0, 0, mWidth, mHeight);
+                    GLES30.glClearColor(1.0F, 0.0F, 0.0F, 1.0F); // draw red background
+                    GlUtil.checkGl3Error("clearColor");
+                    GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
+                            | GL10.GL_DEPTH_BUFFER_BIT);
 
-                // swap buffers to SurfaceTexture
-                egl.eglSwapBuffers(dpy, surface);
+                    // swap buffers to SurfaceTexture
+                    egl.eglSwapBuffers(dpy, surface);
+                    err = egl.eglGetError();
+                    LogUtil.d("err = " + err);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             SystemClock.sleep(333);
+
+            GLES30.glFinish();
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
