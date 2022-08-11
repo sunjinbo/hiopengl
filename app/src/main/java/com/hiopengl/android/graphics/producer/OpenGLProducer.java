@@ -73,8 +73,10 @@ public class OpenGLProducer implements Runnable, ISurfaceProducer {
                 EGL14.EGL_NONE
         };
 
+//        EGLContext context = egl.eglCreateContext(dpy, config,
+//                mSharedContext, ctxAttr);
         EGLContext context = egl.eglCreateContext(dpy, config,
-                mSharedContext, ctxAttr);
+                EGL10.EGL_NO_CONTEXT, ctxAttr);
         EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceTexture, null);
 
         egl.eglMakeCurrent(dpy, surface, surface, context);

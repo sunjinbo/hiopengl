@@ -5,7 +5,6 @@ import android.opengl.EGL14;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES30;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.Surface;
 import android.view.TextureView;
 
@@ -13,11 +12,9 @@ import com.hiopengl.R;
 import com.hiopengl.android.graphics.drawer.ExternalOESTextureDrawer;
 import com.hiopengl.android.graphics.drawer.OpenGL3Drawer;
 import com.hiopengl.android.graphics.producer.ISurfaceProducer;
-import com.hiopengl.android.graphics.producer.MediaPlayerProducer;
 import com.hiopengl.android.graphics.producer.OpenGLProducer;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.GlUtil;
-import com.hiopengl.utils.LogUtil;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
