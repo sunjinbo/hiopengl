@@ -3,21 +3,18 @@ package com.hiopengl.android.graphics;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.GLES11Ext;
-import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 
 import com.hiopengl.R;
-import com.hiopengl.advanced.SharedContextActivity;
-import com.hiopengl.android.graphics.drawer.CubeDrawer;
 import com.hiopengl.android.graphics.drawer.ExternalOESTextureDrawer;
 import com.hiopengl.android.graphics.drawer.OpenGL3Drawer;
-import com.hiopengl.android.graphics.drawer.OpenGLDrawer;
-import com.hiopengl.android.graphics.drawer.TextureDrawer;
-import com.hiopengl.android.graphics.view.OpenGLProducer;
+import com.hiopengl.android.graphics.producer.ISurfaceProducer;
+import com.hiopengl.android.graphics.producer.MediaPlayerProducer;
+import com.hiopengl.android.graphics.producer.OpenGLProducer;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.LogUtil;
@@ -36,12 +33,16 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
 
     private TextureView mTextureView;
     private SurfaceTexture mSurfaceTexture;
+    private Surface mSurface;
     private SurfaceTexture mOutputSurfaceTexture;
     private boolean mRunning = false;
     private int mWidth, mHeight;
 
     private OpenGL3Drawer mDrawer;
-    private OpenGLProducer mOpenGLProducer;
+    private ISurfaceProducer mSurfaceProducer;
+
+    private Object mFrameSyncObject = new Object();     // guards mFrameAvailable
+    private boolean mFrameAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,12 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         setContentView(R.layout.activity_opengl_surface_texture);
         mTextureView = findViewById(R.id.texture_view);
         mTextureView.setSurfaceTextureListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRunning = false;
     }
 
     @Override
@@ -69,8 +76,8 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
         mRunning = false;
-        if (mOpenGLProducer != null) {
-            mOpenGLProducer.stop();
+        if (mSurfaceProducer != null) {
+            mSurfaceProducer.stop();
         }
         return false;
     }
@@ -112,22 +119,35 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         egl.eglMakeCurrent(dpy, surface, surface, context);
         GL10 gl = (GL10)context.getGL();
 
-        final int textureId = generateOESTexture(mWidth, mHeight);
+        final int textureId = generateOESTexture();
 
-        mOutputSurfaceTexture = new SurfaceTexture(textureId, false);
+        mOutputSurfaceTexture = new SurfaceTexture(textureId);
         mOutputSurfaceTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
             @Override
             public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-                LogUtil.d("onFrameAvailable()");
+                mFrameAvailable = true;
             }
         });
-        mOpenGLProducer = new OpenGLProducer(context, mOutputSurfaceTexture, mWidth, mHeight);
-        mOpenGLProducer.start();
+        mSurface = new Surface(mOutputSurfaceTexture);
+//        mSurfaceProducer = new OpenGLProducer(context, mOutputSurfaceTexture, mWidth, mHeight);
+//        mSurfaceProducer.start();
+
+        mSurfaceProducer = new MediaPlayerProducer(this);
+        mSurfaceProducer.setSurface(mSurface);
+        mSurfaceProducer.start();
+
         mDrawer = new ExternalOESTextureDrawer(this, textureId);
 
         mRunning = true;
         while (mRunning) {
             synchronized (this) {
+                synchronized(this) {
+                    if (mFrameAvailable) {
+                        mOutputSurfaceTexture.updateTexImage();
+                        mFrameAvailable = false;
+                    }
+                }
+
                 GLES30.glViewport(0, 0, mWidth, mHeight);
 
                 gl.glClearColor(1.0F, 0.0F, 1.0F, 1.0F); // draw pink background
@@ -135,11 +155,10 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT
                         | GL10.GL_DEPTH_BUFFER_BIT);
 
-//                mDrawer.draw(gl); // draw red texture
+                mDrawer.draw(gl); // draw red texture
 
                 egl.eglSwapBuffers(dpy, surface);
             }
-            SystemClock.sleep(333);
         }
 
         egl.eglMakeCurrent(dpy, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
@@ -153,7 +172,31 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         surfaceTexture.updateTexImage();
     }
 
-    private int generateOESTexture(int width, int height) {
+    public void awaitNewImage() {
+        final int TIMEOUT_MS = 2500;
+
+        synchronized (mFrameSyncObject) {
+            while (!mFrameAvailable) {
+                try {
+                    // Wait for onFrameAvailable() to signal us.  Use a timeout to avoid
+                    // stalling the test if it doesn't arrive.
+                    mFrameSyncObject.wait(TIMEOUT_MS);
+                    if (!mFrameAvailable) {
+                        // TODO: if "spurious wakeup", continue while loop
+                        throw new RuntimeException("frame wait timed out");
+                    }
+                } catch (InterruptedException ie) {
+                    // shouldn't happen
+                    throw new RuntimeException(ie);
+                }
+            }
+            mFrameAvailable = false;
+        }
+
+        mSurfaceTexture.updateTexImage();
+    }
+
+    private int generateOESTexture() {
         int[] values = new int[1];
 
         // Create a texture object and bind it.  This will be the color buffer.
@@ -168,17 +211,7 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
         GLES30.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
         GlUtil.checkGl3Error("glTexParameteri");
 
-        // Create texture storage.
-//        GLES30.glTexImage2D(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
-//                0,
-//                GLES11Ext.GL_RGBA8_OES,
-//                width,
-//                height,
-//                0,
-//                GLES11Ext.GL_RGBA8_OES,
-//                GLES30.GL_UNSIGNED_BYTE,
-//                null);
-//        GlUtil.checkGl3Error("glTexImage2D");
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
 
         return values[0];
     }
