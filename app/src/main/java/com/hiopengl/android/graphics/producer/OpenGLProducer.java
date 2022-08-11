@@ -75,7 +75,7 @@ public class OpenGLProducer implements Runnable, ISurfaceProducer {
 
         EGLContext context = egl.eglCreateContext(dpy, config,
                 mSharedContext, ctxAttr);
-        EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurface, null);
+        EGLSurface surface = egl.eglCreateWindowSurface(dpy, config, mSurfaceTexture, null);
 
         egl.eglMakeCurrent(dpy, surface, surface, context);
         GL10 gl = (GL10)context.getGL();
@@ -86,7 +86,7 @@ public class OpenGLProducer implements Runnable, ISurfaceProducer {
             try {
                 synchronized (this) {
                     GLES30.glViewport(0, 0, mWidth, mHeight);
-                    GLES30.glClearColor(1.0F, 0.0F, 0.0F, 1.0F); // draw red background
+                    GLES30.glClearColor(0.0F, 1.0F, 0.0F, 1.0F); // draw green background
                     GlUtil.checkGl3Error("clearColor");
                     GLES30.glClear(GL10.GL_COLOR_BUFFER_BIT
                             | GL10.GL_DEPTH_BUFFER_BIT);

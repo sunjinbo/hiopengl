@@ -129,12 +129,14 @@ public class OpenGLSurfaceTextureActivity extends ActionBarActivity
             }
         });
         mSurface = new Surface(mOutputSurfaceTexture);
-//        mSurfaceProducer = new OpenGLProducer(context, mOutputSurfaceTexture, mWidth, mHeight);
-//        mSurfaceProducer.start();
 
-        mSurfaceProducer = new MediaPlayerProducer(this);
+        mSurfaceProducer = new OpenGLProducer(context, mOutputSurfaceTexture, mWidth, mHeight);
         mSurfaceProducer.setSurface(mSurface);
         mSurfaceProducer.start();
+
+//        mSurfaceProducer = new MediaPlayerProducer(this);
+//        mSurfaceProducer.setSurface(mSurface);
+//        mSurfaceProducer.start();
 
         mDrawer = new ExternalOESTextureDrawer(this, textureId);
 
