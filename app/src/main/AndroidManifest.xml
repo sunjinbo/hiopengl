@@ -72,6 +72,7 @@
         <activity android:name=".advanced.PhongLightingActivity" />
         <activity android:name=".basic.vertex.VertexActivity" />
         <activity android:name=".advanced.FaceCullingActivity" />
+        <activity android:name=".advanced.TripleSharedTextureActivity" />
         <activity android:name=".basic.coordinate.ViewportActivity" />
         <activity android:name=".basic.coordinate.ProjectionActivity" />
         <activity android:name=".basic.coordinate.ViewModelActivity" />

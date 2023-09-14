@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.hiopengl.advanced.TripleSharedTextureActivity;
 import com.hiopengl.examples.ExampleCategory;
 import com.hiopengl.examples.ExampleFactory;
 import com.hiopengl.examples.ExampleInfo;
@@ -41,6 +42,9 @@ public class MainActivity extends Activity {
         mParentCategory = mAllCategory;
         mExampleAdapter.addAll(mParentCategory.getItems());
         mListView.setAdapter(mExampleAdapter);
+
+        startActivity(new Intent(this, TripleSharedTextureActivity.class));
+        finish();
     }
 
     @Override

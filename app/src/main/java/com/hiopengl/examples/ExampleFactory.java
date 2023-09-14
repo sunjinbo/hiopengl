@@ -90,6 +90,7 @@ public class ExampleFactory {
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Lighting", "com.hiopengl.advanced.LightingActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Materials", "com.hiopengl.advanced.MaterialActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Shared Context", "com.hiopengl.advanced.SharedContextActivity"));
+        advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Triple Shared Texture", "com.hiopengl.advanced.TripleSharedTextureActivity"));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Assimp", ""));
         advancedTechnologyWithOpenGLES.addItem(new ExampleInfo("Geometry Shader", "com.hiopengl.advanced.GeometryShaderActivity"));
 

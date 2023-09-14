@@ -55,7 +55,8 @@
   - [ ] Spot Light
   - [ ] Multiple Light
 - [x] Materials
-- [x] Shared Context and Texture 
+- [x] Shared Context and Texture
+- [x] Triple Shared Texture
 - [ ] Assimp
 
 ##### `OpenGL ES in Practice`
