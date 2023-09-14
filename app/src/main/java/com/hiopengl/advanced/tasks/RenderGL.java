@@ -28,7 +28,7 @@ public class RenderGL implements Runnable {
     private EGLContext mSharedContext;
     private TextureDrawer mDrawer;
     private int mWidth, mHeight;
-    private int mSharedTextureId;
+    private int mSharedTextureId = -1;
 
     // Used to wait for the thread to start.
     private final Object mStartLock = new Object();
@@ -48,14 +48,17 @@ public class RenderGL implements Runnable {
         mHeight = height;
     }
 
-    public void setSharedContext(EGLContext sharedContext, int sharedTextureId) {
+    public void setSharedContext(EGLContext sharedContext) {
         mSharedContext = sharedContext;
-        mSharedTextureId = sharedTextureId;
 
         synchronized (mStartLock) {
             mReady = true;
             mStartLock.notify();
         }
+    }
+
+    public void setSharedTexture(int texId) {
+        mSharedTextureId = texId;
     }
 
     @Override
