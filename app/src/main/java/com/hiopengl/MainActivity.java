@@ -42,9 +42,6 @@ public class MainActivity extends Activity {
         mParentCategory = mAllCategory;
         mExampleAdapter.addAll(mParentCategory.getItems());
         mListView.setAdapter(mExampleAdapter);
-
-        startActivity(new Intent(this, TripleSharedTextureActivity.class));
-        finish();
     }
 
     @Override
