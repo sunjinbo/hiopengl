@@ -7,6 +7,6 @@ out lowp vec4 FragColor;
 
 void main (void)
 {
-    FragColor = texture(text_yuv, vec2(varTexcoord.x, 1.0 - varTexcoord.y));
+    FragColor = texture(text_yuv, vec2(1.0 - varTexcoord.x, 1.0 - varTexcoord.y));
 //    FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
