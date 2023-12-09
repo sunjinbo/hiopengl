@@ -68,6 +68,21 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         0.0f, -0.766044451956441f, 0.6427875991544609f,
         0.6081204068324845f, -0.6081204068324845f, 0.510273594836914f
     };
+
+    static float verticesColor[] = new float[]{
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f
+    };
+
     static short indices[] = new short[]{
         0, 1, 3,
         1, 4, 3,
@@ -167,26 +182,60 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         mHeight = h;
 
         Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.rotateM(mModelMatrix, 0, -90f, 0.5f, 1f, 0.5f);
+//        Matrix.rotateM(mModelMatrix, 0, -90f, 0.5f, 1f, 0.5f); // 旋转一个角度
+
+        Log.e("sunjinbo", "# Model Matrix #");
+        Log.e("sunjinbo", mModelMatrix[0] + " " + mModelMatrix[1] + " " + mModelMatrix[2] + " " + mModelMatrix[3]);
+        Log.e("sunjinbo", mModelMatrix[4] + " " + mModelMatrix[5] + " " + mModelMatrix[6] + " " + mModelMatrix[7]);
+        Log.e("sunjinbo", mModelMatrix[8] + " " + mModelMatrix[9] + " " + mModelMatrix[10] + " " + mModelMatrix[11]);
+        Log.e("sunjinbo", mModelMatrix[12] + " " + mModelMatrix[13] + " " + mModelMatrix[14] + " " + mModelMatrix[15]);
 
         MDQuaternion quaternion = new MDQuaternion();
-        quaternion.setFromAxis(0.5f, 1f, 0.5f, 90f);
-        float[] dot = new float[] {0f,0f,1f};
-        dot = quaternion.rotateVec(dot);
+        quaternion.setFromAxis(0.5f, 1f, 0.5f, 90f); // 同步旋转一个角度
+        float[] dot = new float[] {0f,0f,1f}; // 目标物的中心坐标
+//        dot = quaternion.rotateVec(dot);
 
-        float[] up = new float[] {0f,1.0f,0.0f};
-        up = quaternion.rotateVec(up);
+        float[] up = new float[] {0f,1.0f,0.0f}; // 相机方向
+//        up = quaternion.rotateVec(up);
 
         Matrix.setLookAtM(mViewMatrix,0,
             0,0, 0f,// 摄像机坐标
             dot[0], dot[1], dot[2],// 目标物的中心坐标
             up[0], up[1], up[2]);// 相机方向
 
+        Log.e("sunjinbo", "# View Matrix #");
+        Log.e("sunjinbo", mViewMatrix[0] + " " + mViewMatrix[1] + " " + mViewMatrix[2] + " " + mViewMatrix[3]);
+        Log.e("sunjinbo", mViewMatrix[4] + " " + mViewMatrix[5] + " " + mViewMatrix[6] + " " + mViewMatrix[7]);
+        Log.e("sunjinbo", mViewMatrix[8] + " " + mViewMatrix[9] + " " + mViewMatrix[10] + " " + mViewMatrix[11]);
+        Log.e("sunjinbo", mViewMatrix[12] + " " + mViewMatrix[13] + " " + mViewMatrix[14] + " " + mViewMatrix[15]);
+
         Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
 
+        Log.e("sunjinbo", "# View Model Matrix #");
+        Log.e("sunjinbo", mViewModelMatrix[0] + " " + mViewModelMatrix[1] + " " + mViewModelMatrix[2] + " " + mViewModelMatrix[3]);
+        Log.e("sunjinbo", mViewModelMatrix[4] + " " + mViewModelMatrix[5] + " " + mViewModelMatrix[6] + " " + mViewModelMatrix[7]);
+        Log.e("sunjinbo", mViewModelMatrix[8] + " " + mViewModelMatrix[9] + " " + mViewModelMatrix[10] + " " + mViewModelMatrix[11]);
+        Log.e("sunjinbo", mViewModelMatrix[12] + " " + mViewModelMatrix[13] + " " + mViewModelMatrix[14] + " " + mViewModelMatrix[15]);
+
         float ratio = (float) mWidth / mHeight;
+        Log.e("sunjinbo", "ratio = " + ratio);
+
         Matrix.frustumM(mProjectMatrix,0, -ratio, ratio,-1f,1f,0.5f,100f); // 设置透视投影
+
+        Log.e("sunjinbo", "# Projection Matrix #");
+        Log.e("sunjinbo", mProjectMatrix[0] + " " + mProjectMatrix[1] + " " + mProjectMatrix[2] + " " + mProjectMatrix[3]);
+        Log.e("sunjinbo", mProjectMatrix[4] + " " + mProjectMatrix[5] + " " + mProjectMatrix[6] + " " + mProjectMatrix[7]);
+        Log.e("sunjinbo", mProjectMatrix[8] + " " + mProjectMatrix[9] + " " + mProjectMatrix[10] + " " + mProjectMatrix[11]);
+        Log.e("sunjinbo", mProjectMatrix[12] + " " + mProjectMatrix[13] + " " + mProjectMatrix[14] + " " + mProjectMatrix[15]);
+
         Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
+        Matrix.setIdentityM(mMVPMatrix, 0);
+
+        Log.e("sunjinbo", "# MVP Matrix #");
+        Log.e("sunjinbo", mMVPMatrix[0] + " " + mMVPMatrix[1] + " " + mMVPMatrix[2] + " " + mMVPMatrix[3]);
+        Log.e("sunjinbo", mMVPMatrix[4] + " " + mMVPMatrix[5] + " " + mMVPMatrix[6] + " " + mMVPMatrix[7]);
+        Log.e("sunjinbo", mMVPMatrix[8] + " " + mMVPMatrix[9] + " " + mMVPMatrix[10] + " " + mMVPMatrix[11]);
+        Log.e("sunjinbo", mMVPMatrix[12] + " " + mMVPMatrix[13] + " " + mMVPMatrix[14] + " " + mMVPMatrix[15]);
     }
 
     @Override
@@ -199,31 +248,9 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         GLES30.glDepthFunc(GLES30.GL_LESS);
 
         GLES30.glClearColor(0.f, 0.f, 0.2f, .5f);
-        GLES30.glClearDepthf(1.0f);
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_STENCIL_BUFFER_BIT);
 
         GLES30.glUseProgram(mProgramId);
-
-        float dx = (float) (2 * Math.sin(mAngle));
-        float dz = (float) (2 * Math.cos(mAngle));
-
-        Log.d("angle", "dx = " + dx + ", dz = " + dz);
-
-        // 设置相机位置
-//        Matrix.setLookAtM(mViewMatrix,0,
-//                dx,0f, dz,// 摄像机坐标
-//                0f,0f,0f,// 目标物的中心坐标
-//                0f,1.0f,0.0f);// 相机方向
-        // 接着是摄像机顶部的方向了，如下图，很显然相机旋转，up的方向就会改变，这样就会会影响到绘制图像的角度。
-        // 例如设置up方向为y轴正方向，upx = 0,upy = 1,upz = 0。这是相机正对着目标图像
-        // 计算变换矩阵
-//        Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewMatrix,0);
-
-//        Matrix.rotateM(mModelMatrix, 0, 0.5f, 1.0f, 0.0f, 0.0f);
-//        Matrix.setIdentityM(mViewMatrix, 0);
-//        Matrix.multiplyMM(mViewModelMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-//        Matrix.setIdentityM(mProjectMatrix, 0);
-//        Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
 
         int uMatrixLocation = GLES30.glGetUniformLocation(mProgramId,"vMatrix");
         GLES30.glUniformMatrix4fv(uMatrixLocation,1,false, mMVPMatrix,0);
@@ -239,7 +266,6 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         GLES30.glUniform1i(GLES30.glGetUniformLocation(mProgramId, "tex_yuv"), 0);
 
         // 绘制顶点
-        int numIndices = 2 * SegmentsW * (SegmentsH - 1) * 3;
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_SHORT, mIndicesBuffer);
 
         // 禁止顶点数组的句柄
