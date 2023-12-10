@@ -13,6 +13,7 @@ import android.util.Log;
 import com.hiopengl.R;
 import com.hiopengl.base.ActionBarActivity;
 import com.hiopengl.utils.BitmapUtil;
+import com.hiopengl.utils.GlUtil;
 import com.hiopengl.utils.MDQuaternion;
 import com.hiopengl.utils.ShaderUtil;
 
@@ -144,34 +145,36 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         ShaderUtil.setEGLContextClientVersion(3);
         // 编译顶点着色程序
-        final String vertexShader = ShaderUtil.loadAssets(this, "vertex_panorama.glsl");
+        final String vertexShader = ShaderUtil.loadAssets(this, "vertex_panorama_erp.glsl");
         final int vertexShaderId = ShaderUtil.compileVertexShader(vertexShader);
+        GlUtil.checkGl3Error("vertexShaderId");
         // 编译片段着色程序
-        final String fragmentShader = ShaderUtil.loadAssets(this, "fragment_panorama.glsl");
+        final String fragmentShader = ShaderUtil.loadAssets(this, "fragment_panorama_erp.glsl");
         final int fragmentShaderId = ShaderUtil.compileFragmentShader(fragmentShader);
+        GlUtil.checkGl3Error("fragmentShaderId");
         // 链接程序
         mProgramId = ShaderUtil.linkProgram(vertexShaderId, fragmentShaderId);
         // 在OpenGL ES环境中使用该程序
         GLES32.glUseProgram(mProgramId);
 
         mVertexAttrib = GLES30.glGetAttribLocation(mProgramId, "position");
-        mTexCoordsAttrib = GLES30.glGetAttribLocation(mProgramId, "inTexcoord");
+        mTexCoordsAttrib = GLES30.glGetAttribLocation(mProgramId, "inColor");
 
         // 加载纹理
-        final int[] textureObjectIds = new int[1];
-        GLES30.glGenTextures(1, textureObjectIds, 0);
-        mTextureId = textureObjectIds[0];
-
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-        Bitmap bitmap = BitmapUtil.getBitmapFromAssets(this, "number.jpg");
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
-        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
-        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
-        BitmapUtil.recycleBitmap(bitmap);
+//        final int[] textureObjectIds = new int[1];
+//        GLES30.glGenTextures(1, textureObjectIds, 0);
+//        mTextureId = textureObjectIds[0];
+//
+//        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+//        Bitmap bitmap = BitmapUtil.getBitmapFromAssets(this, "number.jpg");
+//        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+//        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
+//        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+//        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
+//        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+//        BitmapUtil.recycleBitmap(bitmap);
     }
 
     @Override
@@ -229,7 +232,7 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         Log.e("sunjinbo", mProjectMatrix[12] + " " + mProjectMatrix[13] + " " + mProjectMatrix[14] + " " + mProjectMatrix[15]);
 
         Matrix.multiplyMM(mMVPMatrix,0, mProjectMatrix,0, mViewModelMatrix,0);
-        Matrix.setIdentityM(mMVPMatrix, 0);
+//        Matrix.setIdentityM(mMVPMatrix, 0);
 
         Log.e("sunjinbo", "# MVP Matrix #");
         Log.e("sunjinbo", mMVPMatrix[0] + " " + mMVPMatrix[1] + " " + mMVPMatrix[2] + " " + mMVPMatrix[3]);
@@ -259,11 +262,11 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
         GLES30.glVertexAttribPointer (mVertexAttrib, 3, GLES30.GL_FLOAT, false, 0, mVertexBuffer);
 
         GLES30.glEnableVertexAttribArray(mTexCoordsAttrib);
-        GLES30.glVertexAttribPointer (mTexCoordsAttrib, 2, GLES30.GL_FLOAT, false, 0, mTexCoordsBuffer);
+        GLES30.glVertexAttribPointer (mTexCoordsAttrib, 3, GLES30.GL_FLOAT, false, 0, mColorBuffer);
 
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
-        GLES30.glUniform1i(GLES30.glGetUniformLocation(mProgramId, "tex_yuv"), 0);
+//        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+//        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+//        GLES30.glUniform1i(GLES30.glGetUniformLocation(mProgramId, "tex_yuv"), 0);
 
         // 绘制顶点
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, indices.length, GLES30.GL_UNSIGNED_SHORT, mIndicesBuffer);
@@ -282,6 +285,12 @@ public class PanoramaActivity extends ActionBarActivity implements GLSurfaceView
                 .asFloatBuffer();
         mVertexBuffer.put(vertices);
         mVertexBuffer.position(0);
+
+        mColorBuffer = ByteBuffer.allocateDirect(verticesColor.length * 4)
+        .order(ByteOrder.nativeOrder())
+        .asFloatBuffer();
+        mColorBuffer.put(verticesColor);
+        mColorBuffer.position(0);
 
         mTexCoordsBuffer = ByteBuffer.allocateDirect(textureCoords.length * 4)
                 .order(ByteOrder.nativeOrder())
